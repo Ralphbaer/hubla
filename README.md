@@ -11,7 +11,7 @@ This repository contains the source code for the Sales Service.
 | Name | Version | Notes | Mandatory
 |------|---------|---------|---------|
 | [golang](https://golang.org/dl/) | >= go1.20.2 | Main programming language | true
-| [docker](https://www.docker.com/) | n/a | Used to start local environment providers (MongoDB) | true
+| [docker](https://www.docker.com/) | n/a | Used to start local environment providers (PostgresSQL) | true
 | [aws-cli](https://aws.amazon.com/pt/cli/) | v2 | Used to create all AWS Enviroment (Just in case you want to know) | false
 | [sh/bash] | depending on OS. Anyway, you should be able do execute any .sh file | Used to lint checks, test processes and some console interface customizations | true
 | [make](https://www.gnu.org/software/make/) | depending on OS. Anyway, you should be able do execute make commands to run the project, tests and localenvironment | n/a | true
@@ -34,12 +34,12 @@ make setup-env
 ### Start Local Database
 - If you want to just test local without any preload data, just run:
 ```bash
-make localenv                     # Start local mongodb empty instance
+make localenv                     # Start local postgresql empty instance
 ```
 
 - If you want to preload some test data local, run:
 ```bash
-make localenv-withData            # Start local mongodb with preload data based on .localenv/withData/sales.txt
+make localenv-withData            # Start local postgresql with preload data based on .localenv/withData/sales.txt
 ```
 
 Note: After running any of the above commands, an instance will start on your machine and the thread used in the command line of your choice will be blocked. You need to open a second command line window to run the next command.
