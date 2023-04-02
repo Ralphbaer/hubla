@@ -6,7 +6,6 @@ import (
 
 	"github.com/Ralphbaer/hubla/common"
 	e "github.com/Ralphbaer/hubla/sales/entity"
-	"github.com/shopspring/decimal"
 )
 
 // SellerBalancePostgresRepository represents a MongoDB implementation of PartnerRepository interface
@@ -22,7 +21,7 @@ func NewSellerBalancePostgreSQLRepository(c *common.PostgresConnection) *SellerB
 }
 
 // Save stores the given entity.Sales into PostgreSQL
-func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.SellerBalance) (*decimal.Decimal, error) {
+func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.SellerBalance) (*float64, error) {
 	db, err := r.connection.Connect()
 	if err != nil {
 		return nil, err
@@ -36,8 +35,8 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 	defer tx.Rollback()
 
 	// Prepare the INSERT statement with the ON CONFLICT DO UPDATE clause
-	query := `INSERT INTO seller_balances (id, seller_id, balance, created_at)
-              VALUES ($1, $2, $3, DEFAULT) 
+	query := `INSERT INTO seller_balances (id, seller_id, amount, updated_at, created_at)
+              VALUES ($1, $2, $3, $4, DEFAULT) 
               ON CONFLICT (seller_id) DO UPDATE SET balance = seller_balances.balance + $3
               RETURNING balance`
 	//stmt, err := tx.Prepare(query)
@@ -48,7 +47,7 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 
 	// Execute the prepared statement with the given sellerID and amount
 	var newBalance float64
-	if err := tx.QueryRowContext(ctx, query, p.ID, p.Balance).Scan(&newBalance); err != nil {
+	if err := tx.QueryRowContext(ctx, query, p.ID, p.Amount).Scan(&newBalance); err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrFailedToInsertSeller, err)
 	}
 
@@ -57,7 +56,7 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 		return nil, fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
 	}
 
-	fmt.Printf("Balance for seller %s updated by %d to %f\n", p.SellerID, p.Balance, newBalance)
+	fmt.Printf("Balance for seller %s updated by %d to %f\n", p.SellerID, p.Amount, newBalance)
 
-	return nil, nil
+	return &newBalance, nil
 }

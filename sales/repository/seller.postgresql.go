@@ -58,8 +58,8 @@ func (r *SellerPostgresRepository) Find(ctx context.Context, sellerName string, 
 		 SELECT COUNT(*)
 		 FROM sellers
 		 WHERE name = $1`, sellerName).Scan(&count); err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	return count, nil
+	return nil, nil
 }
