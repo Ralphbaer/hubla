@@ -18,9 +18,8 @@ import (
 
 // SalesUseCase represents a collection of use cases for sales operations
 type SalesUseCase struct {
-	SalesRepo         r.SalesRepository
+	TransactionRepo   r.TransactionRepository
 	SellerRepo        r.SellerRepository
-	ProductRepo       r.ProductRepository
 	SellerBalanceRepo r.SellerBalanceRepository
 }
 
@@ -49,9 +48,9 @@ func (uc *SalesUseCase) StoreFileContent(ctx context.Context, binaryData []byte)
 
 func (uc *SalesUseCase) processFileData(ctx context.Context, binaryData []byte) ([]TransactionLine, error) {
 	var entries []TransactionLine
+	sellers := make(map[string]string)
 
 	scanner := bufio.NewScanner(bytes.NewReader(binaryData))
-	sellers := make(map[string]string)
 	for scanner.Scan() {
 		line := scanner.Text()
 		entry, err := parseLine(line)
@@ -60,14 +59,15 @@ func (uc *SalesUseCase) processFileData(ctx context.Context, binaryData []byte) 
 			continue
 		}
 		// check if the seller already exists
-		sellerID, ok := sellers[entry.SellerName]
-		if !ok {
+		if _, ok := sellers[entry.SellerName]; !ok {
 			seller := &e.Seller{
 				ID:         uuid.NewString(),
 				Name:       entry.SellerName,
 				SellerType: e.TransactionTypeToSellerTypeMap[entry.TType],
 			}
-			uc.SellerRepo.Save(ctx, seller)       // Criar seller
+			if _, err := uc.SellerRepo.Save(ctx, seller); err != nil {
+				return nil, err
+			}
 			sellers[entry.SellerName] = seller.ID // joga no mapa
 		}
 		t := &e.Transaction{
@@ -76,14 +76,17 @@ func (uc *SalesUseCase) processFileData(ctx context.Context, binaryData []byte) 
 			TDate:       entry.TDate,
 			ProductName: entry.ProductName,
 			Amount:      entry.Amount,
-			SellerID:    sellerID,
+			SellerID:    sellers[entry.SellerName],
 		}
-		uc.SalesRepo.Save(ctx, t)
+		if _, err := uc.TransactionRepo.Save(ctx, t); err != nil {
+			return nil, err
+		}
 
 		sb := &e.SellerBalance{
-			ID:       uuid.NewString(),
-			SellerID: t.SellerID,
-			Amount:   e.TransactionTypeToOperationMap[entry.TType](entry.Amount),
+			ID:        uuid.NewString(),
+			SellerID:  t.SellerID,
+			UpdatedAt: time.Now(),
+			Balance:   e.TransactionTypeToOperationMap[entry.TType](entry.Amount),
 		}
 		newBalance, err := uc.SellerBalanceRepo.Upsert(ctx, sb)
 		if err != nil {
@@ -138,171 +141,3 @@ func parseLine(line string) (TransactionLine, error) {
 
 	return entry, nil
 }
-
-/*
-
-func (uc *SalesUseCase) orchestrateAndPersist(ctx context.Context, entries []TransactionLine) error {
-	for _, v := range entries {
-		// Check if the seller already exists
-		count, err := uc.SellerRepo.Count(ctx, v.SellerName)
-		if err != nil {
-			return err
-		}
-		if count == 0 {
-			seller := &e.Seller{
-				ID:         uuid.NewString(),
-				Name:       v.SellerName,
-				SellerType: e.TransactionTypeToSellerTypeMap[v.TType],
-			}
-			_, err := uc.SellerRepo.Save(ctx, seller)
-			if err != nil {
-				return err
-			}
-		}
-		product := &e.Product{
-			ID:   uuid.NewString(),
-			Name: v.ProductName,
-		}
-		if seller.SellerType != e.CREATOR {
-			product.CreatorID = sellerID
-		}
-
-		if err := uc.ProductRepo.Save(ctx, product); err != nil {
-			fmt.Println(err)
-			continue
-		}
-		transaction := &e.Transaction{
-			ID:        uuid.NewString(),
-			TType:     v.TType,
-			TDate:     v.TDate,
-			ProductID: product.ID,
-			Amount:    v.Amount,
-			SellerID:  sellerID,
-		}
-		t, err := uc.SalesRepo.Save(ctx, transaction)
-		if err != nil {
-			return err
-		}
-		sb := &e.SellerBalance{
-			ID:       uuid.NewString(),
-			SellerID: t.SellerID,
-			Balance:  t.Amount,
-		}
-
-		newBalance, err := uc.SellerBalanceRepo.Upsert(ctx, sb)
-		if err != nil {
-			return err
-		}
-
-		fmt.Println(newBalance)
-	}
-
-	return nil
-}
-*/
-/*
-// Every sum, is a sum to the product, every subtract, is a pay
-
-	func calculateSellerAmount(sales []e.Transaction) (psAmount []*e.ProductSeller, affiliateAmount []*e.Affiliate) {
-		psAmount = []*e.ProductSeller{}
-
-		for _, sale := range sales {
-			switch sale.TType {
-			case e.CREATOR_SALE, e.AFFILIATE_SALE:
-				upsertCreatorAmount(&psAmount, sale)
-			case e.COMMISSION_PAID:
-				upsertCreatorAmount(&psAmount, sale)
-			case e.COMMISSION_RECEIVED:
-				addToAffiliateAmountMap(&psAmount, sale)
-			}
-		}
-
-		return psAmount, affiliateAmount
-	}
-
-	func upsertProductSeller(psAmountList *[]*e.ProductSeller, sale e.Transaction, uType e.SellerTypeEnum) {
-		for i, ps := range *psAmountList {
-			if ps.Seller.Name == sale.SellerName ||
-				(uType == e.AFFILIATE && ps.Product.Name == sale.ProductName) {
-				// Update existing element
-				(*psAmountList)[i].Seller = e.Seller{
-					//	ID:       ps.Product.SellerID,
-					Name:     sale.SellerName,
-					UType:    uType,
-					Balance:  calculateBalance(sale.Amount, ps.Seller.Balance, sale.TType),
-					ParentID: ps.Seller.ParentID,
-				}
-				return
-			}
-		}
-
-		// Insert new element
-		uuidd := uuid.NewString()
-		*psAmountList = append(*psAmountList, &e.ProductSeller{
-			Seller: e.Seller{
-				ID:      uuidd,
-				Name:    sale.SellerName,
-				UType:   uType,
-				Balance: sale.Amount.Add(decimal.Zero),
-			},
-			Product: &e.Product{
-				ID:   uuid.NewString(),
-				Name: sale.ProductName,
-				//	SellerID: uuidd,
-			},
-		})
-	}
-
-	func upsertCreatorAmount(psAmountList *[]*e.ProductSeller, sale e.Transaction) {
-		upsertProductSeller(psAmountList, sale, e.CREATOR)
-	}
-
-	func addToAffiliateAmountMap(psAmountList *[]*e.ProductSeller, sale e.Transaction) {
-		upsertProductSeller(psAmountList, sale, e.AFFILIATE)
-	}
-*/
-
-func calculateBalance(amount decimal.Decimal, balance decimal.Decimal, tType e.TransactionTypeEnum) decimal.Decimal {
-	if tType == e.COMMISSION_PAID {
-		return balance.Sub(amount)
-	}
-	return balance.Add(amount)
-}
-
-/*
-func addToAffiliateAmountMap(psAmountList *[]*e.ProductSeller, sale e.Sales) {
-	found := false
-	for i, ps := range *psAmountList {
-		if ps.Seller.Name == sale.SellerName ||
-			(sale.TType == e.AFFILIATE_SALE && ps.Product.Name == sale.ProductName) {
-			// Update existing element
-			(*psAmountList)[i].Seller = e.Seller{
-				ID:       ps.Seller.ID,
-				Name:     ps.Seller.Name,
-				UType:    e.AFFILIATE,
-				Balance:  ps.Seller.Balance,
-				ParentID: ps.Seller.ParentID,
-			}
-			found = true
-			break
-		}
-	}
-
-	if !found {
-		uuidd := uuid.NewString()
-		*psAmountList = append(*psAmountList, &e.ProductSeller{
-			Seller: e.Seller{
-				ID:      uuidd,
-				Name:    sale.SellerName,
-				UType:   e.AFFILIATE,
-				Balance: sale.Amount.Add(decimal.Zero),
-			},
-			Product: &e.Product{
-				ID:       uuid.NewString(),
-				Name:     sale.ProductName,
-				SellerID: uuidd,
-			},
-		})
-	}
-}
-*/

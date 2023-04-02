@@ -6,7 +6,7 @@ import (
 	e "github.com/Ralphbaer/hubla/sales/entity"
 )
 
-// SalesRepository manages sales repository operations
-type SalesRepository interface {
+// TransactionRepository manages sales repository operations
+type TransactionRepository interface {
 	Save(ctx context.Context, t *e.Transaction) (*e.Transaction, error)
 }

@@ -35,7 +35,7 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 	defer tx.Rollback()
 
 	// Prepare the INSERT statement with the ON CONFLICT DO UPDATE clause
-	query := `INSERT INTO seller_balances (id, seller_id, amount, updated_at, created_at)
+	query := `INSERT INTO seller_balances (id, seller_id, balance, updated_at, created_at)
               VALUES ($1, $2, $3, $4, DEFAULT) 
               ON CONFLICT (seller_id) DO UPDATE SET balance = seller_balances.balance + $3
               RETURNING balance`
@@ -47,7 +47,7 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 
 	// Execute the prepared statement with the given sellerID and amount
 	var newBalance float64
-	if err := tx.QueryRowContext(ctx, query, p.ID, p.Amount).Scan(&newBalance); err != nil {
+	if err := tx.QueryRowContext(ctx, query, p.ID, p.SellerID, p.Balance, p.UpdatedAt).Scan(&newBalance); err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrFailedToInsertSeller, err)
 	}
 
@@ -56,7 +56,7 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 		return nil, fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
 	}
 
-	fmt.Printf("Balance for seller %s updated by %d to %f\n", p.SellerID, p.Amount, newBalance)
+	fmt.Printf("Balance for seller %s updated by %s to %f\n", p.SellerID, p.Balance.String(), newBalance)
 
 	return &newBalance, nil
 }

@@ -9,3 +9,15 @@ type Seller struct {
 	SellerType SellerTypeEnum
 	CreatedAt  time.Time
 }
+
+type SellerTypeEnum uint8
+
+const (
+	CREATOR   SellerTypeEnum = 1
+	AFFILIATE SellerTypeEnum = 2
+)
+
+var SellerTypeMap = map[SellerTypeEnum]string{
+	CREATOR:   "CREATOR",
+	AFFILIATE: "AFFILIATE",
+}

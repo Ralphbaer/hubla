@@ -10,7 +10,7 @@ import (
 type SellerBalance struct {
 	ID        string
 	SellerID  string
-	Amount    decimal.Decimal
+	Balance   decimal.Decimal
 	UpdatedAt time.Time
 	CreatedAt time.Time
 }

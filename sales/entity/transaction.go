@@ -19,18 +19,6 @@ type Transaction struct {
 	CreatedAt   time.Time
 }
 
-type SellerTypeEnum uint8
-
-const (
-	CREATOR   SellerTypeEnum = 1
-	AFFILIATE SellerTypeEnum = 2
-)
-
-var SellerTypeMap = map[uint8]SellerTypeEnum{
-	1: CREATOR,
-	2: AFFILIATE,
-}
-
 var TransactionTypeToSellerTypeMap = map[TransactionTypeEnum]SellerTypeEnum{
 	CREATOR_SALE:        CREATOR,
 	AFFILIATE_SALE:      AFFILIATE,
@@ -52,4 +40,11 @@ var TransactionTypeMap = map[uint8]TransactionTypeEnum{
 	2: AFFILIATE_SALE,
 	3: COMMISSION_PAID,
 	4: COMMISSION_RECEIVED,
+}
+
+var TransactionTypeMapString = map[TransactionTypeEnum]string{
+	CREATOR_SALE:        "CREATOR_SALE",
+	AFFILIATE_SALE:      "AFFILIATE_SALE",
+	COMMISSION_PAID:     "COMMISSION_PAID",
+	COMMISSION_RECEIVED: "COMMISSION_RECEIVED",
 }
