@@ -25,8 +25,10 @@ func InitializeApp() *app.App {
 	config := app.NewConfig()
 	postgresConnection := setupPostgreSQLConnection(config)
 	salesPostgresRepository := repository.NewSalesPostgreSQLRepository(postgresConnection)
+	sellerPostgresRepository := repository.NewSellerPostgreSQLRepository(postgresConnection)
 	salesUseCase := &usecase.SalesUseCase{
-		SalesRepo: salesPostgresRepository,
+		SalesRepo:  salesPostgresRepository,
+		SellerRepo: sellerPostgresRepository,
 	}
 	salesHandler := &handler.SalesHandler{
 		UseCase: salesUseCase,
@@ -49,4 +51,4 @@ func setupPostgreSQLConnection(cfg *app.Config) *common.PostgresConnection {
 	}
 }
 
-var applicationSet = wire.NewSet(common.InitLocalEnvConfig, setupPostgreSQLConnection, app.NewConfig, app.NewRouter, app.NewServer, repository.NewSalesPostgreSQLRepository, wire.Struct(new(usecase.SalesUseCase), "*"), wire.Struct(new(handler.SalesHandler), "*"), wire.Bind(new(repository.SalesRepository), new(*repository.SalesPostgresRepository)), wire.Bind(new(http.Handler), new(*mux.Router)))
+var applicationSet = wire.NewSet(common.InitLocalEnvConfig, setupPostgreSQLConnection, app.NewConfig, app.NewRouter, app.NewServer, repository.NewSalesPostgreSQLRepository, repository.NewSellerPostgreSQLRepository, wire.Struct(new(usecase.SalesUseCase), "*"), wire.Struct(new(usecase.SellerUseCase), "*"), wire.Struct(new(handler.SalesHandler), "*"), wire.Bind(new(repository.SalesRepository), new(*repository.SalesPostgresRepository)), wire.Bind(new(repository.SellerRepository), new(*repository.SellerPostgresRepository)), wire.Bind(new(http.Handler), new(*mux.Router)))

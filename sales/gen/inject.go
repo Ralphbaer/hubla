@@ -33,9 +33,12 @@ var applicationSet = wire.NewSet(
 	app.NewRouter,
 	app.NewServer,
 	r.NewSalesPostgreSQLRepository,
+	r.NewSellerPostgreSQLRepository,
 	wire.Struct(new(uc.SalesUseCase), "*"),
+	wire.Struct(new(uc.SellerUseCase), "*"),
 	wire.Struct(new(h.SalesHandler), "*"),
 	wire.Bind(new(r.SalesRepository), new(*r.SalesPostgresRepository)),
+	wire.Bind(new(r.SellerRepository), new(*r.SellerPostgresRepository)),
 	wire.Bind(new(http.Handler), new(*mux.Router)),
 )
 

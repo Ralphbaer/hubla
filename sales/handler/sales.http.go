@@ -1,9 +1,8 @@
 package handler
 
 import (
-	"context"
+	"io/ioutil"
 	"net/http"
-	"strings"
 
 	commonHTTP "github.com/Ralphbaer/hubla/common/net/http"
 	uc "github.com/Ralphbaer/hubla/sales/usecase"
@@ -54,27 +53,19 @@ type SalesHandler struct {
 //	      message: message
 func (handler *SalesHandler) Create() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		contentType := r.Header.Get("Content-Type")
-
-		if !strings.HasPrefix(contentType, "multipart/form-data") {
-			commonHTTP.BadRequest(w, "Unsupported content type")
-			return
-		}
-		file, _, err := r.FormFile("file")
+		binaryData, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			commonHTTP.BadRequest(w, err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		defer file.Close()
 
-		sfp := &uc.SalesFileUpload{File: file}
-
-		result, err := handler.UseCase.StoreFileContent(context.Background(), sfp)
+		// Process the binary data
+		result, err := handler.UseCase.StoreFileContent(r.Context(), binaryData)
 		if err != nil {
-			commonHTTP.InternalServerError(w, err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		commonHTTP.OK(w, result)
+		commonHTTP.Accepted(w, result)
 	})
 }
