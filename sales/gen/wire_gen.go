@@ -26,10 +26,12 @@ func InitializeApp() *app.App {
 	postgresConnection := setupPostgreSQLConnection(config)
 	transactionPostgresRepository := repository.NewTransactionPostgreSQLRepository(postgresConnection)
 	sellerPostgresRepository := repository.NewSellerPostgreSQLRepository(postgresConnection)
+	productPostgresRepository := repository.NewProductPostgreSQLRepository(postgresConnection)
 	sellerBalancePostgresRepository := repository.NewSellerBalancePostgreSQLRepository(postgresConnection)
 	salesUseCase := &usecase.SalesUseCase{
 		TransactionRepo:   transactionPostgresRepository,
 		SellerRepo:        sellerPostgresRepository,
+		ProductRepo:       productPostgresRepository,
 		SellerBalanceRepo: sellerBalancePostgresRepository,
 	}
 	salesHandler := &handler.SalesHandler{
@@ -53,4 +55,4 @@ func setupPostgreSQLConnection(cfg *app.Config) *common.PostgresConnection {
 	}
 }
 
-var applicationSet = wire.NewSet(common.InitLocalEnvConfig, setupPostgreSQLConnection, app.NewConfig, app.NewRouter, app.NewServer, repository.NewTransactionPostgreSQLRepository, repository.NewSellerPostgreSQLRepository, repository.NewSellerBalancePostgreSQLRepository, wire.Struct(new(usecase.SalesUseCase), "*"), wire.Struct(new(usecase.SellerUseCase), "*"), wire.Struct(new(handler.SalesHandler), "*"), wire.Bind(new(repository.TransactionRepository), new(*repository.TransactionPostgresRepository)), wire.Bind(new(repository.SellerRepository), new(*repository.SellerPostgresRepository)), wire.Bind(new(repository.SellerBalanceRepository), new(*repository.SellerBalancePostgresRepository)), wire.Bind(new(http.Handler), new(*mux.Router)))
+var applicationSet = wire.NewSet(common.InitLocalEnvConfig, setupPostgreSQLConnection, app.NewConfig, app.NewRouter, app.NewServer, repository.NewTransactionPostgreSQLRepository, repository.NewSellerPostgreSQLRepository, repository.NewSellerBalancePostgreSQLRepository, repository.NewProductPostgreSQLRepository, wire.Struct(new(usecase.SalesUseCase), "*"), wire.Struct(new(usecase.SellerUseCase), "*"), wire.Struct(new(handler.SalesHandler), "*"), wire.Bind(new(repository.TransactionRepository), new(*repository.TransactionPostgresRepository)), wire.Bind(new(repository.SellerRepository), new(*repository.SellerPostgresRepository)), wire.Bind(new(repository.SellerBalanceRepository), new(*repository.SellerBalancePostgresRepository)), wire.Bind(new(repository.ProductRepository), new(*repository.ProductPostgresRepository)), wire.Bind(new(http.Handler), new(*mux.Router)))

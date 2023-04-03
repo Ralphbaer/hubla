@@ -20,35 +20,26 @@ import (
 type SalesUseCase struct {
 	TransactionRepo   r.TransactionRepository
 	SellerRepo        r.SellerRepository
+	ProductRepo       r.ProductRepository
 	SellerBalanceRepo r.SellerBalanceRepository
 }
 
 // StoreFileContent stores a new Sales
 func (uc *SalesUseCase) StoreFileContent(ctx context.Context, binaryData []byte) (*TransactionLine, error) {
-	// Process the file content
 	entries, err := uc.processFileData(ctx, binaryData)
 	if err != nil {
 		return nil, err
 	}
 
 	fmt.Println(entries)
-	// uc.SalesRepo.Save(ctx, entries)
-
-	//	if err := uc.orchestrateAndPersist(ctx, entries); err != nil {
-	//		return nil, err
-	//	}
-	// Get the productName
-
-	// if _, err := uc.SalesRepo.Save(ctx, nil); err != nil {
-	// 	return nil, err
-	// }
 
 	return nil, nil
 }
 
-func (uc *SalesUseCase) processFileData(ctx context.Context, binaryData []byte) ([]TransactionLine, error) {
-	var entries []TransactionLine
-	sellers := make(map[string]string)
+func (uc *SalesUseCase) processFileData(ctx context.Context, binaryData []byte) ([]*e.Transaction, error) {
+	var transactions []*e.Transaction
+	sellers := make(map[string]*e.Seller)
+	products := make(map[string]*e.Product)
 
 	scanner := bufio.NewScanner(bytes.NewReader(binaryData))
 	for scanner.Scan() {
@@ -58,46 +49,8 @@ func (uc *SalesUseCase) processFileData(ctx context.Context, binaryData []byte) 
 			log.Printf("Error parsing line: %v", err)
 			continue
 		}
-		// check if the seller already exists
-		if _, ok := sellers[entry.SellerName]; !ok {
-			seller := &e.Seller{
-				ID:         uuid.NewString(),
-				Name:       entry.SellerName,
-				SellerType: e.TransactionTypeToSellerTypeMap[entry.TType],
-			}
-			if _, err := uc.SellerRepo.Save(ctx, seller); err != nil {
-				return nil, err
-			}
-			sellers[entry.SellerName] = seller.ID // joga no mapa
-		}
-		t := &e.Transaction{
-			ID:          uuid.NewString(),
-			TType:       entry.TType,
-			TDate:       entry.TDate,
-			ProductName: entry.ProductName,
-			Amount:      entry.Amount,
-			SellerID:    sellers[entry.SellerName],
-		}
-		if _, err := uc.TransactionRepo.Save(ctx, t); err != nil {
+		if err := uc.handleTransaction(ctx, entry, sellers, products); err != nil {
 			return nil, err
-		}
-
-		sb := &e.SellerBalance{
-			ID:        uuid.NewString(),
-			SellerID:  t.SellerID,
-			UpdatedAt: time.Now(),
-			Balance:   e.TransactionTypeToOperationMap[entry.TType](entry.Amount),
-		}
-		newBalance, err := uc.SellerBalanceRepo.Upsert(ctx, sb)
-		if err != nil {
-			return nil, err
-		}
-		fmt.Println(newBalance)
-		// Check if the context is cancelled
-		select {
-		case <-ctx.Done():
-			return nil, ctx.Err()
-		default:
 		}
 	}
 
@@ -105,39 +58,162 @@ func (uc *SalesUseCase) processFileData(ctx context.Context, binaryData []byte) 
 		return nil, fmt.Errorf("error scanning file: %v", err)
 	}
 
-	return entries, nil
+	return transactions, nil
 }
 
-func parseLine(line string) (TransactionLine, error) {
-	var entry TransactionLine
-
+func parseLine(line string) (*TransactionLine, error) {
 	if len(line) < 70 {
-		return entry, fmt.Errorf("invalid line format")
+		return nil, fmt.Errorf("invalid line format")
 	}
 
-	entry.ID = uuid.New().String()
-
-	ttype, err := strconv.ParseUint(line[:1], 10, 8)
+	ID := uuid.New().String()
+	tTypeCode, err := strconv.Atoi(string(line[0]))
 	if err != nil {
-		return entry, fmt.Errorf("error parsing code: %v", err)
+		return nil, fmt.Errorf("error parsing transaction type: %v", err)
 	}
-	entry.TType = e.TransactionTypeMap[uint8(ttype)]
+	tType, ok := e.TransactionTypeMap[uint8(tTypeCode)]
+	if !ok {
+		return nil, fmt.Errorf("invalid transaction type")
+	}
 
-	date, err := time.Parse("2006-01-02T15:04:05-07:00", line[1:26])
+	tDate, err := time.Parse("2006-01-02T15:04:05-07:00", line[1:26])
 	if err != nil {
-		return entry, fmt.Errorf("error parsing date: %v", err)
+		return nil, fmt.Errorf("error parsing date: %v", err)
 	}
-	entry.TDate = date
 
-	entry.ProductName = strings.TrimSpace(line[26:50])
+	productName := strings.TrimSpace(line[26:50])
 
-	value, err := decimal.NewFromString(strings.TrimSpace(line[50:66]))
+	amount, err := decimal.NewFromString(strings.TrimSpace(line[50:66]))
 	if err != nil {
-		return entry, fmt.Errorf("error parsing amount: %v", err)
+		return nil, fmt.Errorf("error parsing amount: %v", err)
 	}
-	entry.Amount = value
 
-	entry.SellerName = strings.TrimSpace(line[66:])
+	sellerName := strings.TrimSpace(line[66:])
+	if len(sellerName) == 0 {
+		return nil, fmt.Errorf("invalid seller name")
+	}
 
-	return entry, nil
+	return &TransactionLine{
+		ID:          ID,
+		TType:       tType,
+		TDate:       tDate,
+		ProductName: productName,
+		Amount:      amount,
+		SellerName:  sellerName,
+	}, nil
+}
+
+func (uc *SalesUseCase) handleTransaction(ctx context.Context, entry *TransactionLine, sellers map[string]*e.Seller, products map[string]*e.Product) error {
+	seller, err := uc.findOrCreateSeller(ctx, entry, sellers)
+	if err != nil {
+		return err
+	}
+
+	product, err := uc.findOrCreateProduct(ctx, entry, products, seller.ID)
+	if err != nil {
+		return err
+	}
+
+	err = uc.saveTransaction(ctx, entry, product.ID, seller.ID)
+	if err != nil {
+		return err
+	}
+
+	err = uc.updateSellerBalance(ctx, entry, seller.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (uc *SalesUseCase) findOrCreateSeller(ctx context.Context, entry *TransactionLine, sellers map[string]*e.Seller) (*e.Seller, error) {
+	seller, found := sellers[entry.SellerName]
+	if found {
+		return seller, nil
+	}
+
+	seller, err := uc.SellerRepo.Find(ctx, entry.SellerName)
+	if err != nil {
+		return nil, err
+	}
+
+	if seller == nil {
+		seller = &e.Seller{
+			ID:         uuid.NewString(),
+			Name:       entry.SellerName,
+			SellerType: e.TransactionTypeToSellerTypeMap[entry.TType],
+		}
+		_, err = uc.SellerRepo.Save(ctx, seller)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	sellers[entry.SellerName] = seller
+
+	return seller, nil
+}
+
+func (uc *SalesUseCase) findOrCreateProduct(ctx context.Context, entry *TransactionLine, products map[string]*e.Product, sellerID string) (*e.Product, error) {
+	product, found := products[entry.ProductName]
+	if found {
+		return product, nil
+	}
+
+	product, err := uc.ProductRepo.Find(ctx, entry.ProductName)
+	if err != nil {
+		return nil, err
+	}
+
+	if product == nil {
+		product = &e.Product{
+			ID:        uuid.NewString(),
+			Name:      entry.ProductName,
+			CreatorID: sellerID,
+		}
+		err = uc.ProductRepo.Save(ctx, product)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	products[entry.ProductName] = product
+
+	return product, nil
+}
+
+func (uc *SalesUseCase) saveTransaction(ctx context.Context, entry *TransactionLine, productID, sellerID string) error {
+	transaction := &e.Transaction{
+		ID:        uuid.NewString(),
+		TType:     entry.TType,
+		TDate:     entry.TDate,
+		ProductID: productID,
+		Amount:    entry.Amount,
+		SellerID:  sellerID,
+	}
+
+	if _, err := uc.TransactionRepo.Save(ctx, transaction); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (uc *SalesUseCase) updateSellerBalance(ctx context.Context, entry *TransactionLine, sellerID string) error {
+	sellerBalance := &e.SellerBalance{
+		ID:        uuid.NewString(),
+		SellerID:  sellerID,
+		Balance:   e.TransactionTypeToOperationMap[entry.TType](entry.Amount),
+		UpdatedAt: time.Now(),
+	}
+
+	updatedBalance, err := uc.SellerBalanceRepo.Upsert(ctx, sellerBalance)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(updatedBalance)
+
+	return nil
 }

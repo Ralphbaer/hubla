@@ -51,9 +51,9 @@ func (r *TransactionPostgresRepository) Save(ctx context.Context, t *e.Transacti
 	}
 	defer tx.Rollback()
 
-	query := `INSERT INTO transactions(id, t_type, t_date, product_name, amount, seller_id, created_at) VALUES ($1, $2, $3, $4, $5, $6, DEFAULT) RETURNING id`
+	query := `INSERT INTO transactions(id, t_type, t_date, product_id, amount, seller_id, created_at) VALUES ($1, $2, $3, $4, $5, $6, DEFAULT) RETURNING id`
 	var sellerID string
-	if err := tx.QueryRowContext(ctx, query, t.ID, e.TransactionTypeMapString[t.TType], t.TDate, t.ProductName, t.Amount, t.SellerID).Scan(&sellerID); err != nil {
+	if err := tx.QueryRowContext(ctx, query, t.ID, e.TransactionTypeMapString[t.TType], t.TDate, t.ProductID, t.Amount, t.SellerID).Scan(&sellerID); err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrFailedToInsertSeller, err)
 	}
 

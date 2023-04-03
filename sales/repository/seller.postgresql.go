@@ -47,19 +47,22 @@ func (r *SellerPostgresRepository) Save(ctx context.Context, s *e.Seller) (strin
 	return "", nil
 }
 
-func (r *SellerPostgresRepository) Find(ctx context.Context, sellerName string, productName string, sellerType e.SellerTypeEnum) (*e.Seller, error) {
+func (r *SellerPostgresRepository) Find(ctx context.Context, sellerName string) (*e.Seller, error) {
 	db, err := r.connection.Connect()
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
 	}
 
-	var count int
+	var seller e.Seller
 	if err := db.QueryRow(`
-		 SELECT COUNT(*)
+		 SELECT *
 		 FROM sellers
-		 WHERE name = $1`, sellerName).Scan(&count); err != nil {
-		return nil, err
+		 WHERE name = $1`, sellerName).Scan(&seller.ID, &seller.Name, &seller.SellerType, &seller.CreatedAt); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // Seller not found
+		}
+		return nil, err // Other error
 	}
 
-	return nil, nil
+	return &seller, nil
 }
