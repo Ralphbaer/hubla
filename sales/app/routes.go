@@ -31,14 +31,14 @@ import (
 )
 
 // NewRouter registers routes to the Server
-func NewRouter(p *handler.SalesHandler) *mux.Router {
+func NewRouter(sh *handler.SellerHandler, th *handler.TransactionHandler) *mux.Router {
 	r := mux.NewRouter()
 	config := NewConfig()
 
 	r.Use(lib.WithCorrelationID)
 
-	r.Handle("/sales/upload", p.Create()).Methods("POST")
-	r.Handle("/sales/uploads/", p.Create()).Methods("POST")
+	r.Handle("/transactions/upload", th.Create()).Methods("POST")
+	r.Handle("/sellers/{id}/balance", sh.GetSellerBalanceByID()).Methods("GET")
 
 	// Common
 

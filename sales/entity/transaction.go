@@ -10,13 +10,13 @@ import (
 // including its coordinates represented by the coverageArea and address fields.
 // swagger:model Transaction
 type Transaction struct {
-	ID        string
-	TType     TransactionTypeEnum
-	TDate     time.Time
-	ProductID string
-	Amount    decimal.Decimal
-	SellerID  string
-	CreatedAt time.Time
+	ID        string              `json:"id"`
+	TType     TransactionTypeEnum `json:"type"`
+	TDate     time.Time           `json:"date"`
+	ProductID string              `json:"product_id"`
+	Amount    decimal.Decimal     `json:"amount"`
+	SellerID  string              `json:"seller_id"`
+	CreatedAt time.Time           `json:"created_at"`
 }
 
 var TransactionTypeToSellerTypeMap = map[TransactionTypeEnum]SellerTypeEnum{

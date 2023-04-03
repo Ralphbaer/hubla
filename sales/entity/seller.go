@@ -1,6 +1,10 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"github.com/shopspring/decimal"
+)
 
 // Seller represents a seller (Creator or Affiliate) who offers products for sale.
 type Seller struct {
@@ -8,6 +12,14 @@ type Seller struct {
 	Name       string
 	SellerType SellerTypeEnum
 	CreatedAt  time.Time
+}
+
+// SellerBalanceView represents a seller (Creator or Affiliate) who offers products for sale.
+type SellerBalanceView struct {
+	SellerID      string          `json:"seller_id"`
+	SellerName    string          `json:"seller_name"`
+	SellerBalance decimal.Decimal `json:"balance"`
+	UpdatedAt     time.Time       `json:"updated_at"`
 }
 
 type SellerTypeEnum uint8

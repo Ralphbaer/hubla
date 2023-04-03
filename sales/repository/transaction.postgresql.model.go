@@ -6,12 +6,6 @@ import (
 	e "github.com/Ralphbaer/hubla/sales/entity"
 )
 
-type TransactionResult struct {
-	Transactions e.Transaction
-	Status       string
-	Error        error
-}
-
 type TransactionSellerResult struct {
 	Seller e.Seller
 	Status string

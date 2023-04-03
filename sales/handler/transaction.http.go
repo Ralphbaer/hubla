@@ -8,14 +8,14 @@ import (
 	uc "github.com/Ralphbaer/hubla/sales/usecase"
 )
 
-// SalesHandler represents a handler which deal with Sales resource operations
-type SalesHandler struct {
-	UseCase *uc.SalesUseCase
+// TransactionHandler represents a handler which deal with Transaction resource operations
+type TransactionHandler struct {
+	UseCase *uc.TransactionUseCase
 }
 
-// Create creates a new Sales in the repository
-// swagger:operation POST /sales sales Create
-// Register a new Sales into database
+// Create creates a new Transaction in the repository
+// swagger:operation POST /Transaction Transaction Create
+// Register a new Transaction into database
 // ---
 // parameters:
 //   - name: input
@@ -24,7 +24,7 @@ type SalesHandler struct {
 //     description: The payload
 //     required: true
 //     schema:
-//     "$ref": "#/definitions/CreateSalesInput"
+//     "$ref": "#/definitions/CreateTransactionInput"
 //
 // security:
 //   - Definitions: []
@@ -34,7 +34,7 @@ type SalesHandler struct {
 //	'201':
 //	  description: Success Operation
 //	  schema:
-//	    "$ref": "#/definitions/Sales"
+//	    "$ref": "#/definitions/Transaction"
 //	'400':
 //	  description: Invalid Input - Input has invalid/missing values
 //	  schema:
@@ -44,14 +44,14 @@ type SalesHandler struct {
 //	      code: 400
 //	      message: message
 //	'409':
-//	  description: Conflict - sales document already taken
+//	  description: Conflict - Transaction document already taken
 //	  schema:
 //	    "$ref": "#/definitions/ResponseError"
 //	  examples:
 //	    "application/json":
 //	      code: 409
 //	      message: message
-func (handler *SalesHandler) Create() http.Handler {
+func (handler *TransactionHandler) Create() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		binaryData, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -59,13 +59,12 @@ func (handler *SalesHandler) Create() http.Handler {
 			return
 		}
 
-		// Process the binary data
-		result, err := handler.UseCase.StoreFileContent(r.Context(), binaryData)
+		transactions, err := handler.UseCase.StoreFileContent(r.Context(), binaryData)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		commonHTTP.Accepted(w, result)
+		commonHTTP.Created(w, transactions)
 	})
 }

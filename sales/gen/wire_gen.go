@@ -24,20 +24,27 @@ import (
 func InitializeApp() *app.App {
 	config := app.NewConfig()
 	postgresConnection := setupPostgreSQLConnection(config)
-	transactionPostgresRepository := repository.NewTransactionPostgreSQLRepository(postgresConnection)
-	sellerPostgresRepository := repository.NewSellerPostgreSQLRepository(postgresConnection)
-	productPostgresRepository := repository.NewProductPostgreSQLRepository(postgresConnection)
 	sellerBalancePostgresRepository := repository.NewSellerBalancePostgreSQLRepository(postgresConnection)
-	salesUseCase := &usecase.SalesUseCase{
+	sellerPostgresRepository := repository.NewSellerPostgreSQLRepository(postgresConnection)
+	sellerUseCase := &usecase.SellerUseCase{
+		SellerBalanceRepo: sellerBalancePostgresRepository,
+		SellerRepo:        sellerPostgresRepository,
+	}
+	sellerHandler := &handler.SellerHandler{
+		UseCase: sellerUseCase,
+	}
+	transactionPostgresRepository := repository.NewTransactionPostgreSQLRepository(postgresConnection)
+	productPostgresRepository := repository.NewProductPostgreSQLRepository(postgresConnection)
+	transactionUseCase := &usecase.TransactionUseCase{
 		TransactionRepo:   transactionPostgresRepository,
 		SellerRepo:        sellerPostgresRepository,
 		ProductRepo:       productPostgresRepository,
 		SellerBalanceRepo: sellerBalancePostgresRepository,
 	}
-	salesHandler := &handler.SalesHandler{
-		UseCase: salesUseCase,
+	transactionHandler := &handler.TransactionHandler{
+		UseCase: transactionUseCase,
 	}
-	router := app.NewRouter(salesHandler)
+	router := app.NewRouter(sellerHandler, transactionHandler)
 	server := app.NewServer(config, router)
 	appApp := &app.App{
 		Server: server,
@@ -55,4 +62,4 @@ func setupPostgreSQLConnection(cfg *app.Config) *common.PostgresConnection {
 	}
 }
 
-var applicationSet = wire.NewSet(common.InitLocalEnvConfig, setupPostgreSQLConnection, app.NewConfig, app.NewRouter, app.NewServer, repository.NewTransactionPostgreSQLRepository, repository.NewSellerPostgreSQLRepository, repository.NewSellerBalancePostgreSQLRepository, repository.NewProductPostgreSQLRepository, wire.Struct(new(usecase.SalesUseCase), "*"), wire.Struct(new(usecase.SellerUseCase), "*"), wire.Struct(new(handler.SalesHandler), "*"), wire.Bind(new(repository.TransactionRepository), new(*repository.TransactionPostgresRepository)), wire.Bind(new(repository.SellerRepository), new(*repository.SellerPostgresRepository)), wire.Bind(new(repository.SellerBalanceRepository), new(*repository.SellerBalancePostgresRepository)), wire.Bind(new(repository.ProductRepository), new(*repository.ProductPostgresRepository)), wire.Bind(new(http.Handler), new(*mux.Router)))
+var applicationSet = wire.NewSet(common.InitLocalEnvConfig, setupPostgreSQLConnection, app.NewConfig, app.NewRouter, app.NewServer, repository.NewTransactionPostgreSQLRepository, repository.NewSellerPostgreSQLRepository, repository.NewSellerBalancePostgreSQLRepository, repository.NewProductPostgreSQLRepository, wire.Struct(new(usecase.TransactionUseCase), "*"), wire.Struct(new(usecase.SellerUseCase), "*"), wire.Struct(new(handler.TransactionHandler), "*"), wire.Struct(new(handler.SellerHandler), "*"), wire.Bind(new(repository.TransactionRepository), new(*repository.TransactionPostgresRepository)), wire.Bind(new(repository.SellerRepository), new(*repository.SellerPostgresRepository)), wire.Bind(new(repository.SellerBalanceRepository), new(*repository.SellerBalancePostgresRepository)), wire.Bind(new(repository.ProductRepository), new(*repository.ProductPostgresRepository)), wire.Bind(new(http.Handler), new(*mux.Router)))
