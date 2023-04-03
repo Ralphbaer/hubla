@@ -23,7 +23,7 @@ func NewSellerBalancePostgreSQLRepository(c *common.PostgresConnection) *SellerB
 
 // Save stores the given entity.Sales into PostgreSQL
 func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.SellerBalance) (*float64, error) {
-	db, err := r.connection.Connect()
+	db, err := r.connection.GetDB()
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 }
 
 func (r *SellerBalancePostgresRepository) Find(ctx context.Context, sellerID string) (*e.SellerBalanceView, error) {
-	db, err := r.connection.Connect()
+	db, err := r.connection.GetDB()
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
 	}

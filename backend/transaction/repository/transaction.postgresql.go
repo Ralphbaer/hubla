@@ -14,23 +14,6 @@ type TransactionPostgresRepository struct {
 	connection *common.PostgresConnection
 }
 
-/*
-func connectToPostgres() (*sql.DB, error) {
-	connStr := "user=username password=password dbname=database host=localhost sslmode=disable"
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
-}
-*/
-
 // NewSalesPostgreSQLRepository creates an instance of repository.SalesPostgreSQLRepository
 func NewTransactionPostgreSQLRepository(c *common.PostgresConnection) *TransactionPostgresRepository {
 	return &TransactionPostgresRepository{
@@ -40,7 +23,7 @@ func NewTransactionPostgreSQLRepository(c *common.PostgresConnection) *Transacti
 
 // Save stores the given entity.Sales into PostgreSQL
 func (r *TransactionPostgresRepository) Save(ctx context.Context, t *e.Transaction) (*e.Transaction, error) {
-	db, err := r.connection.Connect()
+	db, err := r.connection.GetDB()
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
 	}

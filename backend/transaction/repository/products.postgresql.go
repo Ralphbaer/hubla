@@ -23,7 +23,7 @@ func NewProductPostgreSQLRepository(c *common.PostgresConnection) *ProductPostgr
 
 // Save stores the given entity.Sales into PostgreSQL
 func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) error {
-	db, err := r.connection.Connect()
+	db, err := r.connection.GetDB()
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) erro
 }
 
 func (r *ProductPostgresRepository) Find(ctx context.Context, productName string) (*e.Product, error) {
-	db, err := r.connection.Connect()
+	db, err := r.connection.GetDB()
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
 	}

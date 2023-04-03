@@ -33,9 +33,11 @@ func InitializeApp() *app.App {
 	sellerHandler := &handler.SellerHandler{
 		UseCase: sellerUseCase,
 	}
+	fileMetadataPostgresRepository := repository.NewFileMetadataPostgreSQLRepository(postgresConnection)
 	transactionPostgresRepository := repository.NewTransactionPostgreSQLRepository(postgresConnection)
 	productPostgresRepository := repository.NewProductPostgreSQLRepository(postgresConnection)
 	transactionUseCase := &usecase.TransactionUseCase{
+		FileMetadataRepo:  fileMetadataPostgresRepository,
 		TransactionRepo:   transactionPostgresRepository,
 		SellerRepo:        sellerPostgresRepository,
 		ProductRepo:       productPostgresRepository,
@@ -62,4 +64,4 @@ func setupPostgreSQLConnection(cfg *app.Config) *common.PostgresConnection {
 	}
 }
 
-var applicationSet = wire.NewSet(common.InitLocalEnvConfig, setupPostgreSQLConnection, app.NewConfig, app.NewRouter, app.NewServer, repository.NewTransactionPostgreSQLRepository, repository.NewSellerPostgreSQLRepository, repository.NewSellerBalancePostgreSQLRepository, repository.NewProductPostgreSQLRepository, wire.Struct(new(usecase.TransactionUseCase), "*"), wire.Struct(new(usecase.SellerUseCase), "*"), wire.Struct(new(handler.TransactionHandler), "*"), wire.Struct(new(handler.SellerHandler), "*"), wire.Bind(new(repository.TransactionRepository), new(*repository.TransactionPostgresRepository)), wire.Bind(new(repository.SellerRepository), new(*repository.SellerPostgresRepository)), wire.Bind(new(repository.SellerBalanceRepository), new(*repository.SellerBalancePostgresRepository)), wire.Bind(new(repository.ProductRepository), new(*repository.ProductPostgresRepository)), wire.Bind(new(http.Handler), new(*mux.Router)))
+var applicationSet = wire.NewSet(common.InitLocalEnvConfig, setupPostgreSQLConnection, app.NewConfig, app.NewRouter, app.NewServer, repository.NewTransactionPostgreSQLRepository, repository.NewSellerPostgreSQLRepository, repository.NewSellerBalancePostgreSQLRepository, repository.NewProductPostgreSQLRepository, repository.NewFileMetadataPostgreSQLRepository, wire.Struct(new(usecase.TransactionUseCase), "*"), wire.Struct(new(usecase.SellerUseCase), "*"), wire.Struct(new(handler.TransactionHandler), "*"), wire.Struct(new(handler.SellerHandler), "*"), wire.Bind(new(repository.TransactionRepository), new(*repository.TransactionPostgresRepository)), wire.Bind(new(repository.SellerRepository), new(*repository.SellerPostgresRepository)), wire.Bind(new(repository.SellerBalanceRepository), new(*repository.SellerBalancePostgresRepository)), wire.Bind(new(repository.ProductRepository), new(*repository.ProductPostgresRepository)), wire.Bind(new(repository.FileMetadataRepository), new(*repository.FileMetadataPostgresRepository)), wire.Bind(new(http.Handler), new(*mux.Router)))

@@ -53,13 +53,26 @@ type TransactionHandler struct {
 //	      message: message
 func (handler *TransactionHandler) Create() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		binaryData, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		ctfm := &uc.CreateFileMetadata{
+			FileName:    r.Header.Get("X-File-Name"),
+			FileSize:    r.Header.Get("Content-length"),
+			Disposition: r.Header.Get("Content-Disposition"),
+			BinaryData:  binaryData,
+		}
 
-		transactions, err := handler.UseCase.StoreFileContent(r.Context(), binaryData)
+		hash, err := handler.UseCase.StoreFileMetadata(ctx, ctfm)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		transactions, err := handler.UseCase.StoreFileContent(ctx, hash, binaryData)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

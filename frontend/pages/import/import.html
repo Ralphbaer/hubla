@@ -6,24 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Import File</title>
     <link rel="stylesheet" href="import-styles.css">
-    <script>
-        function onFileUpload(event) {
-            const file = event.target.files[0];
-            // Read and process the file as needed
-            // Call the API to send the file and get the processed data
-            // Populate the table with the data received from the API
-
-            // If the upload is successful and there is data, display the table
-            /* check if the upload is successful and there is data */
-            if (file) {
-                document.querySelector('.table-container').style.display = 'block';
-            }
-        }
-
-        function onFileConfirm() {
-            // Confirm the uploaded file and send it to the API
-        }
-    </script>
 </head>
 
 <body>
@@ -31,9 +13,9 @@
         <h1>Import File</h1>
         <div class="upload-container">
             <label for="upload" class="upload-label">&#128190; Drop file here or click to upload</label>
-            <input type="file" id="upload" accept=".txt" onchange="onFileUpload(event)" style="display: none;">
+            <input type="file" id="upload" accept=".txt" style="display: none;">
         </div>
-        <button type="button" onclick="onFileConfirm()">Confirm</button>
+        <button type="button">Confirm</button>
         <div class="table-container" style="display: none;">
             <table>
                 <thead>
@@ -53,6 +35,7 @@
             </table>
         </div>
     </div>
+    <script type="module" src="import.js"></script>
 </body>
 
 </html>
