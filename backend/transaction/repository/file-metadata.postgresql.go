@@ -7,6 +7,7 @@ import (
 
 	"github.com/Ralphbaer/hubla/backend/common"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
+	"github.com/lib/pq"
 )
 
 // PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
@@ -37,7 +38,10 @@ func (r *FileMetadataPostgresRepository) Save(ctx context.Context, fm *e.FileMet
 	query := `INSERT INTO file_metadata(id, file_size, disposition, hash, binary_data, created_at) VALUES ($1, $2, $3, $4, $5, DEFAULT) RETURNING id`
 	var FileMetadataID string
 	if err := tx.QueryRowContext(ctx, query, fm.ID,
-		fm.FileSize, fm.Disposition, fm.Hash, fm.BinaryData, fm.CreatedAt).Scan(&FileMetadataID); err != nil {
+		fm.FileSize, fm.Disposition, fm.Hash, fm.BinaryData).Scan(&FileMetadataID); err != nil {
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code.Name() == "unique_violation" && pqErr.Constraint == "file_metadata_hash_key" {
+			return fmt.Errorf("file metadata with hash '%s' already exists", fm.Hash)
+		}
 		return err
 	}
 
