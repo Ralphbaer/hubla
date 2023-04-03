@@ -1,0 +1,77 @@
+body {
+    background-color: #f3f3f3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.import-file-container {
+    background-color: #d8ff5e;
+    padding: 2rem;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1024px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #000000;
+    font-size: 2rem;
+}
+
+.upload-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f3f3f3;
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    width: 100%;
+    height: 150px;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    margin-bottom: 2rem;
+}
+
+.upload-label {
+    font-size: 1rem;
+    color: #000000;
+    text-align: center;
+}
+
+button {
+    background-color: #f3f3f3;
+    color: #000000;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    font-size: 1rem;
+    border-radius: 3px;
+    cursor: pointer;
+    display: block;
+    margin: 1rem auto;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 2rem;
+
+}
+
+th,
+td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+th {
+    background-color: #f3f3f3;
+    color: #000000;
+}

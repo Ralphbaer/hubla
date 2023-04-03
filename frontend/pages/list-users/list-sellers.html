@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+    <link rel="stylesheet" href="list-sellers-styles.css">
+    <script>
+        function showTables() {
+            const leftTableData = document.querySelector('.left-table tbody');
+            const rightTableData = document.querySelector('.right-table tbody');
+            if (leftTableData.children.length > 0 && rightTableData.children.length > 0) {
+                document.querySelector('.table-container').style.display = 'flex';
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="user-list-container">
+        <h1>User List</h1>
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Search users...">
+            <button type="submit" onclick="showTables()">&#128269;</button>
+        </div>
+        <div class="table-container" style="display: none;">
+            <table class="left-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Transactions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Sample data row -->
+                    <tr>
+                        <td>1</td>
+                        <td>John Doe</td>
+                        <td>5</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="right-table">
+                <thead>
+                    <tr>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- User data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
