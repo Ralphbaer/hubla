@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "/Users/cleversonsoares/Workspace/hubla/sales/main.go"
+            "program": "/Users/cleversonsoares/Workspace/hubla/transaction/main.go"
         }
     ]
 }
