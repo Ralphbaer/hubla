@@ -3,8 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"errors"
-	"fmt"
 
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
@@ -23,51 +21,42 @@ func NewSellerPostgreSQLRepository(c *hpostgres.PostgresConnection) *SellerPostg
 }
 
 // Save stores the given entity.Sales into PostgreSQL
-func (r *SellerPostgresRepository) Save(ctx context.Context, s *e.Seller) (string, error) {
+func (r *SellerPostgresRepository) Save(ctx context.Context, s *e.Seller) (*string, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return "", hpostgres.WithError(err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
-		return "", hpostgres.WithError(err)
+		return nil, hpostgres.WithError(err)
 	}
 	defer tx.Rollback()
 
 	query := `INSERT INTO sellers(id, name, seller_type, created_at) VALUES ($1, $2, $3, DEFAULT) RETURNING id`
 	var sellerID string
 	if err := tx.QueryRowContext(ctx, query, s.ID, s.Name, e.SellerTypeMap[s.SellerType]).Scan(&sellerID); err != nil {
-		return "", hpostgres.WithError(err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	if err := tx.Commit(); err != nil {
-		return "", hpostgres.WithError(err)
+		return nil, hpostgres.WithError(err)
 	}
 
-	return sellerID, nil
+	return &sellerID, nil
 }
 
 func (r *SellerPostgresRepository) Find(ctx context.Context, sellerName string) (*e.Seller, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", hpostgres.ErrFailedToConnectToDatabase, err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	var seller e.Seller
 	query := `SELECT id, name, seller_type, created_at FROM sellers WHERE name = $1`
 	err = db.QueryRowContext(ctx, query, sellerName).Scan(&seller.ID, &seller.Name, &seller.SellerType, &seller.CreatedAt)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("%w: %v", hpostgres.ErrNotFound, err)
-		}
-		if errors.Is(err, sql.ErrConnDone) {
-			return nil, fmt.Errorf("%w: %v", hpostgres.ErrFailedToConnectToDatabase, err)
-		}
-		if errors.Is(err, sql.ErrTxDone) {
-			return nil, fmt.Errorf("%w: %v", hpostgres.ErrFailedToCommitTransaction, err)
-		}
-		return nil, fmt.Errorf("%w: %v", hpostgres.ErrFailedToScanRow, err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	return &seller, nil

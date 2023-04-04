@@ -3,8 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"errors"
-	"fmt"
 
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
@@ -26,12 +24,12 @@ func NewProductPostgreSQLRepository(c *hpostgres.PostgresConnection) *ProductPos
 func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) error {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return fmt.Errorf("%w: %v", hpostgres.ErrFailedToConnectToDatabase, err)
+		return hpostgres.WithError(err)
 	}
 
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
-		return fmt.Errorf("%w: %v", hpostgres.ErrFailedToBeginTransaction, err)
+		return hpostgres.WithError(err)
 	}
 	defer tx.Rollback()
 
@@ -40,18 +38,12 @@ func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) erro
 	err = tx.QueryRowContext(ctx, query, s.ID, s.Name, s.CreatorID).Scan(&productID)
 
 	if err != nil {
-		if errors.Is(err, sql.ErrConnDone) {
-			return fmt.Errorf("%w: %v", hpostgres.ErrFailedToConnectToDatabase, err)
-		}
-		if errors.Is(err, sql.ErrTxDone) {
-			return fmt.Errorf("%w: %v", hpostgres.ErrFailedToCommitTransaction, err)
-		}
-		return fmt.Errorf("%w: %v", hpostgres.ErrFailedToInsertTransaction, err)
+		return hpostgres.WithError(err)
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return fmt.Errorf("%w: %v", hpostgres.ErrFailedToCommitTransaction, err)
+		return hpostgres.WithError(err)
 	}
 
 	return nil
@@ -60,7 +52,7 @@ func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) erro
 func (r *ProductPostgresRepository) Find(ctx context.Context, productName string) (*e.Product, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", hpostgres.ErrFailedToConnectToDatabase, err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	query := `
@@ -69,18 +61,8 @@ func (r *ProductPostgresRepository) Find(ctx context.Context, productName string
         WHERE name = $1`
 	var product e.Product
 	err = db.QueryRowContext(ctx, query, productName).Scan(&product.ID, &product.Name, &product.CreatorID, &product.CreatedAt)
-
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("%w: %v", hpostgres.ErrNotFound, err)
-		}
-		if errors.Is(err, sql.ErrConnDone) {
-			return nil, fmt.Errorf("%w: %v", hpostgres.ErrFailedToConnectToDatabase, err)
-		}
-		if errors.Is(err, sql.ErrTxDone) {
-			return nil, fmt.Errorf("%w: %v", hpostgres.ErrFailedToCommitTransaction, err)
-		}
-		return nil, fmt.Errorf("%w: %v", hpostgres.ErrFailedToScanRow, err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	return &product, nil

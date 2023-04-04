@@ -2,8 +2,6 @@ package repository
 
 import (
 	"context"
-	"database/sql"
-	"errors"
 	"fmt"
 
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
@@ -28,7 +26,7 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 		return nil, hpostgres.WithError(err)
 	}
 
-	tx, err := db.BeginTx(context.Background(), nil)
+	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, hpostgres.WithError(err)
 	}
@@ -56,7 +54,7 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 func (r *SellerBalancePostgresRepository) Find(ctx context.Context, sellerID string) (*e.SellerBalanceView, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, hpostgres.WithError(err)
+		return nil, err
 	}
 
 	query := `
@@ -71,16 +69,7 @@ func (r *SellerBalancePostgresRepository) Find(ctx context.Context, sellerID str
 		&sellerBalanceView.SellerBalance, &sellerBalanceView.UpdatedAt)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, hpostgres.WithError(err)
-		}
-		if errors.Is(err, sql.ErrConnDone) {
-			return nil, hpostgres.WithError(err)
-		}
-		if errors.Is(err, sql.ErrTxDone) {
-			return nil, hpostgres.WithError(err)
-		}
-		return nil, hpostgres.WithError(err)
+		return nil, err
 	}
 
 	return sellerBalanceView, nil

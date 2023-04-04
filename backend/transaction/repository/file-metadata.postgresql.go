@@ -3,12 +3,9 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"errors"
-	"fmt"
 
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
-	"github.com/lib/pq"
 )
 
 // PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
@@ -40,9 +37,6 @@ func (r *FileMetadataPostgresRepository) Save(ctx context.Context, fm *e.FileMet
 	var fileMetadataID string
 	err = tx.QueryRowContext(ctx, query, fm.ID, fm.FileSize, fm.Disposition, fm.Hash, fm.BinaryData).Scan(&fileMetadataID)
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code.Name() == "unique_violation" && pqErr.Constraint == "file_metadata_hash_key" {
-			return fmt.Errorf("file metadata with hash '%s' already exists", fm.Hash)
-		}
 		return hpostgres.WithError(err)
 	}
 
@@ -68,15 +62,6 @@ func (r *FileMetadataPostgresRepository) Find(ctx context.Context, hash string) 
 		&fileMetadata.Hash, &fileMetadata.BinaryData)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, hpostgres.WithError(err)
-		}
-		if errors.Is(err, sql.ErrConnDone) {
-			return nil, hpostgres.WithError(err)
-		}
-		if errors.Is(err, sql.ErrTxDone) {
-			return nil, hpostgres.WithError(err)
-		}
 		return nil, hpostgres.WithError(err)
 	}
 

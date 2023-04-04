@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"log"
 
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
@@ -23,7 +22,7 @@ func NewTransactionPostgreSQLRepository(c *hpostgres.PostgresConnection) *Transa
 }
 
 // Save stores the given entity.Sales into PostgreSQL
-func (r *TransactionPostgresRepository) Save(ctx context.Context, t *e.Transaction) (*e.Transaction, error) {
+func (r *TransactionPostgresRepository) Save(ctx context.Context, t *e.Transaction) (*string, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
 		return nil, hpostgres.WithError(err)
@@ -36,19 +35,12 @@ func (r *TransactionPostgresRepository) Save(ctx context.Context, t *e.Transacti
 	defer tx.Rollback()
 
 	const insertQuery = `INSERT INTO transactions(id, t_type, t_date, product_id, amount, seller_id, created_at) VALUES ($1, $2, $3, $4, $5, $6, DEFAULT) RETURNING id`
-
 	var insertedID string
 	if err := tx.QueryRowContext(ctx, insertQuery, t.ID, e.TransactionTypeMapString[t.TType], t.TDate, t.ProductID, t.Amount, t.SellerID).Scan(&insertedID); err != nil {
 		return nil, hpostgres.WithError(err)
 	}
 
-	if err := tx.Commit(); err != nil {
-		return nil, hpostgres.WithError(err)
-	}
-
-	t.ID = insertedID
-
-	return t, nil
+	return &insertedID, nil
 }
 
 func (r *TransactionPostgresRepository) List(ctx context.Context, fileID string) ([]*e.Transaction, error) {
@@ -76,24 +68,16 @@ func (r *TransactionPostgresRepository) List(ctx context.Context, fileID string)
 	var tTypeStr string // Add a variable to store the raw TType string
 	for rows.Next() {
 		transaction := &e.Transaction{} // Create a new transaction variable for each iteration
-		err := rows.Scan(&transaction.ID, &tTypeStr, &transaction.TDate, &transaction.ProductID, &transaction.Amount, &transaction.SellerID, &transaction.CreatedAt)
-		if err != nil {
+		if err := rows.Scan(&transaction.ID, &tTypeStr, &transaction.TDate, &transaction.ProductID,
+			&transaction.Amount, &transaction.SellerID, &transaction.CreatedAt); err != nil {
 			return nil, hpostgres.WithError(err)
 		}
-		if tType, ok := e.TransactionTypeMapEnum[tTypeStr]; !ok {
-			return nil, hpostgres.WithError(err)
-		} else {
-			transaction.TType = tType // Convert the string to TransactionTypeEnum
-		}
+		transaction.TType = e.TransactionTypeMapEnum[tTypeStr] // Convert the string to TransactionTypeEnum
 		transactions = append(transactions, transaction)
 	}
 
 	if err = rows.Err(); err != nil {
 		return nil, hpostgres.WithError(err)
-	}
-
-	if len(transactions) == 0 {
-		return nil, fmt.Errorf("%w: no transactions found for file ID %s", hpostgres.ErrNotFound, fileID)
 	}
 
 	return transactions, nil

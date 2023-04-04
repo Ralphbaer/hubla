@@ -58,7 +58,7 @@ func (handler *TransactionHandler) Create() http.Handler {
 		ctx := r.Context()
 		binaryData, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			commonHTTP.InternalServerError(w, err.Error())
+			commonHTTP.WithError(w, err)
 			return
 		}
 		ctfm := &uc.CreateFileMetadata{
@@ -70,18 +70,18 @@ func (handler *TransactionHandler) Create() http.Handler {
 
 		fileID, err := handler.UseCase.StoreFileMetadata(ctx, ctfm)
 		if err != nil {
-			commonHTTP.InternalServerError(w, err.Error())
+			commonHTTP.WithError(w, err)
 			return
 		}
 
 		transactions, err := handler.UseCase.StoreFileContent(ctx, binaryData)
 		if err != nil {
-			commonHTTP.InternalServerError(w, err.Error())
+			commonHTTP.WithError(w, err)
 			return
 		}
 
 		if err := handler.UseCase.CreateFileTransactions(ctx, fileID, transactions); err != nil {
-			commonHTTP.InternalServerError(w, err.Error())
+			commonHTTP.WithError(w, err)
 			return
 		}
 

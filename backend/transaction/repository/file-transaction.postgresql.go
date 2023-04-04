@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
@@ -38,12 +37,6 @@ func (r *FileTransactionPostgresRepository) Save(ctx context.Context, ft *e.File
 	var fileTransactionID string
 	err = tx.QueryRowContext(ctx, query, ft.ID, ft.FileID, ft.TransactionID).Scan(&fileTransactionID)
 	if err != nil {
-		if errors.Is(err, sql.ErrConnDone) {
-			return hpostgres.WithError(err)
-		}
-		if errors.Is(err, sql.ErrTxDone) {
-			return hpostgres.WithError(err)
-		}
 		return hpostgres.WithError(err)
 	}
 
@@ -67,17 +60,7 @@ func (r *FileTransactionPostgresRepository) Find(ctx context.Context, ID string)
         WHERE id = $1`
 	var fileTransaction e.FileTransaction
 	err = db.QueryRowContext(ctx, query, ID).Scan(&fileTransaction.ID, &fileTransaction.FileID, &fileTransaction.TransactionID)
-
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, hpostgres.WithError(err)
-		}
-		if errors.Is(err, sql.ErrConnDone) {
-			return nil, hpostgres.WithError(err)
-		}
-		if errors.Is(err, sql.ErrTxDone) {
-			return nil, hpostgres.WithError(err)
-		}
 		return nil, hpostgres.WithError(err)
 	}
 

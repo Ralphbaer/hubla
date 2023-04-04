@@ -3,7 +3,9 @@ package hpostgres
 import (
 	"database/sql"
 	"errors"
-	"fmt"
+
+	"github.com/Ralphbaer/hubla/backend/common"
+	"github.com/lib/pq"
 )
 
 // ResponseError represents a HTTP response error payload
@@ -36,25 +38,20 @@ type FieldValidations map[string]string
 // WithError handle errors in handlers and returns the appropriated response
 func WithError(err error) error {
 	switch {
-	case errors.Is(err, sql.ErrConnDone):
-		return fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
-	case errors.Is(err, sql.ErrTxDone):
-		return fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
-	case errors.Is(err, ErrPostgreSQLDuplicatedDocument):
-		return fmt.Errorf("%w: %v", ErrPostgreSQLDuplicatedDocument, err)
-	case errors.Is(err, ErrInvalidDatabaseData):
-		return fmt.Errorf("%w: %v", ErrInvalidDatabaseData, err)
-	case errors.Is(err, ErrFailedToIterateRows):
-		return fmt.Errorf("%w: %v", ErrFailedToIterateRows, err)
-	case errors.Is(err, ErrNotFound):
-		return fmt.Errorf("%w: %v", ErrNotFound, err)
-	case errors.Is(err, ErrFailedToQueryDatabase):
-		return fmt.Errorf("%w: %v", ErrFailedToQueryDatabase, err)
-	case errors.Is(err, ErrFailedToScanRow):
-		return fmt.Errorf("%w: %v", ErrFailedToScanRow, err)
-	case errors.Is(err, ErrFailedToInsertTransaction):
-		return fmt.Errorf("%w: %v", ErrFailedToInsertTransaction, err)
-	default:
-		return err
+	case errors.Is(err, sql.ErrNoRows):
+		return common.EntityNotFoundError{
+			Message: err.Error(),
+			Err:     err,
+		}
+	case errors.As(err, new(*pq.Error)):
+		pqerr := err.(*pq.Error)
+		if pqerr.Code == "23505" {
+			return common.EntityConflictError{
+				Message: err.Error(),
+				Err:     err,
+			}
+		}
 	}
+
+	return err
 }
