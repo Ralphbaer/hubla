@@ -17,10 +17,6 @@ func (handler *SellerHandler) GetSellerBalanceByID() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		sellerID := mux.Vars(r)["id"]
 		view, err := handler.UseCase.GetSellerBalanceByID(r.Context(), sellerID)
-		if view == nil {
-			commonHTTP.WithError(w, err)
-			return
-		}
 		if err != nil {
 			commonHTTP.WithError(w, err)
 			return

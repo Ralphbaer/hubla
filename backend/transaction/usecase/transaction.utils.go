@@ -121,17 +121,17 @@ func (uc *TransactionUseCase) findOrCreateSeller(ctx context.Context, entry *Tra
 
 	seller, err := uc.SellerRepo.Find(ctx, entry.SellerName)
 	if err != nil {
-		if _, ok := err.(common.EntityNotFoundError); ok {
-			seller = &e.Seller{
-				ID:         uuid.NewString(),
-				Name:       entry.SellerName,
-				SellerType: e.TransactionTypeToSellerTypeMap[entry.TType],
-			}
-			if err := uc.SellerRepo.Save(ctx, seller); err != nil {
-				return nil, err
-			}
+		if _, ok := err.(common.EntityNotFoundError); !ok {
+			return nil, err
 		}
-		return nil, err
+		seller = &e.Seller{
+			ID:         uuid.NewString(),
+			Name:       entry.SellerName,
+			SellerType: e.TransactionTypeToSellerTypeMap[entry.TType],
+		}
+		if err := uc.SellerRepo.Save(ctx, seller); err != nil {
+			return nil, err
+		}
 	}
 
 	sellers[entry.SellerName] = seller
@@ -147,17 +147,15 @@ func (uc *TransactionUseCase) findOrCreateProduct(ctx context.Context, entry *Tr
 
 	product, err := uc.ProductRepo.Find(ctx, entry.ProductName)
 	if err != nil {
-		return nil, err
-	}
-
-	if product == nil {
+		if _, ok := err.(common.EntityNotFoundError); !ok {
+			return nil, err
+		}
 		product = &e.Product{
 			ID:        uuid.NewString(),
 			Name:      entry.ProductName,
 			CreatorID: sellerID,
 		}
-		err = uc.ProductRepo.Save(ctx, product)
-		if err != nil {
+		if err = uc.ProductRepo.Save(ctx, product); err != nil {
 			return nil, err
 		}
 	}

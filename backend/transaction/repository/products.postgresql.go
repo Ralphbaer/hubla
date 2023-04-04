@@ -8,6 +8,7 @@ import (
 	"github.com/Ralphbaer/hubla/backend/common"
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
+	"github.com/lib/pq"
 )
 
 // PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
@@ -37,6 +38,12 @@ func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) erro
 
 	query := `INSERT INTO products(id, name, creator_id, created_at) VALUES ($1, $2, $3, DEFAULT)`
 	if _, err = tx.ExecContext(ctx, query, s.ID, s.Name, s.CreatorID); err != nil {
+		if pqerr := err.(*pq.Error); pqerr.Code == "23505" {
+			return common.EntityConflictError{
+				Message: err.Error(),
+				Err:     err,
+			}
+		}
 		return err
 	}
 
@@ -64,7 +71,6 @@ func (r *ProductPostgresRepository) Find(ctx context.Context, productName string
 		if err == sql.ErrNoRows {
 			return nil, common.EntityNotFoundError{
 				EntityType: reflect.TypeOf(e.Seller{}).Name(),
-				Message:    err.Error(),
 				Err:        err,
 			}
 		}

@@ -71,7 +71,6 @@ func (r *FileMetadataPostgresRepository) Find(ctx context.Context, hash string) 
 		if err == sql.ErrNoRows {
 			return nil, common.EntityNotFoundError{
 				EntityType: reflect.TypeOf(e.Seller{}).Name(),
-				Message:    err.Error(),
 				Err:        err,
 			}
 		}

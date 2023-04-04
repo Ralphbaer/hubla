@@ -74,7 +74,6 @@ func (r *SellerBalancePostgresRepository) Find(ctx context.Context, sellerID str
 		if err == sql.ErrNoRows {
 			return nil, common.EntityNotFoundError{
 				EntityType: reflect.TypeOf(e.SellerBalance{}).Name(),
-				Message:    err.Error(),
 				Err:        err,
 			}
 		}

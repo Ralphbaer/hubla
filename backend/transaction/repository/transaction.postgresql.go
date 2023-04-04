@@ -36,14 +36,18 @@ func (r *TransactionPostgresRepository) Save(ctx context.Context, t *e.Transacti
 	}
 	defer tx.Rollback()
 
-	const insertQuery = `INSERT INTO transactions(id, t_type, t_date, product_id, amount, seller_id, created_at) VALUES ($1, $2, $3, $4, $5, $6, DEFAULT)`
-	if _, err := tx.ExecContext(ctx, insertQuery, t.ID, e.TransactionTypeMapString[t.TType], t.TDate, t.ProductID, t.Amount, t.SellerID); err != nil {
+	query := `INSERT INTO transactions(id, t_type, t_date, product_id, amount, seller_id, created_at) VALUES ($1, $2, $3, $4, $5, $6, DEFAULT)`
+	if _, err := tx.ExecContext(ctx, query, t.ID, e.TransactionTypeMapString[t.TType], t.TDate, t.ProductID, t.Amount, t.SellerID); err != nil {
 		if pqerr := err.(*pq.Error); pqerr.Code == "23505" {
 			return common.EntityConflictError{
 				Message: err.Error(),
 				Err:     err,
 			}
 		}
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
 		return err
 	}
 

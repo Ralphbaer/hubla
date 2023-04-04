@@ -64,7 +64,6 @@ func (r *FileTransactionPostgresRepository) Find(ctx context.Context, ID string)
 		if err == sql.ErrNoRows {
 			return nil, common.EntityNotFoundError{
 				EntityType: reflect.TypeOf(e.Seller{}).Name(),
-				Message:    err.Error(),
 				Err:        err,
 			}
 		}
