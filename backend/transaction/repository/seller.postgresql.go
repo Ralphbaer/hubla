@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/Ralphbaer/hubla/backend/common"
@@ -44,7 +45,7 @@ func (r *SellerPostgresRepository) Save(ctx context.Context, s *e.Seller) (strin
 		return "", fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
 	}
 
-	return "", nil
+	return sellerID, nil
 }
 
 func (r *SellerPostgresRepository) Find(ctx context.Context, sellerName string) (*e.Seller, error) {
@@ -54,14 +55,19 @@ func (r *SellerPostgresRepository) Find(ctx context.Context, sellerName string) 
 	}
 
 	var seller e.Seller
-	if err := db.QueryRow(`
-		 SELECT *
-		 FROM sellers
-		 WHERE name = $1`, sellerName).Scan(&seller.ID, &seller.Name, &seller.SellerType, &seller.CreatedAt); err != nil {
+	query := `SELECT id, name, seller_type, created_at FROM sellers WHERE name = $1`
+	err = db.QueryRowContext(ctx, query, sellerName).Scan(&seller.ID, &seller.Name, &seller.SellerType, &seller.CreatedAt)
+	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil // Seller not found
+			return nil, fmt.Errorf("%w: %v", ErrNotFound, err)
 		}
-		return nil, err // Other error
+		if errors.Is(err, sql.ErrConnDone) {
+			return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+		}
+		if errors.Is(err, sql.ErrTxDone) {
+			return nil, fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
+		}
+		return nil, fmt.Errorf("%w: %v", ErrFailedToScanRow, err)
 	}
 
 	return &seller, nil
