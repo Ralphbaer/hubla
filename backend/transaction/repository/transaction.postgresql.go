@@ -5,8 +5,10 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/Ralphbaer/hubla/backend/common"
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
+	"github.com/lib/pq"
 )
 
 // PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
@@ -22,31 +24,36 @@ func NewTransactionPostgreSQLRepository(c *hpostgres.PostgresConnection) *Transa
 }
 
 // Save stores the given entity.Sales into PostgreSQL
-func (r *TransactionPostgresRepository) Save(ctx context.Context, t *e.Transaction) (*string, error) {
+func (r *TransactionPostgresRepository) Save(ctx context.Context, t *e.Transaction) error {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, hpostgres.WithError(err)
+		return err
 	}
 
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
-		return nil, hpostgres.WithError(err)
+		return err
 	}
 	defer tx.Rollback()
 
-	const insertQuery = `INSERT INTO transactions(id, t_type, t_date, product_id, amount, seller_id, created_at) VALUES ($1, $2, $3, $4, $5, $6, DEFAULT) RETURNING id`
-	var insertedID string
-	if err := tx.QueryRowContext(ctx, insertQuery, t.ID, e.TransactionTypeMapString[t.TType], t.TDate, t.ProductID, t.Amount, t.SellerID).Scan(&insertedID); err != nil {
-		return nil, hpostgres.WithError(err)
+	const insertQuery = `INSERT INTO transactions(id, t_type, t_date, product_id, amount, seller_id, created_at) VALUES ($1, $2, $3, $4, $5, $6, DEFAULT)`
+	if _, err := tx.ExecContext(ctx, insertQuery, t.ID, e.TransactionTypeMapString[t.TType], t.TDate, t.ProductID, t.Amount, t.SellerID); err != nil {
+		if pqerr := err.(*pq.Error); pqerr.Code == "23505" {
+			return common.EntityConflictError{
+				Message: err.Error(),
+				Err:     err,
+			}
+		}
+		return err
 	}
 
-	return &insertedID, nil
+	return nil
 }
 
 func (r *TransactionPostgresRepository) List(ctx context.Context, fileID string) ([]*e.Transaction, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, hpostgres.WithError(err)
+		return nil, err
 	}
 
 	rows, err := db.QueryContext(ctx, `
@@ -56,7 +63,7 @@ func (r *TransactionPostgresRepository) List(ctx context.Context, fileID string)
 		WHERE ft.file_id = $1
 	`, fileID)
 	if err != nil {
-		return nil, hpostgres.WithError(err)
+		return nil, err
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
@@ -70,14 +77,14 @@ func (r *TransactionPostgresRepository) List(ctx context.Context, fileID string)
 		transaction := &e.Transaction{} // Create a new transaction variable for each iteration
 		if err := rows.Scan(&transaction.ID, &tTypeStr, &transaction.TDate, &transaction.ProductID,
 			&transaction.Amount, &transaction.SellerID, &transaction.CreatedAt); err != nil {
-			return nil, hpostgres.WithError(err)
+			return nil, err
 		}
 		transaction.TType = e.TransactionTypeMapEnum[tTypeStr] // Convert the string to TransactionTypeEnum
 		transactions = append(transactions, transaction)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, hpostgres.WithError(err)
+		return nil, err
 	}
 
 	return transactions, nil

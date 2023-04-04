@@ -2,8 +2,11 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+	"reflect"
 
+	"github.com/Ralphbaer/hubla/backend/common"
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 )
@@ -23,12 +26,12 @@ func NewSellerBalancePostgreSQLRepository(c *hpostgres.PostgresConnection) *Sell
 func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.SellerBalance) (*float64, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, hpostgres.WithError(err)
+		return nil, err
 	}
 
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, hpostgres.WithError(err)
+		return nil, err
 	}
 	defer tx.Rollback()
 
@@ -36,14 +39,13 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
               VALUES ($1, $2, $3, $4, DEFAULT) 
               ON CONFLICT (seller_id) DO UPDATE SET balance = seller_balances.balance + $3
               RETURNING balance`
-
 	var newBalance float64
 	if err := tx.QueryRowContext(ctx, query, p.ID, p.SellerID, p.Balance, p.UpdatedAt).Scan(&newBalance); err != nil {
-		return nil, hpostgres.WithError(err)
+		return nil, err
 	}
 
 	if err := tx.Commit(); err != nil {
-		return nil, hpostgres.WithError(err)
+		return nil, err
 	}
 
 	fmt.Printf("Balance for seller %s updated by %s to %f\n", p.SellerID, p.Balance.String(), newBalance)
@@ -69,6 +71,13 @@ func (r *SellerBalancePostgresRepository) Find(ctx context.Context, sellerID str
 		&sellerBalanceView.SellerBalance, &sellerBalanceView.UpdatedAt)
 
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, common.EntityNotFoundError{
+				EntityType: reflect.TypeOf(e.SellerBalance{}).Name(),
+				Message:    err.Error(),
+				Err:        err,
+			}
+		}
 		return nil, err
 	}
 

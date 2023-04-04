@@ -3,7 +3,9 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"reflect"
 
+	"github.com/Ralphbaer/hubla/backend/common"
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 )
@@ -24,25 +26,23 @@ func NewFileTransactionPostgreSQLRepository(c *hpostgres.PostgresConnection) *Fi
 func (r *FileTransactionPostgresRepository) Save(ctx context.Context, ft *e.FileTransaction) error {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return hpostgres.WithError(err)
+		return err
 	}
 
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
-		return hpostgres.WithError(err)
+		return err
 	}
 	defer tx.Rollback()
 
-	query := `INSERT INTO file_transactions(id, file_id, transaction_Id) VALUES ($1, $2, $3) RETURNING id`
-	var fileTransactionID string
-	err = tx.QueryRowContext(ctx, query, ft.ID, ft.FileID, ft.TransactionID).Scan(&fileTransactionID)
-	if err != nil {
-		return hpostgres.WithError(err)
+	query := `INSERT INTO file_transactions(id, file_id, transaction_Id) VALUES ($1, $2, $3)`
+	if _, err = tx.ExecContext(ctx, query, ft.ID, ft.FileID, ft.TransactionID); err != nil {
+		return err
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return hpostgres.WithError(err)
+		return err
 	}
 
 	return nil
@@ -51,7 +51,7 @@ func (r *FileTransactionPostgresRepository) Save(ctx context.Context, ft *e.File
 func (r *FileTransactionPostgresRepository) Find(ctx context.Context, ID string) (*e.FileTransaction, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, hpostgres.WithError(err)
+		return nil, err
 	}
 
 	query := `
@@ -61,7 +61,14 @@ func (r *FileTransactionPostgresRepository) Find(ctx context.Context, ID string)
 	var fileTransaction e.FileTransaction
 	err = db.QueryRowContext(ctx, query, ID).Scan(&fileTransaction.ID, &fileTransaction.FileID, &fileTransaction.TransactionID)
 	if err != nil {
-		return nil, hpostgres.WithError(err)
+		if err == sql.ErrNoRows {
+			return nil, common.EntityNotFoundError{
+				EntityType: reflect.TypeOf(e.Seller{}).Name(),
+				Message:    err.Error(),
+				Err:        err,
+			}
+		}
+		return nil, err
 	}
 
 	return &fileTransaction, nil

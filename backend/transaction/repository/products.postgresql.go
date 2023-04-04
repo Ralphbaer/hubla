@@ -3,7 +3,9 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"reflect"
 
+	"github.com/Ralphbaer/hubla/backend/common"
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 )
@@ -24,26 +26,23 @@ func NewProductPostgreSQLRepository(c *hpostgres.PostgresConnection) *ProductPos
 func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) error {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return hpostgres.WithError(err)
+		return err
 	}
 
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
-		return hpostgres.WithError(err)
+		return err
 	}
 	defer tx.Rollback()
 
-	query := `INSERT INTO products(id, name, creator_id, created_at) VALUES ($1, $2, $3, DEFAULT) RETURNING id`
-	var productID string
-	err = tx.QueryRowContext(ctx, query, s.ID, s.Name, s.CreatorID).Scan(&productID)
-
-	if err != nil {
-		return hpostgres.WithError(err)
+	query := `INSERT INTO products(id, name, creator_id, created_at) VALUES ($1, $2, $3, DEFAULT)`
+	if _, err = tx.ExecContext(ctx, query, s.ID, s.Name, s.CreatorID); err != nil {
+		return err
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return hpostgres.WithError(err)
+		return err
 	}
 
 	return nil
@@ -52,7 +51,7 @@ func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) erro
 func (r *ProductPostgresRepository) Find(ctx context.Context, productName string) (*e.Product, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, hpostgres.WithError(err)
+		return nil, err
 	}
 
 	query := `
@@ -62,7 +61,14 @@ func (r *ProductPostgresRepository) Find(ctx context.Context, productName string
 	var product e.Product
 	err = db.QueryRowContext(ctx, query, productName).Scan(&product.ID, &product.Name, &product.CreatorID, &product.CreatedAt)
 	if err != nil {
-		return nil, hpostgres.WithError(err)
+		if err == sql.ErrNoRows {
+			return nil, common.EntityNotFoundError{
+				EntityType: reflect.TypeOf(e.Seller{}).Name(),
+				Message:    err.Error(),
+				Err:        err,
+			}
+		}
+		return nil, err
 	}
 
 	return &product, nil

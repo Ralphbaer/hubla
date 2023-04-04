@@ -8,29 +8,35 @@ import (
 // EntityNotFoundError records an error indicating an entity was not found in any case that caused it.
 // You can use it to representing a Database not found, cache not found or any other repository.
 type EntityNotFoundError struct {
-	Message string
-	Err     error
+	EntityType string
+	Message    string
+	Err        error
 }
 
 // NewEntityNotFoundError creates an instance of EntityNotFoundError
 func NewEntityNotFoundError(entityType string) EntityNotFoundError {
 	return EntityNotFoundError{
-		Message: "",
-		Err:     nil,
+		EntityType: entityType,
+		Message:    "",
+		Err:        nil,
 	}
 }
 
 // WrapEntityNotFoundError creates an instance of EntityNotFoundError
 func WrapEntityNotFoundError(entityType string, err error) EntityNotFoundError {
 	return EntityNotFoundError{
-		Message: "",
-		Err:     err,
+		EntityType: entityType,
+		Message:    "",
+		Err:        err,
 	}
 }
 
 // Error implements the error interface
 func (e EntityNotFoundError) Error() string {
 	if strings.TrimSpace(e.Message) == "" {
+		if strings.TrimSpace(e.EntityType) != "" {
+			return fmt.Sprintf("Entity %s not found", e.EntityType)
+		}
 		if e.Err != nil && strings.TrimSpace(e.Message) == "" {
 			return e.Err.Error()
 		}

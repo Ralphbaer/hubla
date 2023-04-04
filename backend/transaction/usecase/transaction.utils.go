@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Ralphbaer/hubla/backend/common"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -90,21 +91,21 @@ func (uc *TransactionUseCase) handleTransaction(ctx context.Context, entry *Tran
 		return nil, err
 	}
 
-	product, err := uc.findOrCreateProduct(ctx, entry, products, sellerID)
+	product, err := uc.findOrCreateProduct(ctx, entry, products, *sellerID)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err := uc.saveTransaction(ctx, entry, product.ID, sellerID)
+	t, err := uc.saveTransaction(ctx, entry, product.ID, *sellerID)
 	if err != nil {
 		return nil, err
 	}
 
 	if entry.TType == e.AFFILIATE_SALE {
-		sellerID = product.CreatorID
+		sellerID = &product.CreatorID
 	}
 
-	err = uc.updateSellerBalance(ctx, entry, sellerID)
+	err = uc.updateSellerBalance(ctx, entry, *sellerID)
 	if err != nil {
 		return nil, err
 	}
@@ -112,32 +113,30 @@ func (uc *TransactionUseCase) handleTransaction(ctx context.Context, entry *Tran
 	return t, nil
 }
 
-func (uc *TransactionUseCase) findOrCreateSeller(ctx context.Context, entry *TransactionLine, sellers map[string]*e.Seller) (string, error) {
+func (uc *TransactionUseCase) findOrCreateSeller(ctx context.Context, entry *TransactionLine, sellers map[string]*e.Seller) (*string, error) {
 	seller, found := sellers[entry.SellerName]
 	if found {
-		return seller.ID, nil
+		return &seller.ID, nil
 	}
 
 	seller, err := uc.SellerRepo.Find(ctx, entry.SellerName)
 	if err != nil {
-		return seller.ID, err
-	}
-
-	if seller == nil {
-		seller = &e.Seller{
-			ID:         uuid.NewString(),
-			Name:       entry.SellerName,
-			SellerType: e.TransactionTypeToSellerTypeMap[entry.TType],
+		if _, ok := err.(common.EntityNotFoundError); ok {
+			seller = &e.Seller{
+				ID:         uuid.NewString(),
+				Name:       entry.SellerName,
+				SellerType: e.TransactionTypeToSellerTypeMap[entry.TType],
+			}
+			if err := uc.SellerRepo.Save(ctx, seller); err != nil {
+				return nil, err
+			}
 		}
-		_, err = uc.SellerRepo.Save(ctx, seller)
-		if err != nil {
-			return seller.ID, err
-		}
+		return nil, err
 	}
 
 	sellers[entry.SellerName] = seller
 
-	return seller.ID, nil
+	return &seller.ID, nil
 }
 
 func (uc *TransactionUseCase) findOrCreateProduct(ctx context.Context, entry *TransactionLine, products map[string]*e.Product, sellerID string) (*e.Product, error) {
@@ -178,7 +177,7 @@ func (uc *TransactionUseCase) saveTransaction(ctx context.Context, entry *Transa
 		SellerID:  sellerID,
 	}
 
-	if _, err := uc.TransactionRepo.Save(ctx, transaction); err != nil {
+	if err := uc.TransactionRepo.Save(ctx, transaction); err != nil {
 		return nil, err
 	}
 
