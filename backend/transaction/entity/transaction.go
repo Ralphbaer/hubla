@@ -19,13 +19,6 @@ type Transaction struct {
 	CreatedAt time.Time           `json:"created_at"`
 }
 
-var TransactionTypeToSellerTypeMap = map[TransactionTypeEnum]SellerTypeEnum{
-	CREATOR_SALE:        CREATOR,
-	AFFILIATE_SALE:      AFFILIATE,
-	COMMISSION_PAID:     CREATOR,
-	COMMISSION_RECEIVED: AFFILIATE,
-}
-
 type TransactionTypeEnum uint8
 
 const (
@@ -34,6 +27,13 @@ const (
 	COMMISSION_PAID     TransactionTypeEnum = 3
 	COMMISSION_RECEIVED TransactionTypeEnum = 4
 )
+
+var TransactionTypeToSellerTypeMap = map[TransactionTypeEnum]SellerTypeEnum{
+	CREATOR_SALE:        CREATOR,
+	AFFILIATE_SALE:      AFFILIATE,
+	COMMISSION_PAID:     CREATOR,
+	COMMISSION_RECEIVED: AFFILIATE,
+}
 
 var TransactionTypeMap = map[uint8]TransactionTypeEnum{
 	1: CREATOR_SALE,
@@ -47,4 +47,11 @@ var TransactionTypeMapString = map[TransactionTypeEnum]string{
 	AFFILIATE_SALE:      "AFFILIATE_SALE",
 	COMMISSION_PAID:     "COMMISSION_PAID",
 	COMMISSION_RECEIVED: "COMMISSION_RECEIVED",
+}
+
+var TransactionTypeMapEnum = map[string]TransactionTypeEnum{
+	"CREATOR_SALE":        CREATOR_SALE,
+	"AFFILIATE_SALE":      AFFILIATE_SALE,
+	"COMMISSION_PAID":     COMMISSION_PAID,
+	"COMMISSION_RECEIVED": COMMISSION_RECEIVED,
 }

@@ -17,8 +17,11 @@
         </div>
         <button type="button">Confirm</button>
         <div class="table-container" style="display: none;">
-            <table>
-                <thead>
+            <div class="loader">
+                <div class="loader__spinner"></div>
+            </div>
+            <table class="table">
+                <thead class="table__head">
                     <tr>
                         <th>ID</th>
                         <th>Type</th>
@@ -29,12 +32,13 @@
                         <th>Created At</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="table__body">
                     <!-- Data will be populated here -->
                 </tbody>
             </table>
         </div>
     </div>
+
     <script type="module" src="import.js"></script>
 </body>
 

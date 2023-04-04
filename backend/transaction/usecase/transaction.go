@@ -11,18 +11,19 @@ import (
 
 // TransactionUseCase represents a collection of use cases for Transaction operations
 type TransactionUseCase struct {
-	FileMetadataRepo  r.FileMetadataRepository
-	TransactionRepo   r.TransactionRepository
-	SellerRepo        r.SellerRepository
-	ProductRepo       r.ProductRepository
-	SellerBalanceRepo r.SellerBalanceRepository
+	FileMetadataRepo    r.FileMetadataRepository
+	SellerRepo          r.SellerRepository
+	ProductRepo         r.ProductRepository
+	TransactionRepo     r.TransactionRepository
+	FileTransactionRepo r.FileTransactionRepository
+	SellerBalanceRepo   r.SellerBalanceRepository
 }
 
 // StoreFileContent stores a new Transaction
-func (uc *TransactionUseCase) StoreFileContent(ctx context.Context, hash string, binaryData []byte) ([]*e.Transaction, error) {
+func (uc *TransactionUseCase) StoreFileContent(ctx context.Context, binaryData []byte) ([]*e.Transaction, error) {
 	entries, err := uc.processFileData(ctx, binaryData)
 	if err != nil {
-		return entries, err
+		return nil, err
 	}
 
 	return entries, nil
@@ -48,4 +49,9 @@ func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *Creat
 	}
 
 	return tfm.ID, nil
+}
+
+// StoreFileContent stores a new Transaction
+func (uc *TransactionUseCase) GetFileTransactions(ctx context.Context, fileID string) ([]*e.Transaction, error) {
+	return uc.TransactionRepo.List(ctx, fileID)
 }

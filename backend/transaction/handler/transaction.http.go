@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
 	commonHTTP "github.com/Ralphbaer/hubla/backend/common/net/http"
 	uc "github.com/Ralphbaer/hubla/backend/transaction/usecase"
+	"github.com/gorilla/mux"
 )
 
 // TransactionHandler represents a handler which deal with Transaction resource operations
@@ -56,7 +58,7 @@ func (handler *TransactionHandler) Create() http.Handler {
 		ctx := r.Context()
 		binaryData, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			commonHTTP.InternalServerError(w, err.Error())
 			return
 		}
 		ctfm := &uc.CreateFileMetadata{
@@ -66,18 +68,43 @@ func (handler *TransactionHandler) Create() http.Handler {
 			BinaryData:  binaryData,
 		}
 
-		hash, err := handler.UseCase.StoreFileMetadata(ctx, ctfm)
+		fileID, err := handler.UseCase.StoreFileMetadata(ctx, ctfm)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			commonHTTP.InternalServerError(w, err.Error())
 			return
 		}
 
-		transactions, err := handler.UseCase.StoreFileContent(ctx, hash, binaryData)
+		transactions, err := handler.UseCase.StoreFileContent(ctx, binaryData)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			commonHTTP.InternalServerError(w, err.Error())
 			return
 		}
 
-		commonHTTP.Created(w, transactions)
+		if err := handler.UseCase.CreateFileTransactions(ctx, fileID, transactions); err != nil {
+			commonHTTP.InternalServerError(w, err.Error())
+			return
+		}
+
+		w.Header().Set("Location", fmt.Sprintf("%s/files/%s/transactions", r.Host, fileID))
+		w.Header().Set("Content-Type", "application/json")
+
+		commonHTTP.Created(w, nil)
+	})
+}
+
+func (handler *TransactionHandler) GetFileTransactions() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fileID := mux.Vars(r)["id"]
+		view, err := handler.UseCase.GetFileTransactions(r.Context(), fileID)
+		if view == nil {
+			commonHTTP.WithError(w, err)
+			return
+		}
+		if err != nil {
+			commonHTTP.WithError(w, err)
+			return
+		}
+
+		commonHTTP.OK(w, view)
 	})
 }

@@ -53,6 +53,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
+	github.com/rs/cors v1.8.3
 	github.com/shopspring/decimal v1.3.1
 	go.mongodb.org/mongo-driver v1.11.3 // indirect
 	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect

@@ -1,17 +1,21 @@
-async function validateAndUploadFile(file) {
+async function validateAndUploadFile(file, filename) {
     if (!file || file.type !== "text/plain") {
         alert("Invalid file type. Please upload a .txt file.");
         return;
     }
 
     try {
-        console.log("TESTE")
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", file, filename);
 
         const response = await fetch("http://localhost:3000/transactions/upload", {
             method: "POST",
-            body: formData
+            headers: {
+                "Content-Type": "application/octet-stream",
+                "Content-Disposition": `attachment; filename="${filename}"`,
+                "Content-Length": file.size
+            },
+            body: file
         });
 
         if (!response.ok) {
@@ -50,7 +54,7 @@ function onFileUpload(event) {
     uploadedFile = event.target.files[0];
 
     if (uploadedFile) {
-        document.querySelector('.table-container').style.display = 'block';
+        document.querySelector('.upload-label').textContent = `Selected File: ${uploadedFile.name}`;
     }
 }
 
@@ -60,10 +64,11 @@ async function onFileConfirm() {
         return;
     }
 
-    const data = await validateAndUploadFile(uploadedFile);
+    const fileName = uploadedFile.name;
+    const data = await validateAndUploadFile(uploadedFile, fileName);
 
     if (data) {
-        populateTable(data);
+        alert(`File processed successfully. ${data.length} rows processed.`);
     }
 }
 
