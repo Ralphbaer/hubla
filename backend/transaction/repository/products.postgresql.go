@@ -6,17 +6,17 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Ralphbaer/hubla/backend/common"
+	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 )
 
 // PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
 type ProductPostgresRepository struct {
-	connection *common.PostgresConnection
+	connection *hpostgres.PostgresConnection
 }
 
 // NewSalesPostgreSQLRepository creates an instance of repository.SalesPostgreSQLRepository
-func NewProductPostgreSQLRepository(c *common.PostgresConnection) *ProductPostgresRepository {
+func NewProductPostgreSQLRepository(c *hpostgres.PostgresConnection) *ProductPostgresRepository {
 	return &ProductPostgresRepository{
 		connection: c,
 	}
@@ -26,12 +26,12 @@ func NewProductPostgreSQLRepository(c *common.PostgresConnection) *ProductPostgr
 func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) error {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+		return fmt.Errorf("%w: %v", hpostgres.ErrFailedToConnectToDatabase, err)
 	}
 
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrFailedToBeginTransaction, err)
+		return fmt.Errorf("%w: %v", hpostgres.ErrFailedToBeginTransaction, err)
 	}
 	defer tx.Rollback()
 
@@ -41,17 +41,17 @@ func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) erro
 
 	if err != nil {
 		if errors.Is(err, sql.ErrConnDone) {
-			return fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+			return fmt.Errorf("%w: %v", hpostgres.ErrFailedToConnectToDatabase, err)
 		}
 		if errors.Is(err, sql.ErrTxDone) {
-			return fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
+			return fmt.Errorf("%w: %v", hpostgres.ErrFailedToCommitTransaction, err)
 		}
-		return fmt.Errorf("%w: %v", ErrFailedToInsertTransaction, err)
+		return fmt.Errorf("%w: %v", hpostgres.ErrFailedToInsertTransaction, err)
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
+		return fmt.Errorf("%w: %v", hpostgres.ErrFailedToCommitTransaction, err)
 	}
 
 	return nil
@@ -60,7 +60,7 @@ func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) erro
 func (r *ProductPostgresRepository) Find(ctx context.Context, productName string) (*e.Product, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+		return nil, fmt.Errorf("%w: %v", hpostgres.ErrFailedToConnectToDatabase, err)
 	}
 
 	query := `
@@ -72,15 +72,15 @@ func (r *ProductPostgresRepository) Find(ctx context.Context, productName string
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("%w: %v", ErrNotFound, err)
+			return nil, fmt.Errorf("%w: %v", hpostgres.ErrNotFound, err)
 		}
 		if errors.Is(err, sql.ErrConnDone) {
-			return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+			return nil, fmt.Errorf("%w: %v", hpostgres.ErrFailedToConnectToDatabase, err)
 		}
 		if errors.Is(err, sql.ErrTxDone) {
-			return nil, fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
+			return nil, fmt.Errorf("%w: %v", hpostgres.ErrFailedToCommitTransaction, err)
 		}
-		return nil, fmt.Errorf("%w: %v", ErrFailedToScanRow, err)
+		return nil, fmt.Errorf("%w: %v", hpostgres.ErrFailedToScanRow, err)
 	}
 
 	return &product, nil

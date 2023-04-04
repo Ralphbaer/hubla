@@ -6,18 +6,18 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Ralphbaer/hubla/backend/common"
+	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 	"github.com/lib/pq"
 )
 
 // PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
 type FileMetadataPostgresRepository struct {
-	connection *common.PostgresConnection
+	connection *hpostgres.PostgresConnection
 }
 
 // NewSalesPostgreSQLRepository creates an instance of repository.SalesPostgreSQLRepository
-func NewFileMetadataPostgreSQLRepository(c *common.PostgresConnection) *FileMetadataPostgresRepository {
+func NewFileMetadataPostgreSQLRepository(c *hpostgres.PostgresConnection) *FileMetadataPostgresRepository {
 	return &FileMetadataPostgresRepository{
 		connection: c,
 	}
@@ -27,12 +27,12 @@ func NewFileMetadataPostgreSQLRepository(c *common.PostgresConnection) *FileMeta
 func (r *FileMetadataPostgresRepository) Save(ctx context.Context, fm *e.FileMetadata) error {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+		return hpostgres.WithError(err)
 	}
 
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrFailedToBeginTransaction, err)
+		return hpostgres.WithError(err)
 	}
 	defer tx.Rollback()
 
@@ -43,11 +43,11 @@ func (r *FileMetadataPostgresRepository) Save(ctx context.Context, fm *e.FileMet
 		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code.Name() == "unique_violation" && pqErr.Constraint == "file_metadata_hash_key" {
 			return fmt.Errorf("file metadata with hash '%s' already exists", fm.Hash)
 		}
-		return fmt.Errorf("%w: %v", ErrFailedToInsertTransaction, err)
+		return hpostgres.WithError(err)
 	}
 
 	if err = tx.Commit(); err != nil {
-		return fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
+		return hpostgres.WithError(err)
 	}
 
 	return nil
@@ -56,7 +56,7 @@ func (r *FileMetadataPostgresRepository) Save(ctx context.Context, fm *e.FileMet
 func (r *FileMetadataPostgresRepository) Find(ctx context.Context, hash string) (*e.FileMetadata, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	query := `
@@ -69,15 +69,15 @@ func (r *FileMetadataPostgresRepository) Find(ctx context.Context, hash string) 
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("%w: %v", ErrNotFound, err)
+			return nil, hpostgres.WithError(err)
 		}
 		if errors.Is(err, sql.ErrConnDone) {
-			return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+			return nil, hpostgres.WithError(err)
 		}
 		if errors.Is(err, sql.ErrTxDone) {
-			return nil, fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
+			return nil, hpostgres.WithError(err)
 		}
-		return nil, fmt.Errorf("%w: %v", ErrFailedToScanRow, err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	return &fileMetadata, nil

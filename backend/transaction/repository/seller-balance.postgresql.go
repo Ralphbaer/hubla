@@ -6,17 +6,17 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Ralphbaer/hubla/backend/common"
+	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 )
 
 // SellerBalancePostgresRepository represents a MongoDB implementation of PartnerRepository interface
 type SellerBalancePostgresRepository struct {
-	connection *common.PostgresConnection
+	connection *hpostgres.PostgresConnection
 }
 
 // NewSellerBalancePostgreSQLRepository creates an instance of repository.SalesPostgreSQLRepository
-func NewSellerBalancePostgreSQLRepository(c *common.PostgresConnection) *SellerBalancePostgresRepository {
+func NewSellerBalancePostgreSQLRepository(c *hpostgres.PostgresConnection) *SellerBalancePostgresRepository {
 	return &SellerBalancePostgresRepository{
 		connection: c,
 	}
@@ -25,12 +25,12 @@ func NewSellerBalancePostgreSQLRepository(c *common.PostgresConnection) *SellerB
 func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.SellerBalance) (*float64, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, err
+		return nil, hpostgres.WithError(err)
 	}
 
 	tx, err := db.BeginTx(context.Background(), nil)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFailedToBeginTransaction, err)
+		return nil, hpostgres.WithError(err)
 	}
 	defer tx.Rollback()
 
@@ -41,11 +41,11 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 
 	var newBalance float64
 	if err := tx.QueryRowContext(ctx, query, p.ID, p.SellerID, p.Balance, p.UpdatedAt).Scan(&newBalance); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFailedToInsertSeller, err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	if err := tx.Commit(); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	fmt.Printf("Balance for seller %s updated by %s to %f\n", p.SellerID, p.Balance.String(), newBalance)
@@ -56,7 +56,7 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 func (r *SellerBalancePostgresRepository) Find(ctx context.Context, sellerID string) (*e.SellerBalanceView, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	query := `
@@ -72,15 +72,15 @@ func (r *SellerBalancePostgresRepository) Find(ctx context.Context, sellerID str
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("%w: %v", ErrNotFound, err)
+			return nil, hpostgres.WithError(err)
 		}
 		if errors.Is(err, sql.ErrConnDone) {
-			return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+			return nil, hpostgres.WithError(err)
 		}
 		if errors.Is(err, sql.ErrTxDone) {
-			return nil, fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
+			return nil, hpostgres.WithError(err)
 		}
-		return nil, fmt.Errorf("%w: %v", ErrFailedToScanRow, err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	return sellerBalanceView, nil

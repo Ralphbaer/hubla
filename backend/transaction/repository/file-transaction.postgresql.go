@@ -4,19 +4,18 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
-	"github.com/Ralphbaer/hubla/backend/common"
+	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 )
 
 // PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
 type FileTransactionPostgresRepository struct {
-	connection *common.PostgresConnection
+	connection *hpostgres.PostgresConnection
 }
 
 // NewSalesPostgreSQLRepository creates an instance of repository.SalesPostgreSQLRepository
-func NewFileTransactionPostgreSQLRepository(c *common.PostgresConnection) *FileTransactionPostgresRepository {
+func NewFileTransactionPostgreSQLRepository(c *hpostgres.PostgresConnection) *FileTransactionPostgresRepository {
 	return &FileTransactionPostgresRepository{
 		connection: c,
 	}
@@ -26,32 +25,31 @@ func NewFileTransactionPostgreSQLRepository(c *common.PostgresConnection) *FileT
 func (r *FileTransactionPostgresRepository) Save(ctx context.Context, ft *e.FileTransaction) error {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+		return hpostgres.WithError(err)
 	}
 
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrFailedToBeginTransaction, err)
+		return hpostgres.WithError(err)
 	}
 	defer tx.Rollback()
 
 	query := `INSERT INTO file_transactions(id, file_id, transaction_Id) VALUES ($1, $2, $3) RETURNING id`
 	var fileTransactionID string
 	err = tx.QueryRowContext(ctx, query, ft.ID, ft.FileID, ft.TransactionID).Scan(&fileTransactionID)
-
 	if err != nil {
 		if errors.Is(err, sql.ErrConnDone) {
-			return fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+			return hpostgres.WithError(err)
 		}
 		if errors.Is(err, sql.ErrTxDone) {
-			return fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
+			return hpostgres.WithError(err)
 		}
-		return fmt.Errorf("%w: %v", ErrFailedToInsertTransaction, err)
+		return hpostgres.WithError(err)
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
+		return hpostgres.WithError(err)
 	}
 
 	return nil
@@ -60,7 +58,7 @@ func (r *FileTransactionPostgresRepository) Save(ctx context.Context, ft *e.File
 func (r *FileTransactionPostgresRepository) Find(ctx context.Context, ID string) (*e.FileTransaction, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	query := `
@@ -72,15 +70,15 @@ func (r *FileTransactionPostgresRepository) Find(ctx context.Context, ID string)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("%w: %v", ErrNotFound, err)
+			return nil, hpostgres.WithError(err)
 		}
 		if errors.Is(err, sql.ErrConnDone) {
-			return nil, fmt.Errorf("%w: %v", ErrFailedToConnectToDatabase, err)
+			return nil, hpostgres.WithError(err)
 		}
 		if errors.Is(err, sql.ErrTxDone) {
-			return nil, fmt.Errorf("%w: %v", ErrFailedToCommitTransaction, err)
+			return nil, hpostgres.WithError(err)
 		}
-		return nil, fmt.Errorf("%w: %v", ErrFailedToScanRow, err)
+		return nil, hpostgres.WithError(err)
 	}
 
 	return &fileTransaction, nil

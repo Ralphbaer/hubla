@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/Ralphbaer/hubla/backend/common"
+	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	"github.com/Ralphbaer/hubla/backend/transaction/app"
 	h "github.com/Ralphbaer/hubla/backend/transaction/handler"
 	r "github.com/Ralphbaer/hubla/backend/transaction/repository"
@@ -20,8 +21,8 @@ import (
 
 var onceConfig sync.Once
 
-func setupPostgreSQLConnection(cfg *app.Config) *common.PostgresConnection {
-	return &common.PostgresConnection{
+func setupPostgreSQLConnection(cfg *app.Config) *hpostgres.PostgresConnection {
+	return &hpostgres.PostgresConnection{
 		ConnectionString: cfg.PostgreSQLConnectionString,
 	}
 }

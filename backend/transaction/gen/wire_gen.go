@@ -8,6 +8,7 @@ package gen
 
 import (
 	"github.com/Ralphbaer/hubla/backend/common"
+	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	"github.com/Ralphbaer/hubla/backend/transaction/app"
 	"github.com/Ralphbaer/hubla/backend/transaction/handler"
 	"github.com/Ralphbaer/hubla/backend/transaction/repository"
@@ -60,8 +61,8 @@ func InitializeApp() *app.App {
 
 var onceConfig sync.Once
 
-func setupPostgreSQLConnection(cfg *app.Config) *common.PostgresConnection {
-	return &common.PostgresConnection{
+func setupPostgreSQLConnection(cfg *app.Config) *hpostgres.PostgresConnection {
+	return &hpostgres.PostgresConnection{
 		ConnectionString: cfg.PostgreSQLConnectionString,
 	}
 }
