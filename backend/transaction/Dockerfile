@@ -1,12 +1,14 @@
-FROM golang:1.8
+FROM golang:1.17
 
 WORKDIR /app
 
-ADD ./.bin/transaction-service .
-ADD ./gen/swagger.yaml ./gen/
+COPY ../../go.mod ../../go.sum ./
+RUN go mod download
 
-RUN groupadd -r appusers && useradd --no-log-init -r -g appusers appuser
+COPY . .
+
+RUN go build -o .bin/transaction-service ./transaction/main.go
 
 EXPOSE 3000
 
-ENTRYPOINT ["./transaction-service"]
+CMD [".bin/transaction-service"]

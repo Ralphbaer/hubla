@@ -36,7 +36,7 @@ func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) erro
 	}
 	defer tx.Rollback()
 
-	query := `INSERT INTO products(id, name, creator_id, created_at) VALUES ($1, $2, $3, DEFAULT)`
+	query := `INSERT INTO product(id, name, creator_id, created_at) VALUES ($1, $2, $3, DEFAULT)`
 	if _, err = tx.ExecContext(ctx, query, s.ID, s.Name, s.CreatorID); err != nil {
 		if pqerr := err.(*pq.Error); pqerr.Code == "23505" {
 			return common.EntityConflictError{
@@ -63,7 +63,7 @@ func (r *ProductPostgresRepository) Find(ctx context.Context, productName string
 
 	query := `
         SELECT id, name, creator_id, created_at
-        FROM products
+        FROM product
         WHERE name = $1`
 	var product e.Product
 	err = db.QueryRowContext(ctx, query, productName).Scan(&product.ID, &product.Name, &product.CreatorID, &product.CreatedAt)

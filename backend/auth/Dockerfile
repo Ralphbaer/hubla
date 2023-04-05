@@ -1,12 +1,14 @@
-FROM golang:1.8
+FROM golang:1.17
 
 WORKDIR /app
 
-ADD ./.bin/auth-service .
-ADD ./gen/swagger.yaml ./gen/
+COPY ../../go.mod ../../go.sum ./
+RUN go mod download
 
-RUN groupadd -r appusers && useradd --no-log-init -r -g appusers appuser
+COPY . .
 
-EXPOSE 3000
+RUN go build -o .bin/auth-service ./auth/main.go
 
-ENTRYPOINT ["./auth-service"]
+EXPOSE 8080
+
+CMD [".bin/auth-service"]

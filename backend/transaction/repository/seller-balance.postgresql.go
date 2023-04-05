@@ -35,7 +35,7 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 	}
 	defer tx.Rollback()
 
-	query := `INSERT INTO seller_balances (id, seller_id, balance, updated_at, created_at)
+	query := `INSERT INTO seller_balance (id, seller_id, balance, updated_at, created_at)
               VALUES ($1, $2, $3, $4, DEFAULT) 
               ON CONFLICT (seller_id) DO UPDATE SET balance = seller_balances.balance + $3
               RETURNING balance`
@@ -61,8 +61,8 @@ func (r *SellerBalancePostgresRepository) Find(ctx context.Context, sellerID str
 
 	query := `
         SELECT s.id, s.name, sb.balance, sb.updated_at
-        FROM seller_balances sb
-        JOIN sellers s ON s.id = sb.seller_id
+        FROM seller_balance sb
+        JOIN seller s ON s.id = sb.seller_id
         WHERE s.id = $1;
 		`
 

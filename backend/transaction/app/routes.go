@@ -38,8 +38,8 @@ func NewRouter(sh *handler.SellerHandler, th *handler.TransactionHandler) *mux.R
 	lib.AllowFullOptionsWithCORS(r)
 	r.Use(lib.WithCorrelationID)
 
-	r.Handle("/transactions/upload", th.Create()).Methods("POST")
-	r.Handle("/files/{id}/transactions", th.GetFileTransactions()).Methods("GET")
+	r.Handle("/transaction/transactions/upload", th.Create()).Methods("POST")
+	r.Handle("/transaction/files/{id}/transactions", th.GetFileTransactions()).Methods("GET")
 
 	r.Handle("/sellers/{id}/balance", sh.GetSellerBalanceByID()).Methods("GET")
 

@@ -35,7 +35,7 @@ func (r *FileTransactionPostgresRepository) Save(ctx context.Context, ft *e.File
 	}
 	defer tx.Rollback()
 
-	query := `INSERT INTO file_transactions(id, file_id, transaction_Id) VALUES ($1, $2, $3)`
+	query := `INSERT INTO file_transaction(id, file_id, transaction_Id) VALUES ($1, $2, $3)`
 	if _, err = tx.ExecContext(ctx, query, ft.ID, ft.FileID, ft.TransactionID); err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (r *FileTransactionPostgresRepository) Find(ctx context.Context, ID string)
 
 	query := `
         SELECT id, file_id, transaction_id
-        FROM file_transactions
+        FROM file_transaction
         WHERE id = $1`
 	var fileTransaction e.FileTransaction
 	err = db.QueryRowContext(ctx, query, ID).Scan(&fileTransaction.ID, &fileTransaction.FileID, &fileTransaction.TransactionID)

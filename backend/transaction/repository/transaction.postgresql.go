@@ -36,7 +36,7 @@ func (r *TransactionPostgresRepository) Save(ctx context.Context, t *e.Transacti
 	}
 	defer tx.Rollback()
 
-	query := `INSERT INTO transactions(id, t_type, t_date, product_id, amount, seller_id, created_at) VALUES ($1, $2, $3, $4, $5, $6, DEFAULT)`
+	query := `INSERT INTO transaction_records(id, t_type, t_date, product_id, amount, seller_id, created_at) VALUES ($1, $2, $3, $4, $5, $6, DEFAULT)`
 	if _, err := tx.ExecContext(ctx, query, t.ID, e.TransactionTypeMapString[t.TType], t.TDate, t.ProductID, t.Amount, t.SellerID); err != nil {
 		if pqerr := err.(*pq.Error); pqerr.Code == "23505" {
 			return common.EntityConflictError{
@@ -62,7 +62,7 @@ func (r *TransactionPostgresRepository) List(ctx context.Context, fileID string)
 
 	rows, err := db.QueryContext(ctx, `
 		SELECT t.*
-		FROM transactions t
+		FROM transaction_records t
 		JOIN file_transactions ft ON t.id = ft.transaction_id
 		WHERE ft.file_id = $1
 	`, fileID)

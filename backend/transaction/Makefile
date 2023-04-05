@@ -46,15 +46,10 @@ clean:
 	rm -rf $(artifacts-dir)
 
 image: build_linux
-	docker build -t ze-delivery/$(service-name):v1 .
+	docker build -t hubla/$(service-name):v1 .
 
 container:
-	docker run --env SERVER_ADDRESS=:3000 -it -p 127.0.0.1:3000:3000 ze-delivery/$(service-name):v1 bash
-
-deploy-image:
-	aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name) | bash	
-	docker tag ze-delivery/$(service-name):v1 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name)
-	docker push 742261599957.dkr.ecr.us-east-2.amazonaws.com/ze-delivery/$(service-name):latest
+	docker run --env SERVER_ADDRESS=:3000 -it -p 127.0.0.1:3000:3000 hubla/$(service-name):v1 bash
 
 localenv-withData:
 	rm -rf .localenv/withData/.data && \

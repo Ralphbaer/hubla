@@ -36,7 +36,7 @@ func (r *SellerPostgresRepository) Save(ctx context.Context, s *e.Seller) error 
 	}
 	defer tx.Rollback()
 
-	query := `INSERT INTO sellers(id, name, seller_type, created_at) VALUES ($1, $2, $3, DEFAULT)`
+	query := `INSERT INTO seller(id, name, seller_type, created_at) VALUES ($1, $2, $3, DEFAULT)`
 	if _, err := tx.ExecContext(ctx, query, s.ID, s.Name, e.SellerTypeMap[s.SellerType]); err != nil {
 		if pqerr := err.(*pq.Error); pqerr.Code == "23505" {
 			return common.EntityConflictError{
@@ -61,7 +61,7 @@ func (r *SellerPostgresRepository) Find(ctx context.Context, sellerName string) 
 	}
 
 	var seller e.Seller
-	query := `SELECT id, name, seller_type, created_at FROM sellers WHERE name = $1`
+	query := `SELECT id, name, seller_type, created_at FROM seller WHERE name = $1`
 	err = db.QueryRowContext(ctx, query, sellerName).Scan(&seller.ID, &seller.Name, &seller.SellerType, &seller.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {

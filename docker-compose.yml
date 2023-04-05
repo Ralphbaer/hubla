@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: hubla_user
+      POSTGRES_DB: transaction
+    volumes:
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+  transaction:
+    build:
+      context: ./backend
+      dockerfile: ./transaction/Dockerfile
+    env_file:
+      - ./backend/transaction/.env
+    ports:
+      - '3000:3000'
+
+  auth:
+    build:
+      context: ./backend
+      dockerfile: ./auth/Dockerfile
+    env_file:
+      - ./backend/auth/.env
+    ports:
+      - '8080:8080'
