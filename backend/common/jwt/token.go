@@ -34,6 +34,10 @@ func (j *JWTAuth) CreateRefreshToken(payload interface{}) (string, error) {
 	return j.createToken(j.RefreshTokenExpiresIn, payload, j.RefreshTokenPrivateKey)
 }
 
+func (j *JWTAuth) ValidateToken(token string) (interface{}, error) {
+	return j.validateToken(token, j.RefreshTokenPrivateKey)
+}
+
 func (j *JWTAuth) createToken(ttl time.Duration, payload interface{}, privateKey string) (string, error) {
 	decodedPrivateKey, err := base64.StdEncoding.DecodeString(privateKey)
 	if err != nil {
@@ -60,7 +64,7 @@ func (j *JWTAuth) createToken(ttl time.Duration, payload interface{}, privateKey
 	return token, nil
 }
 
-func ValidateToken(token string, publicKey string) (interface{}, error) {
+func (j *JWTAuth) validateToken(token string, publicKey string) (interface{}, error) {
 	decodedPublicKey, err := base64.StdEncoding.DecodeString(publicKey)
 	if err != nil {
 		return nil, fmt.Errorf("could not decode: %w", err)

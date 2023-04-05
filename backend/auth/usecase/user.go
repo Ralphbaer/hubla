@@ -12,8 +12,11 @@ type UserUseCase struct {
 	UserRepo r.UserRepository
 }
 
-// StoreFileContent stores a new Transaction
 func (uc *UserUseCase) GetUserByEmail(ctx context.Context, email string) (*e.User, error) {
-	// get user by email on postgres
-	return nil, nil
+	return uc.UserRepo.FindByEmail(ctx, email)
+}
+
+// StoreFileContent stores a new Transaction
+func (uc *UserUseCase) GetUserByID(ctx context.Context, ID string) (*e.User, error) {
+	return uc.UserRepo.FindByID(ctx, ID)
 }
