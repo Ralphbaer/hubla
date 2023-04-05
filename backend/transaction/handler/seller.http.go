@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	commonHTTP "github.com/Ralphbaer/hubla/backend/common/net/http"
@@ -18,6 +19,7 @@ func (handler *SellerHandler) GetSellerBalanceByID() http.Handler {
 		sellerID := mux.Vars(r)["id"]
 		view, err := handler.UseCase.GetSellerBalanceByID(r.Context(), sellerID)
 		if err != nil {
+			log.Printf("ERRO %v", err)
 			commonHTTP.WithError(w, err)
 			return
 		}

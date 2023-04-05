@@ -18,11 +18,13 @@ type PostgresConnection struct {
 func (r *PostgresConnection) Connect() error {
 	db, err := sql.Open("postgres", r.ConnectionString)
 	if err != nil {
+		log.Printf("PostgresConnection.connectERR %v", err)
 		return err
 	}
 
 	err = db.Ping()
 	if err != nil {
+		log.Printf("PostgresConnection.Ping %v", err)
 		return err
 	}
 
@@ -39,6 +41,7 @@ func (r *PostgresConnection) GetDB() (*sql.DB, error) {
 	if r.DB == nil {
 		err := r.Connect()
 		if err != nil {
+			log.Printf("ERRCONECT %s", err)
 			return nil, err
 		}
 	}

@@ -1,3 +1,9 @@
+SET search_path = public, pgcrypto;
+
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- Table to store the types of transactions
 CREATE TYPE transaction_type AS ENUM (
     'CREATOR_SALE',
@@ -85,8 +91,35 @@ CREATE INDEX IF NOT EXISTS idx_seller_name ON seller(name);
 
 CREATE INDEX IF NOT EXISTS idx_user_account_email ON user_account(email);
 
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+INSERT INTO user_account (id, name, email, password, role, created_at, updated_at)
+VALUES (
+    uuid_generate_v4(),
+    'Marie Curie',
+    'marie.curie@hub.la',
+    PGP_SYM_ENCRYPT('radiantforce', 'AES_KEY'),
+    'admin',
+    NOW(),
+    NOW()
+);
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+INSERT INTO user_account (id, name, email, password, role, created_at, updated_at)
+VALUES (
+    uuid_generate_v4(),
+    'Nikola Tesla',
+    'nikola.testa@hub.la',
+    PGP_SYM_ENCRYPT('radiantforce', 'AES_KEY'),
+    'admin',
+    NOW(),
+    NOW()
+);
 
-CREATE OR REPLACE FUNCTION hash_password(password TEXT) RETURNS TEXT AS $$ BEGIN RETURN encode(pgcrypto.digest(password, 'sha512'), 'hex'); END; $$ LANGUAGE plpgsql;
+INSERT INTO user_account (id, name, email, password, role, created_at, updated_at)
+VALUES (
+    uuid_generate_v4(),
+    'Rosalind Elsie Franklin',
+    'rosalind.franklin@hub.la',
+    PGP_SYM_ENCRYPT('helixstructure1953', 'AES_KEY'),
+    'admin',
+    NOW(),
+    NOW()
+);

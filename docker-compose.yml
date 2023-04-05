@@ -2,16 +2,38 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:13
+    container_name: hubla-postgres
+    image: postgres
+    ports:
+      - "6543:5432"
+    networks:
+      - hubla_network
+    restart: unless-stopped
     environment:
       POSTGRES_USER: hubla_user
       POSTGRES_DB: transaction
+      POSTGRES_PASSWORD: hubla_password
     volumes:
       - ./init-scripts:/docker-entrypoint-initdb.d
+
+  pgadmin:
+    container_name: pg-admin
+    image: dpage/pgadmin4:5.5
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pg_admin@hub.la
+      PGADMIN_DEFAULT_PASSWORD: pg_admin
     ports:
-      - "5432:5432"
+      - "5555:80"
+    volumes:
+      - ./.docker/pgadmin:/var/lib/pgadmin
+    networks:
+      - hubla_network
 
   transaction:
+    container_name: hubla-transaction
     build:
       context: ./backend
       dockerfile: ./transaction/Dockerfile
@@ -19,12 +41,24 @@ services:
       - ./backend/transaction/.env
     ports:
       - '3000:3000'
+    depends_on:
+      - postgres
+    networks:
+      - hubla_network
 
   auth:
+    container_name: hubla-auth
     build:
       context: ./backend
       dockerfile: ./auth/Dockerfile
     env_file:
       - ./backend/auth/.env
+    depends_on:
+      - postgres
     ports:
-      - '8080:8080'
+      - '9229:9229'
+    networks:
+      - hubla_network
+
+networks:
+  hubla_network:
