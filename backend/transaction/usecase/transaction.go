@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 
+	"github.com/Ralphbaer/hubla/backend/common"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 	r "github.com/Ralphbaer/hubla/backend/transaction/repository"
 	"github.com/google/uuid"
@@ -40,7 +41,7 @@ func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *Creat
 		ID:          uuid.NewString(),
 		FileSize:    fileSize,
 		Disposition: ctfm.Disposition,
-		Hash:        calculateSHA256Hash(ctfm.BinaryData),
+		Hash:        common.CalculateSHA256Hash(ctfm.BinaryData),
 		BinaryData:  ctfm.BinaryData,
 	}
 

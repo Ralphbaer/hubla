@@ -32,6 +32,7 @@ require (
 	github.com/go-openapi/validate v0.21.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
+	github.com/golang/mock v1.6.0
 	github.com/google/subcommands v1.0.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/leodido/go-urn v1.2.2 // indirect
