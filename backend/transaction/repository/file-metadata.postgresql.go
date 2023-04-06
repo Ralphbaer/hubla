@@ -54,7 +54,7 @@ func (r *FileMetadataPostgresRepository) Save(ctx context.Context, fm *e.FileMet
 	return nil
 }
 
-func (r *FileMetadataPostgresRepository) Find(ctx context.Context, hash string) (*e.FileMetadata, error) {
+func (r *FileMetadataPostgresRepository) FindByHash(ctx context.Context, hash string) (*e.FileMetadata, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (r *FileMetadataPostgresRepository) Find(ctx context.Context, hash string) 
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, common.EntityNotFoundError{
-				EntityType: reflect.TypeOf(e.Seller{}).Name(),
+				EntityType: reflect.TypeOf(e.FileMetadata{}).Name(),
 				Err:        err,
 			}
 		}

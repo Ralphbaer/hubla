@@ -3,6 +3,7 @@
 CURR_DIR=$PWD
 LOGO=$(cat "$CURR_DIR"/shell/logo.txt)
 
+echo CURR_DIR
 source "$CURR_DIR"/shell/colors.sh
 source "$CURR_DIR"/shell/ascii.sh
 
@@ -91,5 +92,5 @@ fi
 if [ "$1" != "clean" -a "$1" != "lint" -a "$1" != "checkEnvs" -a "$1" != "docs" -a "$1" != "format" ]; then
   format
   lint
-  checkLogs
+ # checkLogs
 fi

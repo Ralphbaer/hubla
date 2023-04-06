@@ -62,7 +62,6 @@ func (handler *TransactionHandler) Create() http.Handler {
 			return
 		}
 		ctfm := &uc.CreateFileMetadata{
-			FileName:    r.Header.Get("X-File-Name"),
 			FileSize:    r.Header.Get("Content-length"),
 			Disposition: r.Header.Get("Content-Disposition"),
 			BinaryData:  binaryData,

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	"github.com/Ralphbaer/hubla/backend/common"
@@ -32,6 +33,18 @@ func (uc *TransactionUseCase) StoreFileContent(ctx context.Context, binaryData [
 
 // StoreFileContent stores a new Transaction
 func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *CreateFileMetadata) (string, error) {
+	hash := common.CalculateSHA256Hash(ctfm.BinaryData)
+
+	fm, err := uc.FileMetadataRepo.FindByHash(ctx, hash)
+	if fm != nil {
+		return "", fmt.Errorf(ErrFileMetadataAlreadyExists.Error(), hash)
+	}
+	if err != nil {
+		if _, ok := err.(common.EntityNotFoundError); !ok {
+			return "", err
+		}
+	}
+
 	fileSize, err := strconv.Atoi(ctfm.FileSize)
 	if err != nil {
 		return "", err
@@ -41,7 +54,7 @@ func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *Creat
 		ID:          uuid.NewString(),
 		FileSize:    fileSize,
 		Disposition: ctfm.Disposition,
-		Hash:        common.CalculateSHA256Hash(ctfm.BinaryData),
+		Hash:        hash,
 		BinaryData:  ctfm.BinaryData,
 	}
 

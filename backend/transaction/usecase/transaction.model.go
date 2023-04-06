@@ -24,10 +24,7 @@ type SellerBalance struct {
 }
 
 type CreateFileMetadata struct {
-	FileName    string
 	FileSize    string
 	Disposition string
-	Hash        string
 	BinaryData  []byte
-	CreatedAt   time.Time
 }
