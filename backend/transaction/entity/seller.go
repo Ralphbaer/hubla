@@ -33,3 +33,8 @@ var SellerTypeMap = map[SellerTypeEnum]string{
 	CREATOR:   "CREATOR",
 	AFFILIATE: "AFFILIATE",
 }
+
+var SellerTypeFromString = map[string]SellerTypeEnum{
+	"CREATOR":   CREATOR,
+	"AFFILIATE": AFFILIATE,
+}

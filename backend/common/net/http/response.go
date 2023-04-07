@@ -46,7 +46,6 @@ func Accepted(w http.ResponseWriter, s interface{}) {
 	JSONResponse(w, http.StatusAccepted, s)
 }
 
-
 // PartialContent respond with HTTP 206 PartialContent and payload.
 func PartialContent(w http.ResponseWriter, s interface{}) {
 	JSONResponse(w, http.StatusPartialContent, s)

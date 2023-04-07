@@ -94,16 +94,16 @@ func (handler *TransactionHandler) Create() http.Handler {
 func (handler *TransactionHandler) GetFileTransactions() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fileID := mux.Vars(r)["id"]
-		view, err := handler.UseCase.GetFileTransactions(r.Context(), fileID)
-		if view == nil {
-			commonHTTP.WithError(w, err)
-			return
-		}
+		transactions, err := handler.UseCase.GetFileTransactions(r.Context(), fileID)
 		if err != nil {
 			commonHTTP.WithError(w, err)
 			return
 		}
+		if transactions == nil {
+			commonHTTP.OK(w, []interface{}{})
+			return
+		}
 
-		commonHTTP.OK(w, view)
+		commonHTTP.OK(w, transactions)
 	})
 }

@@ -1,10 +1,14 @@
 package usecase
 
 import (
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
+	"github.com/golang/mock/gomock"
 	"github.com/shopspring/decimal"
 )
 
@@ -12,13 +16,13 @@ func TestParseLine(t *testing.T) {
 	testCases := []struct {
 		name        string
 		line        string
-		expected    *TransactionLine
+		expected    *CreateTransaction
 		expectedErr error
 	}{
 		{
 			name: "valid line",
 			line: "42022-01-16T14:13:54-03:00CURSO DE BEM-ESTAR            0000004500THIAGO OLIVEIRA",
-			expected: &TransactionLine{
+			expected: &CreateTransaction{
 				TType:       e.COMMISSION_RECEIVED,
 				TDate:       mustParseTime("2022-01-16T14:13:54-03:00"),
 				ProductName: "CURSO DE BEM-ESTAR",
@@ -70,6 +74,39 @@ func TestParseLine(t *testing.T) {
 	}
 }
 
+func TestReadFileData(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	transactionUseCase := setupTransactionUseCaseMocks(mockCtrl, t)
+	testCases := []struct {
+		name        string
+		binaryData  []byte
+		expected    []string
+		expectedErr error
+	}{
+		{
+			name:       "Valid file data",
+			binaryData: []byte("line1\nline2\nline3"),
+			expected:   strings.Split("line1\nline2\nline3", "\n"),
+		},
+		{
+			name:       "Empty file data",
+			binaryData: []byte{},
+			expected:   []string{},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			lines, err := transactionUseCase.readFileData(tc.binaryData)
+
+			assert.ElementsMatch(t, tc.expected, lines)
+			assert.Equal(t, tc.expectedErr, err)
+		})
+	}
+}
+
 func mustParseTime(timeStr string) time.Time {
 	t, err := time.Parse("2006-01-02T15:04:05-07:00", timeStr)
 	if err != nil {
@@ -78,7 +115,7 @@ func mustParseTime(timeStr string) time.Time {
 	return t
 }
 
-func cmpTransactionLine(tl1, tl2 *TransactionLine) bool {
+func cmpTransactionLine(tl1, tl2 *CreateTransaction) bool {
 	if tl1 == nil || tl2 == nil {
 		return false
 	}

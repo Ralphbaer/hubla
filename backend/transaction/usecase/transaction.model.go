@@ -7,7 +7,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-type TransactionLine struct {
+type CreateTransaction struct {
 	ID          string
 	TType       e.TransactionTypeEnum
 	TDate       time.Time

@@ -69,3 +69,48 @@ func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *Creat
 func (uc *TransactionUseCase) GetFileTransactions(ctx context.Context, fileID string) ([]*e.Transaction, error) {
 	return uc.TransactionRepo.List(ctx, fileID)
 }
+
+func (uc *TransactionUseCase) handleTransaction(ctx context.Context, ct *CreateTransaction, sellerNameToID map[string]string, productIDToName map[string]*e.Product) (*e.Transaction, error) {
+	sellerID, err := uc.findOrCreateSeller(ctx, ct.SellerName, ct.TType, sellerNameToID)
+	if err != nil {
+		return nil, err
+	}
+
+	product, err := uc.findOrCreateProduct(ctx, ct.ProductName, productIDToName, sellerID)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := uc.saveTransaction(ctx, ct, product.ID, sellerID)
+	if err != nil {
+		return nil, err
+	}
+
+	if ct.TType == e.AFFILIATE_SALE {
+		sellerID = product.CreatorID
+	}
+
+	err = uc.updateSellerBalance(ctx, ct, sellerID)
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
+}
+
+func (uc *TransactionUseCase) saveTransaction(ctx context.Context, ct *CreateTransaction, productID, sellerID string) (*e.Transaction, error) {
+	transaction := &e.Transaction{
+		ID:        uuid.NewString(),
+		TType:     ct.TType,
+		TDate:     ct.TDate,
+		ProductID: productID,
+		Amount:    ct.Amount,
+		SellerID:  sellerID,
+	}
+
+	if err := uc.TransactionRepo.Save(ctx, transaction); err != nil {
+		return nil, err
+	}
+
+	return transaction, nil
+}

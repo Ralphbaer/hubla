@@ -8,6 +8,6 @@ import (
 
 // SellerBalanceRepository manages transaction repository operations
 type ProductRepository interface {
-	Find(ctx context.Context, sellerName string) (*e.Product, error)
+	FindByProductName(ctx context.Context, productName string) (*e.Product, error)
 	Save(ctx context.Context, p *e.Product) error
 }

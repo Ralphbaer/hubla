@@ -42,6 +42,11 @@ var TransactionTypeMap = map[uint8]TransactionTypeEnum{
 	4: COMMISSION_RECEIVED,
 }
 
+var SellerTypeMapString = map[SellerTypeEnum]string{
+	CREATOR:   "CREATOR",
+	AFFILIATE: "AFFILIATE",
+}
+
 var TransactionTypeMapString = map[TransactionTypeEnum]string{
 	CREATOR_SALE:        "CREATOR_SALE",
 	AFFILIATE_SALE:      "AFFILIATE_SALE",

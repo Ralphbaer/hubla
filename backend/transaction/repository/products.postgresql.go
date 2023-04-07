@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"reflect"
 
 	"github.com/Ralphbaer/hubla/backend/common"
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
@@ -55,27 +54,30 @@ func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) erro
 	return nil
 }
 
-func (r *ProductPostgresRepository) Find(ctx context.Context, productName string) (*e.Product, error) {
+func (r *ProductPostgresRepository) FindByProductName(ctx context.Context, productName string) (*e.Product, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
 		return nil, err
 	}
 
 	query := `
-        SELECT id, name, creator_id, created_at
+        SELECT *
         FROM product
         WHERE name = $1`
-	var product e.Product
-	err = db.QueryRowContext(ctx, query, productName).Scan(&product.ID, &product.Name, &product.CreatorID, &product.CreatedAt)
+	rows, err := db.QueryContext(ctx, query, productName)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, common.EntityNotFoundError{
-				EntityType: reflect.TypeOf(e.Seller{}).Name(),
-				Err:        err,
-			}
-		}
 		return nil, err
 	}
+	defer rows.Close()
 
-	return &product, nil
+	var product *e.Product
+	if rows.Next() {
+		product := &e.Product{}
+		err := rows.Scan(&product.ID, &product.Name, &product.CreatorID, &product.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return product, nil
 }

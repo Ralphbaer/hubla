@@ -40,7 +40,7 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 
 	query := `INSERT INTO seller_balance (id, seller_id, balance, updated_at, created_at)
               VALUES ($1, $2, $3, $4, DEFAULT) 
-              ON CONFLICT (seller_id) DO UPDATE SET balance = seller_balances.balance + $3
+              ON CONFLICT (seller_id) DO UPDATE SET balance = seller_balance.balance + $3
               RETURNING balance`
 	var newBalance float64
 	if err := tx.QueryRowContext(ctx, query, p.ID, p.SellerID, p.Balance, p.UpdatedAt).Scan(&newBalance); err != nil {
