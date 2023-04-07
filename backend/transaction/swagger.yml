@@ -1,0 +1,12 @@
+consumes:
+    - application/json
+info:
+    description: "The Hubla Transaction API efficiently imports creator and affiliate data \tfrom the Hubla ecosystem, including balances, transactions, and product names. \tThis secure and streamlined service simplifies financial data handling and integration \twithin your application."
+    title: Hubla Transaction API
+    version: 1.0.0
+paths: {}
+produces:
+    - application/json
+schemes:
+    - http
+swagger: "2.0"

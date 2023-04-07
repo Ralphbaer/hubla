@@ -11,6 +11,7 @@ import (
 	"sync"
 
 	"github.com/Ralphbaer/hubla/backend/common"
+	"github.com/Ralphbaer/hubla/backend/common/hlogrus"
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	"github.com/Ralphbaer/hubla/backend/transaction/app"
 	h "github.com/Ralphbaer/hubla/backend/transaction/handler"
@@ -31,6 +32,7 @@ func setupPostgreSQLConnection(cfg *app.Config) *hpostgres.PostgresConnection {
 
 var applicationSet = wire.NewSet(
 	common.InitLocalEnvConfig,
+	hlogrus.InitializeLogger,
 	setupPostgreSQLConnection,
 	app.NewConfig,
 	app.NewRouter,

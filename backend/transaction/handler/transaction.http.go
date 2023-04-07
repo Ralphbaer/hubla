@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/Ralphbaer/hubla/backend/common/hlog"
 	commonHTTP "github.com/Ralphbaer/hubla/backend/common/net/http"
 	uc "github.com/Ralphbaer/hubla/backend/transaction/usecase"
 	"github.com/gorilla/mux"
@@ -15,8 +16,9 @@ type TransactionHandler struct {
 	UseCase *uc.TransactionUseCase
 }
 
-// Create creates a new Transaction in the repository
-// swagger:operation POST /Transaction Transaction Create
+// Create is a method that handles incoming requests for creating file transactions,
+// processing the request data, storing the metadata and content, and returning an appropriate response.
+// swagger:operation POST /transactions/upload nil Create
 // Register a new Transaction into database
 // ---
 // parameters:
@@ -26,14 +28,14 @@ type TransactionHandler struct {
 //     description: The payload
 //     required: true
 //     schema:
-//     "$ref": "#/definitions/CreateTransactionInput"
+//     "$ref": "#/definitions/CreateFileMetadata"
 //
 // security:
 //   - Definitions: []
 //
 // responses:
 //
-//	'201':
+//	'204':
 //	  description: Success Operation
 //	  schema:
 //	    "$ref": "#/definitions/Transaction"
@@ -56,6 +58,9 @@ type TransactionHandler struct {
 func (handler *TransactionHandler) Create() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
+		logger := hlog.NewLoggerFromContext(ctx)
+		logger.Debug("Create transactions thought transaction files")
+
 		binaryData, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			commonHTTP.WithError(w, err)
@@ -87,7 +92,7 @@ func (handler *TransactionHandler) Create() http.Handler {
 		w.Header().Set("Location", fmt.Sprintf("%s/files/%s/transactions", r.Host, fileID))
 		w.Header().Set("Content-Type", "application/json")
 
-		commonHTTP.Created(w, nil)
+		commonHTTP.NoContent(w)
 	})
 }
 

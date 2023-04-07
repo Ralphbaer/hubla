@@ -60,6 +60,13 @@ localenv:
 	docker-compose -f .localenv/docker-compose.yml up --force-recreate
 
 doc:
-	swagger generate spec -o ./gen/swagger.yaml --scan-models \
-	-c "github.com/Ralphbaer/hubla/$(package-name)" \
-	-c "github.com/Ralphbaer/hubla/common" \
+	swagger init spec \
+		--title "Hubla Transaction API" \
+		--description "The Hubla Transaction API efficiently imports creator and affiliate data \
+		from the Hubla ecosystem, including balances, transactions, and product names. \
+		This secure and streamlined service simplifies financial data handling and integration \
+		within your application." \
+		--version 1.0.0 \
+		--scheme http \
+		--consumes application/json \
+		--produces application/json

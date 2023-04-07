@@ -17,9 +17,6 @@ clean_build:
 build: clean_build
 	go build -o $(bin-dir)/$(service-name)
 
-build_linux: clean_build
-	GOOS=linux GOARCH=amd64 go build -o $(bin-dir)/$(service-name)
-
 run:
 	go run main.go
 	
@@ -32,9 +29,6 @@ unit-test:
 	./... github.com/Ralphbaer/hubla/common... \
 	-coverprofile=$(artifacts-dir)/coverage.out
 
-integration-test:
-	go test ./usecase -v -run TestSalesUseCase_GetNearestSales
-	
 cover-html:
 	go tool cover -html=$(artifacts-dir)/coverage.out -o $(artifacts-dir)/coverage.html
 
@@ -45,21 +39,19 @@ clean:
 	rm -rf $(bin-dir)
 	rm -rf $(artifacts-dir)
 
-image: build_linux
-	docker build -t hubla/$(service-name):v1 .
-
-container:
-	docker run --env SERVER_ADDRESS=:3000 -it -p 127.0.0.1:3000:3000 hubla/$(service-name):v1 bash
-
-localenv-withData:
-	rm -rf .localenv/withData/.data && \
-	docker-compose -f .localenv/withData/docker-compose.yml up --force-recreate
-	
 localenv:
 	rm -rf .localenv/.data && \
 	docker-compose -f .localenv/docker-compose.yml up --force-recreate
 
 doc:
-	swagger generate spec -o ./gen/swagger.yaml --scan-models \
-	-c "github.com/Ralphbaer/hubla/$(package-name)" \
-	-c "github.com/Ralphbaer/hubla/common" \
+	swagger init spec \
+		--title "Hubla Auth API" \
+		--description "The Hubla Auth API is a secure and reliable authentication service 
+			specifically designed for users within the Hubla company. It is responsible for managing user credentials, 
+			verifying user identities, and issuing access tokens to grant appropriate permissions across the company's applications. 
+			By adhering to industry-standard security practices and protocols,
+			the Hubla Auth API ensures a seamless and secure user authentication experience, which helps maintain trust and safeguard sensitive user information." \
+		--version 1.0.0 \
+		--scheme http \
+		--consumes application/json \
+		--produces application/json

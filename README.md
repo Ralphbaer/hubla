@@ -62,8 +62,3 @@ make test                 # Run all tests
 ## Documentation
 
 Visit [this link](localhost:3000/docs) for API documentation. If you want to access the docs locally, change the host in the URL to localhost:3000. For example: http://localhost:3000/sales/docs
-
-# Deployment
-
-The Sales Service uses a Github Actions pipeline that automatically triggers when code is pushed to the master branch. To facilitate testing, the master branch has no PR approval criteria for the Hubla team. To deploy and test the service, you can make changes to the code or modify the signal.id file inside /sales, commit the changes to master, and wait for Github Actions to deploy the code. 
-All necessary provisioning on the AWS Cloud has already been completed and is running. If you encounter any issues accessing the project through the link, feel free to reach out to us, and we can provide more details about AWS provisioning, such as EC2, load balancer, system manager, and secrets, as well as the CircleCI pipeline to help you get started.

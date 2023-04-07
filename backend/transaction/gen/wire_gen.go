@@ -8,6 +8,7 @@ package gen
 
 import (
 	"github.com/Ralphbaer/hubla/backend/common"
+	"github.com/Ralphbaer/hubla/backend/common/hlogrus"
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	"github.com/Ralphbaer/hubla/backend/transaction/app"
 	"github.com/Ralphbaer/hubla/backend/transaction/handler"
@@ -50,7 +51,8 @@ func InitializeApp() *app.App {
 	transactionHandler := &handler.TransactionHandler{
 		UseCase: transactionUseCase,
 	}
-	router := app.NewRouter(sellerHandler, transactionHandler)
+	logger := hlogrus.InitializeLogger()
+	router := app.NewRouter(sellerHandler, transactionHandler, logger)
 	server := app.NewServer(config, router)
 	appApp := &app.App{
 		Server: server,
@@ -69,4 +71,4 @@ func setupPostgreSQLConnection(cfg *app.Config) *hpostgres.PostgresConnection {
 	}
 }
 
-var applicationSet = wire.NewSet(common.InitLocalEnvConfig, setupPostgreSQLConnection, app.NewConfig, app.NewRouter, app.NewServer, repository.NewTransactionPostgreSQLRepository, repository.NewSellerPostgreSQLRepository, repository.NewSellerBalancePostgreSQLRepository, repository.NewProductPostgreSQLRepository, repository.NewFileMetadataPostgreSQLRepository, repository.NewFileTransactionPostgreSQLRepository, wire.Struct(new(usecase.TransactionUseCase), "*"), wire.Struct(new(usecase.SellerUseCase), "*"), wire.Struct(new(handler.TransactionHandler), "*"), wire.Struct(new(handler.SellerHandler), "*"), wire.Bind(new(repository.TransactionRepository), new(*repository.TransactionPostgresRepository)), wire.Bind(new(repository.SellerRepository), new(*repository.SellerPostgresRepository)), wire.Bind(new(repository.SellerBalanceRepository), new(*repository.SellerBalancePostgresRepository)), wire.Bind(new(repository.ProductRepository), new(*repository.ProductPostgresRepository)), wire.Bind(new(repository.FileMetadataRepository), new(*repository.FileMetadataPostgresRepository)), wire.Bind(new(repository.FileTransactionRepository), new(*repository.FileTransactionPostgresRepository)), wire.Bind(new(http.Handler), new(*mux.Router)))
+var applicationSet = wire.NewSet(common.InitLocalEnvConfig, hlogrus.InitializeLogger, setupPostgreSQLConnection, app.NewConfig, app.NewRouter, app.NewServer, repository.NewTransactionPostgreSQLRepository, repository.NewSellerPostgreSQLRepository, repository.NewSellerBalancePostgreSQLRepository, repository.NewProductPostgreSQLRepository, repository.NewFileMetadataPostgreSQLRepository, repository.NewFileTransactionPostgreSQLRepository, wire.Struct(new(usecase.TransactionUseCase), "*"), wire.Struct(new(usecase.SellerUseCase), "*"), wire.Struct(new(handler.TransactionHandler), "*"), wire.Struct(new(handler.SellerHandler), "*"), wire.Bind(new(repository.TransactionRepository), new(*repository.TransactionPostgresRepository)), wire.Bind(new(repository.SellerRepository), new(*repository.SellerPostgresRepository)), wire.Bind(new(repository.SellerBalanceRepository), new(*repository.SellerBalancePostgresRepository)), wire.Bind(new(repository.ProductRepository), new(*repository.ProductPostgresRepository)), wire.Bind(new(repository.FileMetadataRepository), new(*repository.FileMetadataPostgresRepository)), wire.Bind(new(repository.FileTransactionRepository), new(*repository.FileTransactionPostgresRepository)), wire.Bind(new(http.Handler), new(*mux.Router)))

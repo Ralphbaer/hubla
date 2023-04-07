@@ -25,21 +25,27 @@
 package app
 
 import (
+	"github.com/Ralphbaer/hubla/backend/common/hlog"
 	lib "github.com/Ralphbaer/hubla/backend/common/net/http"
 	"github.com/Ralphbaer/hubla/backend/transaction/handler"
 	"github.com/gorilla/mux"
 )
 
 // NewRouter registers routes to the Server
-func NewRouter(sh *handler.SellerHandler, th *handler.TransactionHandler) *mux.Router {
+func NewRouter(sh *handler.SellerHandler, th *handler.TransactionHandler, logger hlog.Logger) *mux.Router {
 	r := mux.NewRouter()
 	config := NewConfig()
 
 	lib.AllowFullOptionsWithCORS(r)
 	r.Use(lib.WithCorrelationID)
+	r.Use(lib.WithLog(lib.WithLogger(logger)))
 
-	r.Handle("/transaction/transactions/upload", th.Create()).Methods("POST")
-	r.Handle("/transaction/files/{id}/transactions", th.GetFileTransactions()).Methods("GET")
+	// Transaction Files
+
+	r.Handle("/transaction-files", th.Create()).Methods("POST")
+	r.Handle("/transaction-files/{id}/transactions", th.GetFileTransactions()).Methods("GET")
+
+	// Sellers
 
 	r.Handle("/sellers/{id}/balance", sh.GetSellerBalanceByID()).Methods("GET")
 
