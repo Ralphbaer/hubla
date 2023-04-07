@@ -3,8 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"log"
 	"reflect"
 
 	"github.com/Ralphbaer/hubla/backend/common"
@@ -27,10 +25,8 @@ func NewSellerBalancePostgreSQLRepository(c *hpostgres.PostgresConnection) *Sell
 func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.SellerBalance) (*float64, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
-		log.Printf("DBERR %v", err)
 		return nil, err
 	}
-	log.Printf("DB %v", db)
 
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
@@ -50,8 +46,6 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 	if err := tx.Commit(); err != nil {
 		return nil, err
 	}
-
-	fmt.Printf("Balance for seller %s updated by %s to %f\n", p.SellerID, p.Balance.String(), newBalance)
 
 	return &newBalance, nil
 }

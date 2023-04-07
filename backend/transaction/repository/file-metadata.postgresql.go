@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"reflect"
 
 	"github.com/Ralphbaer/hubla/backend/common"
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
@@ -52,30 +51,4 @@ func (r *FileMetadataPostgresRepository) Save(ctx context.Context, fm *e.FileMet
 	}
 
 	return nil
-}
-
-func (r *FileMetadataPostgresRepository) FindByHash(ctx context.Context, hash string) (*e.FileMetadata, error) {
-	db, err := r.connection.GetDB()
-	if err != nil {
-		return nil, err
-	}
-
-	query := `
-        SELECT id, file_size, disposition, hash, binary_data
-        FROM file_metadata
-        WHERE hash = $1`
-	var fileMetadata e.FileMetadata
-	err = db.QueryRowContext(ctx, query, hash).Scan(&fileMetadata.ID, &fileMetadata.FileSize, &fileMetadata.Disposition,
-		&fileMetadata.Hash, &fileMetadata.BinaryData)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, common.EntityNotFoundError{
-				EntityType: reflect.TypeOf(e.FileMetadata{}).Name(),
-				Err:        err,
-			}
-		}
-		return nil, err
-	}
-
-	return &fileMetadata, nil
 }

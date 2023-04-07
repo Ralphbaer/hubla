@@ -35,21 +35,6 @@ func (m *MockFileMetadataRepository) EXPECT() *MockFileMetadataRepositoryMockRec
 	return m.recorder
 }
 
-// FindByHash mocks base method.
-func (m *MockFileMetadataRepository) FindByHash(arg0 context.Context, arg1 string) (*entity.FileMetadata, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByHash", arg0, arg1)
-	ret0, _ := ret[0].(*entity.FileMetadata)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// FindByHash indicates an expected call of FindByHash.
-func (mr *MockFileMetadataRepositoryMockRecorder) FindByHash(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByHash", reflect.TypeOf((*MockFileMetadataRepository)(nil).FindByHash), arg0, arg1)
-}
-
 // Save mocks base method.
 func (m *MockFileMetadataRepository) Save(arg0 context.Context, arg1 *entity.FileMetadata) error {
 	m.ctrl.T.Helper()

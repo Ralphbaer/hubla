@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -13,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 
+	"github.com/Ralphbaer/hubla/backend/common"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 )
 
@@ -71,8 +71,10 @@ func (uc *TransactionUseCase) readFileData(binaryData []byte) ([]string, error) 
 func (uc *TransactionUseCase) processLine(ctx context.Context, line string, lineNumber int, seller map[string]string, product map[string]*e.Product) (*e.Transaction, error) {
 	entry, err := parseLine(line)
 	if err != nil {
-		log.Printf(ErrParsingParsingLine.Error(), lineNumber, err)
-		return nil, nil
+		return nil, common.ValidationError{
+			Message: ErrParsingParsingLine.Error(),
+			Err:     err,
+		}
 	}
 
 	transaction, err := uc.handleTransaction(ctx, entry, seller, product)

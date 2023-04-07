@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/Ralphbaer/hubla/backend/common"
@@ -23,30 +23,27 @@ type TransactionUseCase struct {
 
 // StoreFileContent stores a new Transaction
 func (uc *TransactionUseCase) StoreFileContent(ctx context.Context, binaryData []byte) ([]*e.Transaction, error) {
+	log.Printf("Starting the process of StoreFileContent")
+
 	entries, err := uc.processFileData(ctx, binaryData)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
+
+	log.Printf("The file content has been processed successfully. Number of entries: %v", len(entries))
 
 	return entries, nil
 }
 
 // StoreFileContent stores a new Transaction
 func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *CreateFileMetadata) (string, error) {
+	log.Printf("Starting the process of StoreFileMetadata: %v", ctfm)
+
 	hash := common.CalculateSHA256Hash(ctfm.BinaryData)
-
-	fm, err := uc.FileMetadataRepo.FindByHash(ctx, hash)
-	if fm != nil {
-		return "", fmt.Errorf(ErrFileMetadataAlreadyExists.Error(), hash)
-	}
-	if err != nil {
-		if _, ok := err.(common.EntityNotFoundError); !ok {
-			return "", err
-		}
-	}
-
 	fileSize, err := strconv.Atoi(ctfm.FileSize)
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 
@@ -59,15 +56,33 @@ func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *Creat
 	}
 
 	if err := uc.FileMetadataRepo.Save(ctx, tfm); err != nil {
+		log.Println(err)
+		if err, ok := err.(common.EntityConflictError); ok {
+			return "", common.EntityConflictError{
+				Message: ErrFileMetadataAlreadyExists.Error(),
+				Err:     err,
+			}
+		}
 		return "", err
 	}
+
+	log.Printf("The file metadata has been processed successfully.	: %v", ctfm)
 
 	return tfm.ID, nil
 }
 
-// StoreFileContent stores a new Transaction
 func (uc *TransactionUseCase) GetFileTransactions(ctx context.Context, fileID string) ([]*e.Transaction, error) {
-	return uc.TransactionRepo.List(ctx, fileID)
+	log.Printf("GetFileTransactions() with fileID %s", fileID)
+
+	transactions, err := uc.TransactionRepo.List(ctx, fileID)
+	if err != nil {
+		log.Printf("GetFileTransactions().err %v", err)
+		return nil, err
+	}
+
+	log.Println("GetFileTransactions.success")
+
+	return transactions, nil
 }
 
 func (uc *TransactionUseCase) handleTransaction(ctx context.Context, ct *CreateTransaction, sellerNameToID map[string]string, productIDToName map[string]*e.Product) (*e.Transaction, error) {

@@ -26,16 +26,6 @@ func setupFileMetadataRepo(mockCtrl *gomock.Controller) *mocks.MockFileMetadataR
 	m := mocks.NewMockFileMetadataRepository(mockCtrl)
 	m.
 		EXPECT().
-		FindByHash(gomock.Any(), gomock.Eq("71a1ae20f8bb23ccbc15a161364c238fe7a6360a07a26dfb2818584692c77403")).
-		Return(nil, nil).
-		AnyTimes()
-	m.
-		EXPECT().
-		FindByHash(gomock.Any(), gomock.Eq("randomHash")).
-		Return(nil, common.EntityNotFoundError{}).
-		AnyTimes()
-	m.
-		EXPECT().
 		Save(gomock.Any(), hmock.FieldValueMatcher("Hash", "71a1ae20f8bb23ccbc15a161364c238fe7a6360a07a26dfb2818584692c77403")).
 		Return(ErrFileMetadataAlreadyExists).
 		AnyTimes()

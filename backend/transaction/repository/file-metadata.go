@@ -10,6 +10,5 @@ import (
 
 // FileMetadataRepository manages transaction repository operations
 type FileMetadataRepository interface {
-	FindByHash(ctx context.Context, hash string) (*e.FileMetadata, error)
 	Save(ctx context.Context, fm *e.FileMetadata) error
 }

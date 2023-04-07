@@ -14,7 +14,7 @@ var (
 	ErrFindingOrCreateSeller     = errors.New("error finding or creating seller")
 	ErrFindingOrCreateProduct    = errors.New("error finding or creating product")
 	ErrSavingTransaction         = errors.New("error saving transaction")
-	ErrUpdatingSellerBalance     = errors.New("error updating seller balance")
+	ErrUpsertingSellerBalance    = errors.New("error upserting seller balance")
 	ErrParsingParsingLine        = errors.New("error parsing line %d: %v")
 	ErrFileMetadataAlreadyExists = errors.New("file metadata with id %s already exists")
 	ErrInvalidAmount             = errors.New("invalid amount")

@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"github.com/Ralphbaer/hubla/backend/transaction/entity"
 	"github.com/google/uuid"
@@ -50,6 +50,8 @@ func (uc *TransactionUseCase) createSeller(ctx context.Context, sellerName strin
 		return "", err
 	}
 
+	log.Printf("Created seller with name %s and ID %s\n", seller.Name, seller.ID)
+
 	return seller.ID, nil
 }
 
@@ -62,10 +64,9 @@ func (uc *TransactionUseCase) updateSellerBalance(ctx context.Context, ct *Creat
 
 	updatedBalance, err := uc.SellerBalanceRepo.Upsert(ctx, sellerBalance)
 	if err != nil {
-		return err
+		return ErrUpsertingSellerBalance
 	}
-
-	fmt.Println(updatedBalance)
+	log.Printf("Balance for seller %s updated by %s to %v\n", sellerBalance.SellerID, sellerBalance.Balance.String(), updatedBalance)
 
 	return nil
 }
