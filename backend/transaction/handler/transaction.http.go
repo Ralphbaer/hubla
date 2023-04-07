@@ -8,6 +8,7 @@ import (
 	"github.com/Ralphbaer/hubla/backend/common/hlog"
 	commonHTTP "github.com/Ralphbaer/hubla/backend/common/net/http"
 	uc "github.com/Ralphbaer/hubla/backend/transaction/usecase"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
@@ -68,6 +69,7 @@ func (handler *TransactionHandler) Create() http.Handler {
 			return
 		}
 		ctfm := &uc.CreateFileMetadata{
+			ID:          uuid.New().String(),
 			FileSize:    r.Header.Get("Content-length"),
 			Disposition: r.Header.Get("Content-Disposition"),
 			BinaryData:  binaryData,
@@ -93,7 +95,7 @@ func (handler *TransactionHandler) Create() http.Handler {
 			return
 		}
 
-		w.Header().Set("Location", fmt.Sprintf("%s/transaction-files/%s/transactions", r.Host, fileID))
+		w.Header().Set("Location", fmt.Sprintf("%s/file-transactions/%s/transactions", r.Host, fileID))
 		w.Header().Set("Content-Type", "application/json")
 
 		commonHTTP.Created(w, nil)

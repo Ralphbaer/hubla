@@ -24,6 +24,7 @@ type SellerBalance struct {
 }
 
 type CreateFileMetadata struct {
+	ID          string
 	FileSize    string
 	Disposition string
 	BinaryData  []byte

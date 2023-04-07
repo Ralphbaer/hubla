@@ -42,8 +42,8 @@ func NewRouter(sh *handler.SellerHandler, th *handler.TransactionHandler, logger
 
 	// Transaction Files
 
-	r.Handle("/transaction-files", th.Create()).Methods("POST")
-	r.Handle("/transaction-files/{id}/transactions", th.GetFileTransactions()).Methods("GET")
+	r.Handle("/file-transactions", th.Create()).Methods("POST")
+	r.Handle("/file-transactions/{id}/transactions", th.GetFileTransactions()).Methods("GET")
 
 	// Sellers
 

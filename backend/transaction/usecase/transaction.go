@@ -44,7 +44,7 @@ func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *Creat
 	}
 
 	tfm := &e.FileMetadata{
-		ID:          uuid.NewString(),
+		ID:          ctfm.ID,
 		FileSize:    fileSize,
 		Disposition: ctfm.Disposition,
 		Hash:        hash,
@@ -67,7 +67,7 @@ func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *Creat
 func (uc *TransactionUseCase) GetFileTransactions(ctx context.Context, fileID string) ([]*e.Transaction, error) {
 	hlog.NewLoggerFromContext(ctx).Infof("Retrieving file transaction by fileID %s", fileID)
 
-	transactions, err := uc.TransactionRepo.List(ctx, fileID)
+	transactions, err := uc.TransactionRepo.ListTransactionsByFileID(ctx, fileID)
 	if err != nil {
 		return nil, err
 	}

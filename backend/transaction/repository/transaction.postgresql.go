@@ -54,7 +54,7 @@ func (r *TransactionPostgresRepository) Save(ctx context.Context, t *e.Transacti
 	return nil
 }
 
-func (r *TransactionPostgresRepository) List(ctx context.Context, fileID string) ([]*e.Transaction, error) {
+func (r *TransactionPostgresRepository) ListTransactionsByFileID(ctx context.Context, fileID string) ([]*e.Transaction, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
 		return nil, err
@@ -76,14 +76,14 @@ func (r *TransactionPostgresRepository) List(ctx context.Context, fileID string)
 	}()
 
 	var transactions []*e.Transaction
-	var tTypeStr string // Add a variable to store the raw TType string
+	var tTypeStr string
 	for rows.Next() {
-		transaction := &e.Transaction{} // Create a new transaction variable for each iteration
+		transaction := &e.Transaction{}
 		if err := rows.Scan(&transaction.ID, &tTypeStr, &transaction.TDate, &transaction.ProductID,
 			&transaction.Amount, &transaction.SellerID, &transaction.CreatedAt); err != nil {
 			return nil, err
 		}
-		transaction.TType = e.TransactionTypeMapEnum[tTypeStr] // Convert the string to TransactionTypeEnum
+		transaction.TType = e.TransactionTypeMapEnum[tTypeStr]
 		transactions = append(transactions, transaction)
 	}
 

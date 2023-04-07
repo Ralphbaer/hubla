@@ -2,10 +2,13 @@ package usecase
 
 import (
 	"testing"
+	"time"
 
 	"github.com/Ralphbaer/hubla/backend/common"
 	"github.com/Ralphbaer/hubla/backend/common/hmock"
+	"github.com/shopspring/decimal"
 
+	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 	"github.com/Ralphbaer/hubla/backend/transaction/gen/mocks"
 
 	"github.com/golang/mock/gomock"
@@ -16,7 +19,7 @@ func setupTransactionUseCaseMocks(mockCtrl *gomock.Controller, t *testing.T) Tra
 		FileMetadataRepo:    setupFileMetadataRepo(mockCtrl),
 		SellerRepo:          setupSellerRepo(mockCtrl),
 		ProductRepo:         nil,
-		TransactionRepo:     nil,
+		TransactionRepo:     setupTransactionRepo(mockCtrl),
 		FileTransactionRepo: nil,
 		SellerBalanceRepo:   nil,
 	}
@@ -26,7 +29,7 @@ func setupFileMetadataRepo(mockCtrl *gomock.Controller) *mocks.MockFileMetadataR
 	m := mocks.NewMockFileMetadataRepository(mockCtrl)
 	m.
 		EXPECT().
-		Save(gomock.Any(), hmock.FieldValueMatcher("Hash", "71a1ae20f8bb23ccbc15a161364c238fe7a6360a07a26dfb2818584692c77403")).
+		Save(gomock.Any(), hmock.FieldValueMatcher("ID", "1")).
 		Return(ErrFileMetadataAlreadyExists).
 		AnyTimes()
 	m.
@@ -62,4 +65,41 @@ func setupSellerRepo(mockCtrl *gomock.Controller) *mocks.MockSellerRepository {
 		AnyTimes()
 
 	return m
+}
+
+func setupTransactionRepo(mockCtrl *gomock.Controller) *mocks.MockTransactionRepository {
+	m := mocks.NewMockTransactionRepository(mockCtrl)
+	m.
+		EXPECT().
+		Save(gomock.Any(), hmock.FieldValueMatcher("ID", "test-transaction-id")).
+		Return(common.EntityConflictError{}).
+		AnyTimes()
+	m.
+		EXPECT().
+		Save(gomock.Any(), gomock.Any()).
+		Return(nil).
+		AnyTimes()
+	m.
+		EXPECT().
+		ListTransactionsByFileID(gomock.Any(), gomock.Eq("test-file-id")).
+		Return([]*e.Transaction{
+			validTransaction,
+		}, nil).
+		AnyTimes()
+	m.
+		EXPECT().
+		ListTransactionsByFileID(gomock.Any(), gomock.Any()).
+		Return(nil, nil).
+		AnyTimes()
+
+	return m
+}
+
+var validTransaction = &e.Transaction{
+	ID:        "test-transaction-id",
+	TType:     e.CREATOR_SALE,
+	TDate:     time.Now(),
+	ProductID: "test-product-id",
+	Amount:    decimal.NewFromFloat(100.00),
+	SellerID:  "test-seller-id",
 }
