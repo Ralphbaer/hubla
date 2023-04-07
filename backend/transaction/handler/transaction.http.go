@@ -59,10 +59,11 @@ func (handler *TransactionHandler) Create() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		logger := hlog.NewLoggerFromContext(ctx)
-		logger.Debug("Create transactions thought transaction files")
+		logger.Debug("Create transactions")
 
 		binaryData, err := ioutil.ReadAll(r.Body)
 		if err != nil {
+			logger.Error(err.Error())
 			commonHTTP.WithError(w, err)
 			return
 		}
@@ -74,37 +75,46 @@ func (handler *TransactionHandler) Create() http.Handler {
 
 		fileID, err := handler.UseCase.StoreFileMetadata(ctx, ctfm)
 		if err != nil {
+			logger.Error(err.Error())
 			commonHTTP.WithError(w, err)
 			return
 		}
 
 		transactions, err := handler.UseCase.StoreFileContent(ctx, binaryData)
 		if err != nil {
+			logger.Error(err.Error())
 			commonHTTP.WithError(w, err)
 			return
 		}
 
 		if err := handler.UseCase.CreateFileTransactions(ctx, fileID, transactions); err != nil {
+			logger.Error(err.Error())
 			commonHTTP.WithError(w, err)
 			return
 		}
 
-		w.Header().Set("Location", fmt.Sprintf("%s/files/%s/transactions", r.Host, fileID))
+		w.Header().Set("Location", fmt.Sprintf("%s/transaction-files/%s/transactions", r.Host, fileID))
 		w.Header().Set("Content-Type", "application/json")
 
-		commonHTTP.NoContent(w)
+		commonHTTP.Created(w, nil)
 	})
 }
 
 func (handler *TransactionHandler) GetFileTransactions() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		logger := hlog.NewLoggerFromContext(ctx)
+		logger.Debug("Get file transactions")
+
 		fileID := mux.Vars(r)["id"]
 		transactions, err := handler.UseCase.GetFileTransactions(r.Context(), fileID)
 		if err != nil {
+			logger.Error(err.Error())
 			commonHTTP.WithError(w, err)
 			return
 		}
 		if transactions == nil {
+			logger.Error(err.Error())
 			commonHTTP.OK(w, []interface{}{})
 			return
 		}

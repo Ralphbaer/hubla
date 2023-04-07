@@ -29,7 +29,7 @@ test:
 unit-test:
 	mkdir -p $(artifacts-dir) && \
 	gotestsum --format short-verbose --junitfile $(artifacts-dir)/junit-report.xml \
-	./... github.com/Ralphbaer/hubla/common... \
+	./... github.com/Ralphbaer/hubla/backend/common... \
 	-coverprofile=$(artifacts-dir)/coverage.out
 
 integration-test:

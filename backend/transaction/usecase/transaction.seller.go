@@ -50,8 +50,6 @@ func (uc *TransactionUseCase) createSeller(ctx context.Context, sellerName strin
 		return "", err
 	}
 
-	log.Printf("Created seller with name %s and ID %s\n", seller.Name, seller.ID)
-
 	return seller.ID, nil
 }
 
@@ -66,6 +64,7 @@ func (uc *TransactionUseCase) updateSellerBalance(ctx context.Context, ct *Creat
 	if err != nil {
 		return ErrUpsertingSellerBalance
 	}
+
 	log.Printf("Balance for seller %s updated by %s to %v\n", sellerBalance.SellerID, sellerBalance.Balance.String(), updatedBalance)
 
 	return nil
