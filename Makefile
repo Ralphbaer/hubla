@@ -26,7 +26,7 @@ logs:
 	./make.sh "logs"
 
 lint:
-#	./make.sh "lint"
+	./make.sh "lint"
 
 format:
 	./make.sh "format"
