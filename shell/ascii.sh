@@ -1,4 +1,4 @@
-source colors.sh
+source "$CURR_DIR"/shell/colors.sh
 
 border () {
     local str="$*"      # Put all arguments into single string

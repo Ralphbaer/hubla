@@ -11,7 +11,7 @@ type App interface {
 	Run(launcher *Launcher) error
 }
 
-//LauncherOption defines a function option for Launcher
+// LauncherOption defines a function option for Launcher
 type LauncherOption func(l *Launcher)
 
 // RunApp start all process registered before to the launcher
@@ -36,7 +36,6 @@ func (l *Launcher) Add(appName string, a App) *Launcher {
 
 // Run run every application registered before with Run method.
 func (l *Launcher) Run() {
-
 	count := len(l.apps)
 	l.wg.Add(count)
 
@@ -45,7 +44,6 @@ func (l *Launcher) Run() {
 	print(fmt.Sprintf("Starting %d app(s)\n", count))
 
 	for name, app := range l.apps {
-
 		go func(name string, app App) {
 			print("--")
 			print(fmt.Sprintf("Launcher: App \u001b[33m(%s)\u001b[0m starting\n", name))
@@ -68,7 +66,6 @@ func (l *Launcher) Run() {
 
 // NewLauncher create an instance of Launch
 func NewLauncher(opts ...LauncherOption) *Launcher {
-
 	l := &Launcher{
 		apps:    make(map[string]App),
 		wg:      new(sync.WaitGroup),

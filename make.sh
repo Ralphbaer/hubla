@@ -3,7 +3,6 @@
 CURR_DIR=$PWD
 LOGO=$(cat "$CURR_DIR"/shell/logo.txt)
 
-echo CURR_DIR
 source "$CURR_DIR"/shell/colors.sh
 source "$CURR_DIR"/shell/ascii.sh
 
@@ -53,6 +52,7 @@ lint() {
 
 format() {
   title1 "Formatting all golang source code"
+  cd ./backend
   go fmt ./...
   lineOk "All go files formatted"
 }

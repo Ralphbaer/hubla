@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="16" failures="0" errors="0" time="1.283073">
-	<testsuite tests="1" failures="0" time="0.344000" name="github.com/Ralphbaer/hubla/backend/common" timestamp="2023-04-07T09:20:23-03:00">
+<testsuites tests="22" failures="0" errors="0" time="1.470536">
+	<testsuite tests="1" failures="0" time="0.543000" name="github.com/Ralphbaer/hubla/backend/common" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 		<testcase classname="github.com/Ralphbaer/hubla/backend/common" name="TestGetenvBool" time="0.000000"></testcase>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/console" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/console" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/hlog" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/hlog" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/hlogrus" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/hlogrus" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="4" failures="0" time="0.502000" name="github.com/Ralphbaer/hubla/backend/common/hmock" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="4" failures="0" time="0.375000" name="github.com/Ralphbaer/hubla/backend/common/hmock" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
@@ -30,74 +30,74 @@
 		<testcase classname="github.com/Ralphbaer/hubla/backend/common/hmock" name="TestFieldValue_Matches/neq1" time="0.000000"></testcase>
 		<testcase classname="github.com/Ralphbaer/hubla/backend/common/hmock" name="TestFieldValue_Matches" time="0.000000"></testcase>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/hpointers" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/hpointers" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/hpostgres" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/hpostgres" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/jwt" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/jwt" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="2" failures="0" time="0.189000" name="github.com/Ralphbaer/hubla/backend/common/net/http" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="2" failures="0" time="0.362000" name="github.com/Ralphbaer/hubla/backend/common/net/http" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 		<testcase classname="github.com/Ralphbaer/hubla/backend/common/net/http" name="TestNewOfTypeWithSimpleStruct" time="0.000000"></testcase>
 		<testcase classname="github.com/Ralphbaer/hubla/backend/common/net/http" name="TestNewOfTypeWithComplexStruct" time="0.000000"></testcase>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/zcache" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/zcache" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/zpointers" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/common/zpointers" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction/app" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction/app" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction/entity" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction/entity" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction/gen" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction/gen" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction/gen/mocks" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction/gen/mocks" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction/handler" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction/handler" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction/repository" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/Ralphbaer/hubla/backend/transaction/repository" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
 	</testsuite>
-	<testsuite tests="9" failures="0" time="0.191000" name="github.com/Ralphbaer/hubla/backend/transaction/usecase" timestamp="2023-04-07T09:20:23-03:00">
+	<testsuite tests="15" failures="0" time="0.210000" name="github.com/Ralphbaer/hubla/backend/transaction/usecase" timestamp="2023-04-07T15:49:52-03:00">
 		<properties>
 			<property name="go.version" value="go1.20.2 darwin/arm64"></property>
 		</properties>
@@ -110,5 +110,11 @@
 		<testcase classname="github.com/Ralphbaer/hubla/backend/transaction/usecase" name="TestReadFileData/Valid_file_data" time="0.000000"></testcase>
 		<testcase classname="github.com/Ralphbaer/hubla/backend/transaction/usecase" name="TestReadFileData/Empty_file_data" time="0.000000"></testcase>
 		<testcase classname="github.com/Ralphbaer/hubla/backend/transaction/usecase" name="TestReadFileData" time="0.000000"></testcase>
+		<testcase classname="github.com/Ralphbaer/hubla/backend/transaction/usecase" name="TestTransactionUseCase_StoreFileMetadata/Valid_file_metadata" time="0.000000"></testcase>
+		<testcase classname="github.com/Ralphbaer/hubla/backend/transaction/usecase" name="TestTransactionUseCase_StoreFileMetadata/Entity_conflict" time="0.000000"></testcase>
+		<testcase classname="github.com/Ralphbaer/hubla/backend/transaction/usecase" name="TestTransactionUseCase_StoreFileMetadata" time="0.000000"></testcase>
+		<testcase classname="github.com/Ralphbaer/hubla/backend/transaction/usecase" name="TestTransactionUseCase_GetFileTransactions/Valid_file_ID" time="0.000000"></testcase>
+		<testcase classname="github.com/Ralphbaer/hubla/backend/transaction/usecase" name="TestTransactionUseCase_GetFileTransactions/No_content" time="0.000000"></testcase>
+		<testcase classname="github.com/Ralphbaer/hubla/backend/transaction/usecase" name="TestTransactionUseCase_GetFileTransactions" time="0.000000"></testcase>
 	</testsuite>
 </testsuites>
