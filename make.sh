@@ -12,6 +12,7 @@ GITHUB_PATH="$CURR_DIR"/.git
 
 # Set executable permissions 🆗
 chmod +x "$PWD/backend/backend.sh"
+chmod +x "$PWD/.git/hooks/pre-commit"
 
 # Backend.sh 🛠
 make_backend() {
