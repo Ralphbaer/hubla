@@ -33,6 +33,8 @@ format:
 	
 setup-env:
 	cp -R ./github/hooks/* .git/hooks/
+	chmod +x .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-push
 
 run:
 	docker-compose up --build
