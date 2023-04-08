@@ -29,6 +29,7 @@ require (
 	github.com/swaggo/swag v1.8.12 // indirect
 	github.com/urfave/cli/v2 v2.25.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
+	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
 	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/tools v0.8.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

@@ -1,5 +1,5 @@
 build:
-	./make.sh "build"
+	./backend.sh "build"
 
 help:
 	@echo "Management commands"
@@ -17,22 +17,16 @@ help:
 	@echo ""
 
 test:
-	./make.sh "test"
+	./backend.sh "test"
 
 clean:
-	./make.sh "clean"
+	./backend.sh "clean"
 
 logs:
-	./make.sh "logs"
+	./backend.sh "logs_backend"
 
 lint:
-#	./make.sh "lint"
+	./backend.sh "lint_backend"
 
 format:
-	./make.sh "format"
-	
-setup-env:
-	cp -R ./github/hooks/* .git/hooks/
-
-run:
-	docker-compose up --build
+	./backend.sh "format_backend"

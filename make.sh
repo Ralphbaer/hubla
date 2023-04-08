@@ -1,14 +1,39 @@
 #!/bin/bash
 
+# General Config ⚙️
 CURR_DIR=$PWD
-LOGO=$(cat "$CURR_DIR"/shell/logo.txt)
 
-source "$CURR_DIR"/shell/colors.sh
-source "$CURR_DIR"/shell/ascii.sh
+# Hubla Style 🖌️
+source "$CURR_DIR"/shell/variables.sh
 
-echo "${bold}${blue}$LOGO${normal}"
+# Github Hooks 🪝
+GITHUB_PACKAGE_PATH="$CURR_DIR"/github/hooks
+GITHUB_PATH="$CURR_DIR"/.git
+
+# Set executable permissions 🆗
+chmod +x "$PWD/backend/backend.sh"
+
+# Backend.sh 🛠
+make_backend() {
+  source "$CURR_DIR"/backend/backend.sh
+}
+
+lint() {
+  lint_backend
+}
+
+logs() {
+  logs_backend
+}
+
+format() {
+  cd ./backend
+  format_backend
+}
 
 makeCmd() {
+  echo "${bold}${blue}$LOGO${normal}"
+  make_backend
   cmd=$1
   for DIR in "$CURR_DIR"/*; do
     FILE="$DIR"/Makefile
@@ -30,58 +55,39 @@ makeCmd() {
   done
 }
 
-lint() {
-  title1 "STARTING LINT"
-  out=$(golint $CURR_DIR/... | tee /dev/tty)
-  out_err=$?
-  err=0
-  if [ $out_err -ne 0 ]; then
-    echo -e "\n${bold}${red}An error has occurred during lint process\n"
-    err=1
-    exit 1
-  fi
-  if [ -n "$out" ]; then
-    echo -e "\n${red}Some lint rules are broken ${bold}[WARNING]${normal}\n"
-    err=1
-    exit 1
-  fi
-  if [ ! $err -ne 0 ]; then
-    lineOk "\nAll lint rules passed"
-  fi
-}
-
-format() {
-  title1 "Formatting all golang source code"
-  cd ./backend
-  go fmt ./...
-  lineOk "All go files formatted"
-}
-
-checkLogs() {
-  title1 "STARTING LOGS ANALYZER"
-  allFiles=$(find . -type f -path '*usecase*/*' -name '*.go')
-  err=0
-  while IFS= read -r path; do
-     file=$( awk 'f && f-- {print} /err != nil/ { f = 1 }' $path | column)
-     if [[ ! -z "$file" && $path != *"_test"* && $path != *"./common"* ]]; then
-          while IFS= read -r line; do
-              if [[ "$line" != *"logger.Error"* && "$line" != *"log.Error"* ]]; then
-              err=1
-              echo $path
-              fi
-          done <<< "$file"
-     fi
-  done <<< "$allFiles"
-  if [ $err -ne 0 ]; then
-      echo -e "\n${yellow}You need to log all errors inside usecases after they are handled. ${bold}[WARNING]${normal}\n"
-  fi
+checkHooks() {
+    err=0
+    echo "Checking github hooks..."
+    for FILE in "$GITHUB_PACKAGE_PATH"/*; do
+      f="$(basename -- $FILE)"
+      FILE2="$GITHUB_PATH"/hooks/$f
+      if [ -f "$FILE2" ]; then
+        if cmp -s "$FILE" "$FILE2"; then
+          lineOk "Hook file ${underline}$f${normal} installed and updated"
+        else
+          lineError "Hook file ${underline}$f${normal} ${red}installed but out-of-date [OUT-OF-DATE]"
+          err=1
+        fi
+      else
+        lineError "Hook file ${underline}$f${normal} ${red}not installed [NOT INSTALLED]"
+        err=1
+      fi
+      if [ $err -ne 0 ]; then
+        echo -e "\nRun ${bold}make setup-env${normal} to setup your development environment, then try again.\n"
+        exit 1
+      fi
+    done
 }
 
 echo -e "\n\n"
 title1 "STARTING PRE-COMMIT SCRIPT"
 
+checkHooks
+
 if [ "$1" == "lint" ]; then
   lint
+elif [ "$1" == "logs" ]; then
+  logs
 elif [ "$1" == "format" ]; then
   format
 else
@@ -89,8 +95,8 @@ else
   makeCmd "$1"
 fi
 
-if [ "$1" != "clean" -a "$1" != "lint" -a "$1" != "checkEnvs" -a "$1" != "docs" -a "$1" != "format" ]; then
-  format
+if [ "$1" != "clean" -a "$1" != "lint" -a "$1" != "format" -a "$1" != "logs" ]; then
   lint
- # checkLogs
+  logs
+  format
 fi
