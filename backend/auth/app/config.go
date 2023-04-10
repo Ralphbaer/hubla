@@ -12,6 +12,8 @@ type Config struct {
 	ServerAddress                  string `env:"SERVER_ADDRESS"`
 	HydraAdminURL                  string `env:"HYDRA_ADMIN_URL"`
 	SpecURL                        string `env:"SPEC_URL"`
+	LocalHostCSR                   string `env:"LOCAL_HOST_CSR"`
+	LocalHostKey                   string `env:"LOCAL_HOST_KEY"`
 
 	Origin                string `env:"ORIGIN"`
 	AccessTokenPrivateKey string `env:"ACCESS_TOKEN_PRIVATE_KEY"`

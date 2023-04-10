@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -64,7 +63,10 @@ func (uc *TransactionUseCase) readFileData(binaryData []byte) ([]string, error) 
 	}
 
 	if err := scanner.Err(); err != nil {
-		return nil, fmt.Errorf(ErrScanningFile.Error(), err)
+		return nil, common.UnprocessableOperationError{
+			Err:     err,
+			Message: err.Error(),
+		}
 	}
 
 	return lines, nil
@@ -73,7 +75,7 @@ func (uc *TransactionUseCase) readFileData(binaryData []byte) ([]string, error) 
 func (uc *TransactionUseCase) processLine(ctx context.Context, line string, lineNumber int, seller map[string]string, product map[string]*e.Product) (*e.Transaction, error) {
 	entry, err := parseLine(line)
 	if err != nil {
-		return nil, common.ValidationError{
+		return nil, common.UnprocessableOperationError{
 			Message: ErrParsingParsingLine.Error(),
 			Err:     err,
 		}

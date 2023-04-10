@@ -36,9 +36,12 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 	if err != nil {
 		return nil, err
 	}
+	success := false
 	defer func() {
-		if err := tx.Rollback(); err != nil {
-			hlog.NewLoggerFromContext(ctx).Errorf("Failed to rollback transaction: %v", err)
+		if !success {
+			if err := tx.Rollback(); err != nil {
+				hlog.NewLoggerFromContext(ctx).Errorf("Failed to rollback transaction: %v", err)
+			}
 		}
 	}()
 

@@ -35,3 +35,7 @@ type CreateFileMetadata struct {
 	Disposition string
 	BinaryData  []byte
 }
+
+type FileID struct {
+	ID string `json:"id"`
+}

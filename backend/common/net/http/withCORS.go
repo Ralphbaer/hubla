@@ -8,17 +8,19 @@ import (
 )
 
 const (
-	defaultAccessControlAllowOrigin   = "*"
+	// defaultAccessControlAllowOrigin   = "*"
 	defaultAccessControlAllowMethods  = "POST, GET, OPTIONS, PUT, DELETE, PATCH"
-	defaultAccessControlAllowHeaders  = "Accept, Content-Type, Content-Length, Content-Disposition, Accept-Encoding, X-CSRF-Token, Authorization, X-Total-Count"
-	defaultAccessControlExposeHeaders = "X-Total-Count"
+	defaultAccessControlAllowHeaders  = "Accept, Content-Type, Content-Length, Content-Disposition, Accept-Encoding, X-CSRF-Token, Authorization, X-Total-Count, X-Requested-With"
+	defaultAccessControlExposeHeaders = "Location"
 )
 
 // WithCORS register a middleware with public global CORS. Use env vars to override it:
 // Variables: ACCESS_CONTROL_ALLOW_ORIGIN, ACCESS_CONTROL_ALLOW_METHODS and ACCESS_CONTROL_ALLOW_HEADERS
 func WithCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", common.GetenvOrDefault("ACCESS_CONTROL_ALLOW_ORIGIN", defaultAccessControlAllowOrigin))
+		origin := r.Header.Get("Origin")
+		w.Header().Set("Access-Control-Allow-Origin", origin)
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Methods", common.GetenvOrDefault("ACCESS_CONTROL_ALLOW_METHODS", defaultAccessControlAllowMethods))
 		w.Header().Set("Access-Control-Allow-Headers", common.GetenvOrDefault("ACCESS_CONTROL_ALLOW_HEADERS", defaultAccessControlAllowHeaders))
 		w.Header().Set("Access-Control-Expose-Headers", common.GetenvOrDefault("ACCESS_CONTROL_EXPOSE_HEADERS", defaultAccessControlExposeHeaders))

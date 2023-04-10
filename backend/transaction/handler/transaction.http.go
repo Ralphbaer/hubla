@@ -52,16 +52,16 @@ func (handler *TransactionHandler) Create() http.Handler {
 			return
 		}
 
-		if err := handler.UseCase.CreateFileTransactions(ctx, fileID, transactions); err != nil {
+		if err := handler.UseCase.CreateFileTransactions(ctx, fileID.ID, transactions); err != nil {
 			logger.Error(err.Error())
 			commonHTTP.WithError(w, err)
 			return
 		}
 
-		w.Header().Set("Location", fmt.Sprintf("%s/file-transactions/%s/transactions", r.Host, fileID))
+		w.Header().Set("Location", fmt.Sprintf("%s/file-transactions/%s/transactions", r.Host, fileID.ID))
 		w.Header().Set("Content-Type", "application/json")
 
-		commonHTTP.Created(w, nil)
+		commonHTTP.Created(w, fileID)
 	})
 }
 

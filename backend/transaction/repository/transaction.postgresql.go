@@ -35,9 +35,12 @@ func (r *TransactionPostgresRepository) Save(ctx context.Context, t *e.Transacti
 	if err != nil {
 		return err
 	}
+	success := false
 	defer func() {
-		if err := tx.Rollback(); err != nil {
-			hlog.NewLoggerFromContext(ctx).Errorf("Failed to rollback transaction: %v", err)
+		if !success {
+			if err := tx.Rollback(); err != nil {
+				hlog.NewLoggerFromContext(ctx).Errorf("Failed to rollback transaction: %v", err)
+			}
 		}
 	}()
 

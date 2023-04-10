@@ -35,13 +35,13 @@ func (uc *TransactionUseCase) StoreFileContent(ctx context.Context, binaryData [
 
 // StoreFileMetadata stores the given file metadata information in the database using the FileMetadataRepo.
 // It returns the file ID if successfully saved, or an error if the query fails.
-func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *CreateFileMetadata) (string, error) {
+func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *CreateFileMetadata) (*FileID, error) {
 	hlog.NewLoggerFromContext(ctx).Infof("Starting the process of StoreFileMetadata: %v", ctfm)
 
 	hash := common.CalculateSHA256Hash(ctfm.BinaryData)
 	fileSize, err := strconv.Atoi(ctfm.FileSize)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	tfm := &e.FileMetadata{
@@ -54,15 +54,15 @@ func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *Creat
 
 	if err := uc.FileMetadataRepo.Save(ctx, tfm); err != nil {
 		if err, ok := err.(common.EntityConflictError); ok {
-			return "", common.EntityConflictError{
+			return nil, common.EntityConflictError{
 				Message: ErrFileMetadataAlreadyExists.Error(),
 				Err:     err,
 			}
 		}
-		return "", err
+		return nil, err
 	}
 
-	return tfm.ID, nil
+	return &FileID{ID: tfm.ID}, nil
 }
 
 // GetFileTransactions retrieves all transactions associated with the provided file ID.

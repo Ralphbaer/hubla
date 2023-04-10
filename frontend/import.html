@@ -5,10 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Import File</title>
-    <link rel="stylesheet" href="import-styles.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/import.css">
 </head>
 
 <body>
+    <div id="toast-container">
+        <div id="toast"></div>
+    </div>
     <div class="import-file-container">
         <h1>Import File</h1>
         <div class="upload-container">
@@ -16,30 +20,9 @@
             <input type="file" id="upload" accept=".txt" style="display: none;">
         </div>
         <button type="button">Confirm</button>
-        <div class="table-container" style="display: none;">
-            <div class="loader">
-                <div class="loader__spinner"></div>
-            </div>
-            <table class="table">
-                <thead class="table__head">
-                    <tr>
-                        <th>ID</th>
-                        <th>Type</th>
-                        <th>Date</th>
-                        <th>Product ID</th>
-                        <th>Amount</th>
-                        <th>Seller ID</th>
-                        <th>Created At</th>
-                    </tr>
-                </thead>
-                <tbody class="table__body">
-                    <!-- Data will be populated here -->
-                </tbody>
-            </table>
-        </div>
     </div>
 
-    <script type="module" src="import.js"></script>
+    <script type="module" src="js/import.js"></script>
 </body>
 
 </html>

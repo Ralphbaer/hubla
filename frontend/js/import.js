@@ -1,56 +1,43 @@
+import { getJwtToken } from './jwt.js';
+import { showError, handleErrors } from './error.js';
+
 async function validateAndUploadFile(file, filename) {
-    if (!file || file.type !== "text/plain") {
-        alert("Invalid file type. Please upload a .txt file.");
+    if (!file || file.type !== 'text/plain') {
+        showError('Invalid file type. Please upload a .txt file.');
         return;
     }
 
+    const jwtToken = getJwtToken();
+
     try {
         const formData = new FormData();
-        formData.append("file", file, filename);
+        formData.append('file', file, filename);
 
-        const response = await fetch("http://localhost:3000/transactions/upload", {
-            method: "POST",
+        const response = await fetch('http://localhost:3000/file-transactions', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/octet-stream",
-                "Content-Disposition": `attachment; filename="${filename}"`,
-                "Content-Length": file.size
+                'Content-Type': 'application/octet-stream',
+                'Content-Disposition': `attachment; filename="${filename}"`,
+                'Content-Length': file.size,
+                'Authorization': `Bearer ${jwtToken}`,
             },
-            body: file
-        });
+            body: file,
+        }).then(handleErrors);
 
-        if (!response.ok) {
-            throw new Error(`HTTP error ${response.status}`);
+        if (response.status === 201) {
+            const { id } = await response.json()
+            return id;
+        } else {
+            showError('Unexpected server response. Please try again later.');
         }
-
-        const data = await response.json();
-
-        return data;
     } catch (error) {
-        console.error("Error uploading file:", error);
-        alert("Error uploading file. Please try again.");
+        showError(error.message);
     }
-}
-
-function populateTable(data) {
-    const tableBody = document.querySelector("table tbody");
-    tableBody.innerHTML = "";
-
-    data.forEach((item) => {
-        const row = document.createElement("tr");
-
-        Object.values(item).forEach((value) => {
-            const cell = document.createElement("td");
-            cell.textContent = value;
-            row.appendChild(cell);
-        });
-
-        tableBody.appendChild(row);
-    });
 }
 
 let uploadedFile = null;
 
-function onFileUpload(event) {
+function handleFileUpload(event) {
     uploadedFile = event.target.files[0];
 
     if (uploadedFile) {
@@ -58,21 +45,22 @@ function onFileUpload(event) {
     }
 }
 
-async function onFileConfirm() {
+async function confirmFileUpload() {
     if (!uploadedFile) {
-        alert("No file has been uploaded. Please upload a file before confirming.");
+        showError('No file has been uploaded. Please upload a file before confirming.');
         return;
     }
 
     const fileName = uploadedFile.name;
-    const data = await validateAndUploadFile(uploadedFile, fileName);
+    const id = await validateAndUploadFile(uploadedFile, fileName);
 
-    if (data) {
-        alert(`File processed successfully. ${data.length} rows processed.`);
+    if (id) {
+        window.location.href = 'http://127.0.0.1:5500/frontend/transactions.html';
+        window.location.hash = `transactions/${id}`;
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelector('#upload').addEventListener('change', onFileUpload);
-    document.querySelector('button').addEventListener('click', onFileConfirm);
+    document.querySelector('#upload').addEventListener('change', handleFileUpload);
+    document.querySelector('button').addEventListener('click', confirmFileUpload);
 });
