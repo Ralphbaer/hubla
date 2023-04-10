@@ -10,12 +10,12 @@ import (
 	"github.com/lib/pq"
 )
 
-// PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
+// SellerPostgresRepository implements the SellerRepository interface for storing and retrieving sellers in Postgres.
 type SellerPostgresRepository struct {
 	connection *hpostgres.PostgresConnection
 }
 
-// NewSalesPostgreSQLRepository creates an instance of repository.SalesPostgreSQLRepository
+// NewSellerPostgreSQLRepository creates a new instance of SellerPostgresRepository with the given Postgres connection.
 func NewSellerPostgreSQLRepository(c *hpostgres.PostgresConnection) *SellerPostgresRepository {
 	return &SellerPostgresRepository{
 		connection: c,
@@ -53,6 +53,8 @@ func (r *SellerPostgresRepository) Save(ctx context.Context, s *e.Seller) error 
 	return nil
 }
 
+// FindBySellerName retrieves a Seller entity from the Postgres database by the given seller name.
+// It returns a Seller object if found, or nil if no seller is found.
 func (r *SellerPostgresRepository) FindBySellerName(ctx context.Context, sellerName string) (*e.Seller, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {

@@ -23,7 +23,7 @@ func TestParseLine(t *testing.T) {
 			name: "valid line",
 			line: "42022-01-16T14:13:54-03:00CURSO DE BEM-ESTAR            0000004500THIAGO OLIVEIRA",
 			expected: &CreateTransaction{
-				TType:       e.COMMISSION_RECEIVED,
+				TType:       e.CommissionReceived,
 				TDate:       mustParseTime("2022-01-16T14:13:54-03:00"),
 				ProductName: "CURSO DE BEM-ESTAR",
 				Amount:      decimal.NewFromInt(4500),

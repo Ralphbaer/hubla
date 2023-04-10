@@ -10,19 +10,20 @@ import (
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 )
 
-// PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
+// FileTransactionPostgresRepository implements the FileTransactionRepository interface for storing and retrieving file transactions in Postgres.
 type FileTransactionPostgresRepository struct {
 	connection *hpostgres.PostgresConnection
 }
 
-// NewSalesPostgreSQLRepository creates an instance of repository.SalesPostgreSQLRepository
+// NewFileTransactionPostgreSQLRepository creates a new instance of FileTransactionPostgresRepository with the given Postgres connection.
 func NewFileTransactionPostgreSQLRepository(c *hpostgres.PostgresConnection) *FileTransactionPostgresRepository {
 	return &FileTransactionPostgresRepository{
 		connection: c,
 	}
 }
 
-// Save stores the given entity.Sales into PostgreSQL
+// Save saves the provided file transaction to the PostgreSQL database.
+// Returns an error if there's any issue.
 func (r *FileTransactionPostgresRepository) Save(ctx context.Context, ft *e.FileTransaction) error {
 	db, err := r.connection.GetDB()
 	if err != nil {
@@ -48,6 +49,8 @@ func (r *FileTransactionPostgresRepository) Save(ctx context.Context, ft *e.File
 	return nil
 }
 
+// Find retrieves a file transaction by its ID from the PostgreSQL database.
+// Returns a pointer to the transaction and an error if there's any issue.
 func (r *FileTransactionPostgresRepository) Find(ctx context.Context, ID string) (*e.FileTransaction, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {

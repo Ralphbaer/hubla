@@ -97,7 +97,7 @@ func setupTransactionRepo(mockCtrl *gomock.Controller) *mocks.MockTransactionRep
 
 var validTransaction = &e.Transaction{
 	ID:        "test-transaction-id",
-	TType:     e.CREATOR_SALE,
+	TType:     e.CreatorSale,
 	TDate:     time.Now(),
 	ProductID: "test-product-id",
 	Amount:    decimal.NewFromFloat(100.00),

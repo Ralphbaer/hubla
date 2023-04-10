@@ -10,19 +10,20 @@ import (
 	"github.com/lib/pq"
 )
 
-// PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
+// FileMetadataPostgresRepository implements the Repository interface for storing and retrieving file metadata in Postgres.
 type FileMetadataPostgresRepository struct {
 	connection *hpostgres.PostgresConnection
 }
 
-// NewSalesPostgreSQLRepository creates an instance of repository.SalesPostgreSQLRepository
+// NewFileMetadataPostgreSQLRepository creates a new instance of FileMetadataPostgresRepository with the given Postgres connection.
 func NewFileMetadataPostgreSQLRepository(c *hpostgres.PostgresConnection) *FileMetadataPostgresRepository {
 	return &FileMetadataPostgresRepository{
 		connection: c,
 	}
 }
 
-// Save stores the given entity.Sales into PostgreSQL
+// Save inserts the given file metadata into the Postgres database, wrapped in a transaction.
+// If the entity already exists, it returns a common.EntityConflictError.
 func (r *FileMetadataPostgresRepository) Save(ctx context.Context, fm *e.FileMetadata) error {
 	db, err := r.connection.GetDB()
 	if err != nil {

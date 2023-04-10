@@ -22,6 +22,9 @@ func NewSellerBalancePostgreSQLRepository(c *hpostgres.PostgresConnection) *Sell
 	}
 }
 
+// Upsert upserts a SellerBalance entity in the Postgres database with the given values.
+// If the entity already exists, it updates its balance value by adding the new value to the existing one.
+// It returns the new balance value after the upsert operation is performed.
 func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.SellerBalance) (*float64, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
@@ -50,6 +53,8 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 	return &newBalance, nil
 }
 
+// Find retrieves a SellerBalanceView entity from the Postgres database by the given seller ID.
+// It returns a SellerBalanceView object containing the seller ID, name, balance, and updated time.
 func (r *SellerBalancePostgresRepository) Find(ctx context.Context, sellerID string) (*e.SellerBalanceView, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {

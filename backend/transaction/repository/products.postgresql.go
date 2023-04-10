@@ -10,12 +10,15 @@ import (
 	"github.com/lib/pq"
 )
 
-// PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
+// ProductPostgresRepository is a struct that implements the ProductRepository interface
+// for retrieving and saving product data from a PostgreSQL database.
 type ProductPostgresRepository struct {
 	connection *hpostgres.PostgresConnection
 }
 
-// NewSalesPostgreSQLRepository creates an instance of repository.SalesPostgreSQLRepository
+// NewProductPostgreSQLRepository creates a new instance of the
+// ProductPostgresRepository, which implements the ProductRepository interface
+// for retrieving and saving product data from a PostgreSQL database.
 func NewProductPostgreSQLRepository(c *hpostgres.PostgresConnection) *ProductPostgresRepository {
 	return &ProductPostgresRepository{
 		connection: c,
@@ -54,6 +57,8 @@ func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) erro
 	return nil
 }
 
+// FindByProductName retrieves a Product entity from the Postgres database by the given product name.
+// It returns a Product object if found, or nil if no product is found.
 func (r *ProductPostgresRepository) FindByProductName(ctx context.Context, productName string) (*e.Product, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {

@@ -33,7 +33,8 @@ func (uc *TransactionUseCase) StoreFileContent(ctx context.Context, binaryData [
 	return entries, nil
 }
 
-// StoreFileContent stores a new Transaction
+// StoreFileMetadata stores the given file metadata information in the database using the FileMetadataRepo.
+// It returns the file ID if successfully saved, or an error if the query fails.
 func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *CreateFileMetadata) (string, error) {
 	hlog.NewLoggerFromContext(ctx).Infof("Starting the process of StoreFileMetadata: %v", ctfm)
 
@@ -93,7 +94,7 @@ func (uc *TransactionUseCase) handleTransaction(ctx context.Context, ct *CreateT
 		return nil, err
 	}
 
-	if ct.TType == e.AFFILIATE_SALE {
+	if ct.TType == e.AffiliateSale {
 		sellerID = product.CreatorID
 	}
 

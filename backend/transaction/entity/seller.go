@@ -26,6 +26,7 @@ type SellerBalanceView struct {
 // SellerTypeEnum is a custom type representing different types of sellers.
 type SellerTypeEnum uint8
 
+// Constants representing different types of sellers.
 const (
 	CREATOR   SellerTypeEnum = 1
 	AFFILIATE SellerTypeEnum = 2

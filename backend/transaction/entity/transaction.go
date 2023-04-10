@@ -19,44 +19,52 @@ type Transaction struct {
 	CreatedAt time.Time           `json:"created_at"`
 }
 
+// TransactionTypeEnum is a custom type that represents the type of transaction.
 type TransactionTypeEnum uint8
 
+// These constants represent the different types of transactions.
 const (
-	CREATOR_SALE        TransactionTypeEnum = 1
-	AFFILIATE_SALE      TransactionTypeEnum = 2
-	COMMISSION_PAID     TransactionTypeEnum = 3
-	COMMISSION_RECEIVED TransactionTypeEnum = 4
+	CreatorSale        TransactionTypeEnum = 1 // The transaction type for creator sales.
+	AffiliateSale      TransactionTypeEnum = 2 // The transaction type for affiliate sales.
+	CommissionPaid     TransactionTypeEnum = 3 // The transaction type for commission paid.
+	CommissionReceived TransactionTypeEnum = 4 // The transaction type for commission received.
 )
 
+// TransactionTypeToSellerTypeMap maps TransactionTypeEnum to SellerTypeEnum.
 var TransactionTypeToSellerTypeMap = map[TransactionTypeEnum]SellerTypeEnum{
-	CREATOR_SALE:        CREATOR,
-	AFFILIATE_SALE:      AFFILIATE,
-	COMMISSION_PAID:     CREATOR,
-	COMMISSION_RECEIVED: AFFILIATE,
+	CreatorSale:        CREATOR,
+	AffiliateSale:      AFFILIATE,
+	CommissionPaid:     CREATOR,
+	CommissionReceived: AFFILIATE,
 }
 
+// TransactionTypeMap maps uint8 to TransactionTypeEnum.
 var TransactionTypeMap = map[uint8]TransactionTypeEnum{
-	1: CREATOR_SALE,
-	2: AFFILIATE_SALE,
-	3: COMMISSION_PAID,
-	4: COMMISSION_RECEIVED,
+	1: CreatorSale,
+	2: AffiliateSale,
+	3: CommissionPaid,
+	4: CommissionReceived,
 }
 
+// SellerTypeMapString maps SellerTypeEnum to string.
 var SellerTypeMapString = map[SellerTypeEnum]string{
 	CREATOR:   "CREATOR",
 	AFFILIATE: "AFFILIATE",
 }
 
+// TransactionTypeMapString maps TransactionTypeEnum to string.
 var TransactionTypeMapString = map[TransactionTypeEnum]string{
-	CREATOR_SALE:        "CREATOR_SALE",
-	AFFILIATE_SALE:      "AFFILIATE_SALE",
-	COMMISSION_PAID:     "COMMISSION_PAID",
-	COMMISSION_RECEIVED: "COMMISSION_RECEIVED",
+	CreatorSale:        "CREATOR_SALE",
+	AffiliateSale:      "AFFILIATE_SALE",
+	CommissionPaid:     "COMMISSION_PAID",
+	CommissionReceived: "COMMISSION_RECEIVED",
 }
 
+// TransactionTypeMapEnum is a map that allows for getting a transaction type enum value
+// from its string representation.
 var TransactionTypeMapEnum = map[string]TransactionTypeEnum{
-	"CREATOR_SALE":        CREATOR_SALE,
-	"AFFILIATE_SALE":      AFFILIATE_SALE,
-	"COMMISSION_PAID":     COMMISSION_PAID,
-	"COMMISSION_RECEIVED": COMMISSION_RECEIVED,
+	"CREATOR_SALE":        CreatorSale,
+	"AFFILIATE_SALE":      AffiliateSale,
+	"COMMISSION_PAID":     CommissionPaid,
+	"COMMISSION_RECEIVED": CommissionReceived,
 }

@@ -8,7 +8,7 @@ import (
 
 //go:generate mockgen -destination=../gen/mocks/file-transaction_repository_mock.go -package=mocks . FileTransactionRepository
 
-// FileMetadataRepository manages transaction repository operations
+// FileTransactionRepository defines the methods for storing and retrieving file transactions.
 type FileTransactionRepository interface {
 	Find(ctx context.Context, ID string) (*e.FileTransaction, error)
 	Save(ctx context.Context, ft *e.FileTransaction) error

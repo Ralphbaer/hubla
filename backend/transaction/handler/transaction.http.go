@@ -17,45 +17,8 @@ type TransactionHandler struct {
 	UseCase *uc.TransactionUseCase
 }
 
-// Create is a method that handles incoming requests for creating file transactions,
-// processing the request data, storing the metadata and content, and returning an appropriate response.
-// swagger:operation POST /transactions/upload nil Create
-// Register a new Transaction into database
-// ---
-// parameters:
-//   - name: input
-//     in: body
-//     type: string
-//     description: The payload
-//     required: true
-//     schema:
-//     "$ref": "#/definitions/CreateFileMetadata"
-//
-// security:
-//   - Definitions: []
-//
-// responses:
-//
-//	'204':
-//	  description: Success Operation
-//	  schema:
-//	    "$ref": "#/definitions/Transaction"
-//	'400':
-//	  description: Invalid Input - Input has invalid/missing values
-//	  schema:
-//	    "$ref": "#/definitions/ValidationError"
-//	  examples:
-//	    "application/json":
-//	      code: 400
-//	      message: message
-//	'409':
-//	  description: Conflict - Transaction document already taken
-//	  schema:
-//	    "$ref": "#/definitions/ResponseError"
-//	  examples:
-//	    "application/json":
-//	      code: 409
-//	      message: message
+// Create returns an http.Handler that creates a new file and its transactions.
+// It reads binary data from the request body, stores the file metadata, content, and transactions.
 func (handler *TransactionHandler) Create() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -102,6 +65,7 @@ func (handler *TransactionHandler) Create() http.Handler {
 	})
 }
 
+// GetFileTransactions handles to retrieve transactions for a given file ID.
 func (handler *TransactionHandler) GetFileTransactions() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()

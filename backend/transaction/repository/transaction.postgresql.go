@@ -11,12 +11,12 @@ import (
 	"github.com/lib/pq"
 )
 
-// PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
+// TransactionPostgresRepository implements the TransactionRepository interface for storing and retrieving transactions in Postgres.
 type TransactionPostgresRepository struct {
 	connection *hpostgres.PostgresConnection
 }
 
-// NewSalesPostgreSQLRepository creates an instance of repository.SalesPostgreSQLRepository
+// NewTransactionPostgreSQLRepository creates a new instance of TransactionPostgresRepository with the given Postgres connection.
 func NewTransactionPostgreSQLRepository(c *hpostgres.PostgresConnection) *TransactionPostgresRepository {
 	return &TransactionPostgresRepository{
 		connection: c,
@@ -54,6 +54,8 @@ func (r *TransactionPostgresRepository) Save(ctx context.Context, t *e.Transacti
 	return nil
 }
 
+// ListTransactionsByFileID retrieves a slice of Transaction entities from the Postgres database by the given file ID.
+// It returns a slice of Transaction objects if found, or an error if the query fails.
 func (r *TransactionPostgresRepository) ListTransactionsByFileID(ctx context.Context, fileID string) ([]*e.Transaction, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
