@@ -19,19 +19,6 @@ make_backend() {
   source "$CURR_DIR"/backend/backend.sh
 }
 
-lint() {
-  lint_backend
-}
-
-logs() {
-  logs_backend
-}
-
-format() {
-  cd ./backend
-  format_backend
-}
-
 makeCmd() {
   echo "${bold}${blue}$LOGO${normal}"
  # make_backend
