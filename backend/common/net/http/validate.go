@@ -52,7 +52,9 @@ func newValidator() (*validator.Validate, ut.Translator) {
 
 	v := validator.New()
 
-	en2.RegisterDefaultTranslations(v, trans)
+	if err := en2.RegisterDefaultTranslations(v, trans); err != nil {
+		panic(err)
+	}
 
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]

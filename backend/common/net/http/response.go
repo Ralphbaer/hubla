@@ -1,8 +1,11 @@
 package http
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
+
+	"github.com/Ralphbaer/hubla/backend/common/hlog"
 )
 
 // Unauthorized respond with HTTP 401 Unauthorized and payload.
@@ -108,6 +111,8 @@ func JSONResponse(w http.ResponseWriter, status int, s interface{}) {
 	json.NewEncoder(w)
 	if s != nil {
 		payload, _ := json.Marshal(s)
-		w.Write(payload)
+		if _, err := w.Write(payload); err != nil {
+			hlog.NewLoggerFromContext(context.TODO()).Errorf("Failed to write JSON response: %v", err)
+		}
 	}
 }

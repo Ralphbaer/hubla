@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/Ralphbaer/hubla/backend/common"
+	"github.com/Ralphbaer/hubla/backend/common/hlog"
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 	"github.com/lib/pq"
@@ -34,7 +35,11 @@ func (r *FileMetadataPostgresRepository) Save(ctx context.Context, fm *e.FileMet
 	if err != nil {
 		return err
 	}
-	defer tx.Rollback()
+	defer func() {
+		if err := tx.Rollback(); err != nil {
+			hlog.NewLoggerFromContext(ctx).Errorf("Failed to rollback transaction: %v", err)
+		}
+	}()
 
 	query := `INSERT INTO file_metadata(id, file_size, disposition, hash, binary_data, created_at) VALUES ($1, $2, $3, $4, $5, DEFAULT)`
 	if _, err = tx.ExecContext(ctx, query, fm.ID, fm.FileSize, fm.Disposition, fm.Hash, fm.BinaryData); err != nil {

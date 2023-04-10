@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/Ralphbaer/hubla/backend/common"
+	"github.com/Ralphbaer/hubla/backend/common/hlog"
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 	"github.com/lib/pq"
@@ -36,7 +37,11 @@ func (r *ProductPostgresRepository) Save(ctx context.Context, s *e.Product) erro
 	if err != nil {
 		return err
 	}
-	defer tx.Rollback()
+	defer func() {
+		if err := tx.Rollback(); err != nil {
+			hlog.NewLoggerFromContext(ctx).Errorf("Failed to rollback transaction: %v", err)
+		}
+	}()
 
 	query := `INSERT INTO product(id, name, creator_id, created_at) VALUES ($1, $2, $3, DEFAULT)`
 	if _, err = tx.ExecContext(ctx, query, s.ID, s.Name, s.CreatorID); err != nil {

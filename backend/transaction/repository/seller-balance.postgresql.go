@@ -6,6 +6,7 @@ import (
 	"reflect"
 
 	"github.com/Ralphbaer/hubla/backend/common"
+	"github.com/Ralphbaer/hubla/backend/common/hlog"
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 )
@@ -35,7 +36,11 @@ func (r *SellerBalancePostgresRepository) Upsert(ctx context.Context, p *e.Selle
 	if err != nil {
 		return nil, err
 	}
-	defer tx.Rollback()
+	defer func() {
+		if err := tx.Rollback(); err != nil {
+			hlog.NewLoggerFromContext(ctx).Errorf("Failed to rollback transaction: %v", err)
+		}
+	}()
 
 	query := `INSERT INTO seller_balance (id, seller_id, balance, updated_at, created_at)
               VALUES ($1, $2, $3, $4, DEFAULT) 

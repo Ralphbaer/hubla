@@ -21,6 +21,8 @@ type Config struct {
 // NewConfig creates a instance of Config
 func NewConfig() *Config {
 	cfg := &Config{}
-	common.SetConfigFromEnvVars(cfg)
+	if err := common.SetConfigFromEnvVars(cfg); err != nil {
+		panic(err)
+	}
 	return cfg
 }

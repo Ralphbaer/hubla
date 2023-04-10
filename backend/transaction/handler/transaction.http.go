@@ -2,7 +2,7 @@ package handler
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/Ralphbaer/hubla/backend/common/hlog"
@@ -25,7 +25,7 @@ func (handler *TransactionHandler) Create() http.Handler {
 		logger := hlog.NewLoggerFromContext(ctx)
 		logger.Debug("Create transactions")
 
-		binaryData, err := ioutil.ReadAll(r.Body)
+		binaryData, err := io.ReadAll(r.Body)
 		if err != nil {
 			logger.Error(err.Error())
 			commonHTTP.WithError(w, err)

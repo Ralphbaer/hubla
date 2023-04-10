@@ -3,7 +3,7 @@ package http
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -74,11 +74,11 @@ func NewRequestInfo(w http.ResponseWriter, r *http.Request) *RequestInfo {
 	body := ""
 
 	if r.ContentLength > 0 {
-		b, err := ioutil.ReadAll(r.Body)
+		b, err := io.ReadAll(r.Body)
 
 		if err == nil {
 			body = string(b)
-			r.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			r.Body = io.NopCloser(bytes.NewBuffer(b))
 		}
 	}
 
