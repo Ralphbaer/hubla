@@ -70,8 +70,8 @@ format_backend() {
   lineOk "All go files formatted"
 }
 
-if [ "$1" != "clean" -a "$1" != "lint" -a "$1" != "format" ]; then
- # lint_backend
+if [ "$1" != "clean" -a "$1" != "lint_backend" -a "$1" != "format_backend" ]; then
+  #lint_backend
   logs_backend
   format_backend
 fi

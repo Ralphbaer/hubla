@@ -72,19 +72,19 @@ title1 "STARTING PRE-COMMIT SCRIPT"
 
 checkHooks
 
-if [ "$1" == "lint" ]; then
-  lint
-elif [ "$1" == "logs" ]; then
-  logs
-elif [ "$1" == "format" ]; then
-  format
-else
-  echo "Executing with parameter $1"
-  makeCmd "$1"
-fi
+# if [ "$1" == "lint" ]; then
+#   lint
+# elif [ "$1" == "logs" ]; then
+#   logs
+# elif [ "$1" == "format" ]; then
+#   format
+# else
+#   echo "Executing with parameter $1"
+#   makeCmd "$1"
+# fi
 
-if [ "$1" != "clean" -a "$1" != "lint" -a "$1" != "format" -a "$1" != "logs" ]; then
-  lint
-  logs
-  format
-fi
+# if [ "$1" != "clean" -a "$1" != "lint" -a "$1" != "format" -a "$1" != "logs" ]; then
+#   lint
+#   logs
+#   format
+# fi
