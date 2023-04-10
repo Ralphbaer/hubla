@@ -71,7 +71,7 @@ format_backend() {
 }
 
 if [ "$1" != "clean" -a "$1" != "lint" -a "$1" != "format" ]; then
-  lint_backend
+ # lint_backend
   logs_backend
   format_backend
 fi
