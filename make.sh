@@ -21,7 +21,7 @@ make_backend() {
 
 makeCmd() {
   echo "${bold}${blue}$LOGO${normal}"
- # make_backend
+  make_backend
   cmd=$1
   for DIR in "$CURR_DIR"/*; do
     FILE="$DIR"/Makefile
