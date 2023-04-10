@@ -28,8 +28,8 @@ func setupPostgreSQLConnection(cfg *app.Config) *hpostgres.PostgresConnection {
 	}
 }
 
-func setupJWTAuth(cfg *app.Config) *jwt.JWTAuth {
-	return &jwt.JWTAuth{
+func setupJWTAuth(cfg *app.Config) *jwt.Auth {
+	return &jwt.Auth{
 		AccessTokenPrivateKey: cfg.AccessTokenPrivateKey,
 		AccessTokenPublicKey:  cfg.AccessTokenPublicKey,
 	}

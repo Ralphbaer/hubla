@@ -22,15 +22,6 @@ test:
 clean:
 	./make.sh "clean"
 
-logs:
-	./make.sh "logs"
-
-lint:
-	./make.sh "lint"
-
-format:
-	./make.sh "format"
-	
 setup-env:
 	cp -R ./github/hooks/* .git/hooks/
 	chmod +x .git/hooks/pre-commit

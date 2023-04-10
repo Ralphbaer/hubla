@@ -2,7 +2,8 @@ package entity
 
 import "time"
 
-// TransactionFile represents a product that can be created and sold by creators or affiliates.
+// FileMetadata is a struct containing information about a file,
+// including ID, file size, disposition, hash, binary data, and creation time.
 type FileMetadata struct {
 	ID          string
 	FileSize    int

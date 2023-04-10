@@ -4,11 +4,7 @@ import (
 	"time"
 )
 
-type SignInInput struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
+// User represents a user in the system.
 type User struct {
 	ID        string    `json:"id,omitempty"`
 	Name      string    `json:"name,omitempty"`

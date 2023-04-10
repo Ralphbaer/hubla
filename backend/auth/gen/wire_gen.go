@@ -30,10 +30,10 @@ func InitializeApp() *app.App {
 	userUseCase := &usecase.UserUseCase{
 		UserRepo: userPostgresRepository,
 	}
-	jwtAuth := setupJWTAuth(config)
+	auth := setupJWTAuth(config)
 	loginHandler := &handler.LoginHandler{
 		UseCase: userUseCase,
-		JWTAuth: jwtAuth,
+		JWTAuth: auth,
 	}
 	router := app.NewRouter(loginHandler)
 	server := app.NewServer(config, router)
@@ -53,8 +53,8 @@ func setupPostgreSQLConnection(cfg *app.Config) *hpostgres.PostgresConnection {
 	}
 }
 
-func setupJWTAuth(cfg *app.Config) *jwt.JWTAuth {
-	return &jwt.JWTAuth{
+func setupJWTAuth(cfg *app.Config) *jwt.Auth {
+	return &jwt.Auth{
 		AccessTokenPrivateKey: cfg.AccessTokenPrivateKey,
 		AccessTokenPublicKey:  cfg.AccessTokenPublicKey,
 	}

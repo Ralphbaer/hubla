@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 
+	// Package pq is a PostgreSQL database driver for the Go database/sql package.
 	_ "github.com/lib/pq"
 )
 
@@ -37,6 +38,7 @@ func (r *PostgresConnection) Connect() error {
 	return nil
 }
 
+// GetDB returns a pointer to the database connection, initializing it if necessary.
 func (r *PostgresConnection) GetDB() (*sql.DB, error) {
 	if r.DB == nil {
 		err := r.Connect()

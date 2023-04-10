@@ -10,18 +10,21 @@ import (
 	"github.com/Ralphbaer/hubla/backend/common/hpostgres"
 )
 
-// PartnerMongoRepository represents a MongoDB implementation of PartnerRepository interface
+// UserPostgresRepository implements the UserRepository interface for
+// retrieving user data from a PostgreSQL database.
 type UserPostgresRepository struct {
 	connection *hpostgres.PostgresConnection
 }
 
-// NewSalesPostgreSQLRepository creates an instance of repository.SalesPostgreSQLRepository
+// NewUserPostgreSQLRepository creates a new UserPostgresRepository instance
+// with a given PostgreSQL database connection.
 func NewUserPostgreSQLRepository(c *hpostgres.PostgresConnection) *UserPostgresRepository {
 	return &UserPostgresRepository{
 		connection: c,
 	}
 }
 
+// FindByEmail retrieves a user by email from the database.
 func (r *UserPostgresRepository) FindByEmail(ctx context.Context, email string) (*e.User, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {
@@ -47,6 +50,7 @@ func (r *UserPostgresRepository) FindByEmail(ctx context.Context, email string) 
 	return &user, nil
 }
 
+// FindByID retrieves a user by ID from the database.
 func (r *UserPostgresRepository) FindByID(ctx context.Context, ID string) (*e.User, error) {
 	db, err := r.connection.GetDB()
 	if err != nil {

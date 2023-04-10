@@ -64,6 +64,8 @@ func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *Creat
 	return tfm.ID, nil
 }
 
+// GetFileTransactions retrieves all transactions associated with the provided file ID.
+// Returns a slice of Transaction pointers and an error if there's any issue.
 func (uc *TransactionUseCase) GetFileTransactions(ctx context.Context, fileID string) ([]*e.Transaction, error) {
 	hlog.NewLoggerFromContext(ctx).Infof("Retrieving file transaction by fileID %s", fileID)
 

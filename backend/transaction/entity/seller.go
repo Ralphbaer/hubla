@@ -14,7 +14,8 @@ type Seller struct {
 	CreatedAt  time.Time
 }
 
-// SellerBalanceView represents a seller (Creator or Affiliate) who offers products for sale.
+// SellerBalanceView is a struct representing a seller's balance,
+// including the seller ID, name, balance, and the last update time.
 type SellerBalanceView struct {
 	SellerID      string          `json:"seller_id"`
 	SellerName    string          `json:"seller_name"`
@@ -22,6 +23,7 @@ type SellerBalanceView struct {
 	UpdatedAt     time.Time       `json:"updated_at"`
 }
 
+// SellerTypeEnum is a custom type representing different types of sellers.
 type SellerTypeEnum uint8
 
 const (
@@ -29,11 +31,13 @@ const (
 	AFFILIATE SellerTypeEnum = 2
 )
 
+// SellerTypeMap maps SellerTypeEnum values to their corresponding string representations.
 var SellerTypeMap = map[SellerTypeEnum]string{
 	CREATOR:   "CREATOR",
 	AFFILIATE: "AFFILIATE",
 }
 
+// SellerTypeFromString maps string representations of seller types to their corresponding SellerTypeEnum values.
 var SellerTypeFromString = map[string]SellerTypeEnum{
 	"CREATOR":   CREATOR,
 	"AFFILIATE": AFFILIATE,

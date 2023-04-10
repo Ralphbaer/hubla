@@ -13,6 +13,8 @@ type UserUseCase struct {
 	UserRepo r.UserRepository
 }
 
+// GetUserByEmail retrieves a user by their email address from the user repository and returns it.
+// If no user is found with the specified email address, a ValidationError is returned with an EntityNotFoundError.
 func (uc *UserUseCase) GetUserByEmail(ctx context.Context, email string) (*e.User, error) {
 	u, err := uc.UserRepo.FindByEmail(ctx, email)
 	if err != nil {
@@ -28,7 +30,8 @@ func (uc *UserUseCase) GetUserByEmail(ctx context.Context, email string) (*e.Use
 	return u, nil
 }
 
-// StoreFileContent stores a new Transaction
+// GetUserByID retrieves a user by their ID from the UserRepo.
+// Returns a User pointer and an error if there's any issue.
 func (uc *UserUseCase) GetUserByID(ctx context.Context, ID string) (*e.User, error) {
 	return uc.UserRepo.FindByID(ctx, ID)
 }

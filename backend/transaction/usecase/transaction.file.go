@@ -16,6 +16,8 @@ import (
 	e "github.com/Ralphbaer/hubla/backend/transaction/entity"
 )
 
+// CreateFileTransactions creates a new file transaction for each transaction in the provided slice.
+// Returns an error if there's any issue.
 func (uc *TransactionUseCase) CreateFileTransactions(ctx context.Context, fileID string, transactions []*e.Transaction) error {
 	for _, v := range transactions {
 		fileTransaction := &e.FileTransaction{

@@ -14,6 +14,8 @@ type Product struct {
 	CreatedAt time.Time
 }
 
+// SellerTypeToOperationMap is a mapping between TransactionTypeEnum values and
+// corresponding functions that manipulate the transaction amount.
 var SellerTypeToOperationMap = map[TransactionTypeEnum]func(amount decimal.Decimal) decimal.Decimal{
 	CREATOR_SALE: func(amount decimal.Decimal) decimal.Decimal {
 		return amount
