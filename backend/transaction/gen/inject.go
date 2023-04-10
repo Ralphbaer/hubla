@@ -6,7 +6,6 @@
 package gen
 
 import (
-	"log"
 	"net/http"
 	"sync"
 
@@ -24,7 +23,6 @@ import (
 var onceConfig sync.Once
 
 func setupPostgreSQLConnection(cfg *app.Config) *hpostgres.PostgresConnection {
-	log.Printf("cfg %v", cfg)
 	return &hpostgres.PostgresConnection{
 		ConnectionString: cfg.PostgreSQLConnectionString,
 	}

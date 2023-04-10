@@ -7,6 +7,7 @@ type Config struct {
 	EnvName                        string `env:"ENV_NAME"`
 	PostgreSQLConnectionString     string `env:"POSTGRES_CONNECTION_STRING"`
 	PostgreSQLConnectionStringTest string `env:"POSTGRES_SQL_CONNECTION_TEST"`
+	AccessTokenPublicKey           string `env:"ACCESS_TOKEN_PUBLIC_KEY"`
 	ServerAddress                  string `env:"SERVER_ADDRESS"`
 	SpecURL                        string `env:"SPEC_URL"`
 }

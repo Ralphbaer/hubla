@@ -1,6 +1,6 @@
 package usecase
 
-type LoginInput struct {
-	Email    string
-	Password string
+type SignInInput struct {
+	Email    string `json:"email" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }

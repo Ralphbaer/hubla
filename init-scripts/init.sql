@@ -96,7 +96,7 @@ VALUES (
     uuid_generate_v4(),
     'Marie Curie',
     'marie.curie@hub.la',
-    PGP_SYM_ENCRYPT('radiantforce', 'AES_KEY'),
+    crypt('radiantforce', gen_salt('bf')),
     'admin',
     NOW(),
     NOW()
@@ -107,7 +107,7 @@ VALUES (
     uuid_generate_v4(),
     'Nikola Tesla',
     'nikola.testa@hub.la',
-    PGP_SYM_ENCRYPT('radiantforce', 'AES_KEY'),
+    crypt('radiantforce', gen_salt('bf')),
     'admin',
     NOW(),
     NOW()
@@ -118,7 +118,7 @@ VALUES (
     uuid_generate_v4(),
     'Rosalind Elsie Franklin',
     'rosalind.franklin@hub.la',
-    PGP_SYM_ENCRYPT('helixstructure1953', 'AES_KEY'),
+    crypt('helixstructure1953', gen_salt('bf')),
     'admin',
     NOW(),
     NOW()

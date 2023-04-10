@@ -1,8 +1,6 @@
 package app
 
 import (
-	"time"
-
 	"github.com/Ralphbaer/hubla/backend/common"
 )
 
@@ -15,15 +13,9 @@ type Config struct {
 	HydraAdminURL                  string `env:"HYDRA_ADMIN_URL"`
 	SpecURL                        string `env:"SPEC_URL"`
 
-	Origin                 string        `env:"ORIGIN"`
-	AccessTokenPrivateKey  string        `env:"ACCESS_TOKEN_PRIVATE_KEY"`
-	AccessTokenPublicKey   string        `env:"ACCESS_TOKEN_PUBLIC_KEY"`
-	RefreshTokenPrivateKey string        `env:"REFRESH_TOKEN_PRIVATE_KEY"`
-	RefreshTokenPublicKey  string        `env:"REFRESH_TOKEN_PUBLIC_KEY"`
-	AccessTokenExpiresIn   time.Duration `env:"ACCESS_TOKEN_EXPIRED_IN"`
-	RefreshTokenExpiresIn  time.Duration `env:"REFRESH_TOKEN_EXPIRED_IN"`
-	AccessTokenMaxAge      int           `env:"ACCESS_TOKEN_MAXAGE"`
-	RefreshTokenMaxAge     int           `env:"REFRESH_TOKEN_MAXAGE"`
+	Origin                string `env:"ORIGIN"`
+	AccessTokenPrivateKey string `env:"ACCESS_TOKEN_PRIVATE_KEY"`
+	AccessTokenPublicKey  string `env:"ACCESS_TOKEN_PUBLIC_KEY"`
 }
 
 // NewConfig creates a instance of Config

@@ -26,6 +26,7 @@ package app
 
 import (
 	"github.com/Ralphbaer/hubla/backend/auth/handler"
+	"github.com/Ralphbaer/hubla/backend/auth/usecase"
 	lib "github.com/Ralphbaer/hubla/backend/common/net/http"
 	"github.com/gorilla/mux"
 )
@@ -38,7 +39,7 @@ func NewRouter(l *handler.LoginHandler) *mux.Router {
 	lib.AllowFullOptionsWithCORS(r)
 	r.Use(lib.WithCorrelationID)
 
-	r.Handle("/auth/login", l.SignInUser()).Methods("GET")
+	r.Handle("/auth/login", lib.WithBody(new(usecase.SignInInput), l.SignInUser)).Methods("POST")
 
 	// Common
 

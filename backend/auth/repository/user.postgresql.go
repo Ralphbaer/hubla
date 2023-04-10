@@ -29,11 +29,11 @@ func (r *UserPostgresRepository) FindByEmail(ctx context.Context, email string) 
 	}
 
 	query := `
-        SELECT id, name, email, role, created_at, updated_at
-        FROM users
+        SELECT id, name, email, password, role, created_at, updated_at
+        FROM user_account
         WHERE email = $1`
 	var user e.User
-	err = db.QueryRowContext(ctx, query, email).Scan(&user.ID, &user.Name, &user.Email, &user.Role, &user.CreatedAt, &user.UpdatedAt)
+	err = db.QueryRowContext(ctx, query, email).Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Role, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, common.EntityNotFoundError{

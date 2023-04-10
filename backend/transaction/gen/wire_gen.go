@@ -16,7 +16,6 @@ import (
 	"github.com/Ralphbaer/hubla/backend/transaction/usecase"
 	"github.com/google/wire"
 	"github.com/gorilla/mux"
-	"log"
 	"net/http"
 	"sync"
 )
@@ -65,7 +64,6 @@ func InitializeApp() *app.App {
 var onceConfig sync.Once
 
 func setupPostgreSQLConnection(cfg *app.Config) *hpostgres.PostgresConnection {
-	log.Printf("cfg %v", cfg)
 	return &hpostgres.PostgresConnection{
 		ConnectionString: cfg.PostgreSQLConnectionString,
 	}

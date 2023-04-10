@@ -1,7 +1,12 @@
 package http
 
 import (
+	"reflect"
+	"strings"
+
+	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
+	en2 "github.com/go-playground/validator/translations/en"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -39,4 +44,23 @@ func malformedRequestErr(err validator.ValidationErrors, trans ut.Translator) Va
 }
 
 // Validator returns an instance of "gopkg.in/go-playground/validator.v9"
-func newValidator() (*validator.Validate, ut.Translator) { return nil, nil }
+func newValidator() (*validator.Validate, ut.Translator) {
+	en := en.New()
+	uni := ut.New(en, en)
+
+	trans, _ := uni.GetTranslator("en")
+
+	v := validator.New()
+
+	en2.RegisterDefaultTranslations(v, trans)
+
+	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+
+	return v, trans
+}

@@ -26,6 +26,7 @@ package app
 
 import (
 	"github.com/Ralphbaer/hubla/backend/common/hlog"
+	"github.com/Ralphbaer/hubla/backend/common/jwt"
 	lib "github.com/Ralphbaer/hubla/backend/common/net/http"
 	"github.com/Ralphbaer/hubla/backend/transaction/handler"
 	"github.com/gorilla/mux"
@@ -39,10 +40,11 @@ func NewRouter(sh *handler.SellerHandler, th *handler.TransactionHandler, logger
 	lib.AllowFullOptionsWithCORS(r)
 	r.Use(lib.WithCorrelationID)
 	r.Use(lib.WithLog(lib.WithLogger(logger)))
+	userJWT := jwt.NewJWTAuth(config.AccessTokenPublicKey)
 
 	// Transaction Files
 
-	r.Handle("/file-transactions", th.Create()).Methods("POST")
+	r.Handle("/file-transactions", userJWT.Protect(th.Create())).Methods("POST")
 	r.Handle("/file-transactions/{id}/transactions", th.GetFileTransactions()).Methods("GET")
 
 	// Sellers
