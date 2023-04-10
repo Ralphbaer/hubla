@@ -71,7 +71,7 @@ echo -e "\n\n"
 title1 "STARTING PRE-COMMIT SCRIPT"
 
 checkHooks
-
+makeCmd
 # if [ "$1" == "lint" ]; then
 #   lint
 # elif [ "$1" == "logs" ]; then
