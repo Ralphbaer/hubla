@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -76,7 +77,7 @@ func (uc *TransactionUseCase) processLine(ctx context.Context, line string, line
 	entry, err := parseLine(line)
 	if err != nil {
 		return nil, common.UnprocessableOperationError{
-			Message: ErrParsingParsingLine.Error(),
+			Message: fmt.Sprintf(ErrParsingParsingLine.Error(), err),
 			Err:     err,
 		}
 	}

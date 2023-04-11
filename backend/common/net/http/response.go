@@ -95,7 +95,7 @@ func UnprocessableEntity(w http.ResponseWriter, message string) {
 func InternalServerError(w http.ResponseWriter, message string) {
 	JSONResponse(w, http.StatusInternalServerError, &ResponseError{
 		Code:    http.StatusInternalServerError,
-		Message: message,
+		Message: "Internal Server Error",
 	})
 }
 

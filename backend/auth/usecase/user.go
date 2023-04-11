@@ -19,7 +19,7 @@ func (uc *UserUseCase) GetUserByEmail(ctx context.Context, email string) (*e.Use
 	u, err := uc.UserRepo.FindByEmail(ctx, email)
 	if err != nil {
 		if err, ok := err.(common.EntityNotFoundError); ok {
-			return nil, common.ValidationError{
+			return nil, common.UnauthorizedError{
 				Message: ErrInvalidEmailOrPassword.Error(),
 				Err:     err,
 			}

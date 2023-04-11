@@ -13,7 +13,6 @@ import (
 func fields(errors validator.ValidationErrors, trans ut.Translator) FieldValidations {
 	l := len(errors)
 	if l > 0 {
-
 		fields := make(FieldValidations, l)
 		for _, e := range errors {
 			fields[e.Field()] = e.Translate(trans)

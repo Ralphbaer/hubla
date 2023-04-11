@@ -38,12 +38,13 @@ func NewRouter(l *handler.LoginHandler) *mux.Router {
 
 	lib.AllowFullOptionsWithCORS(r)
 	r.Use(lib.WithCorrelationID)
+	api := r.PathPrefix("/api/v1").Subrouter()
 
-	r.Handle("/auth/login", lib.WithBody(new(usecase.SignInInput), l.SignInUser)).Methods("POST")
+	api.Handle("/auth/login", lib.WithBody(new(usecase.SignInInput), l.SignInUser)).Methods("POST")
 
 	// Common
 
-	r.HandleFunc("/auth/ping", lib.Ping)
+	api.HandleFunc("/auth/ping", lib.Ping)
 
 	// Documentation
 

@@ -1,226 +1,151 @@
-basePath: /transaction
-consumes:
-  - application/json
-definitions:
-  Address:
-    description: Address follows the GeoJSON Point format (https://en.wikipedia.org/wiki/GeoJSON)
-    properties:
-      coordinates:
-        items:
-          format: double
-          type: number
-        type: array
-        x-go-name: Coordinates
-      type:
-        type: string
-        x-go-name: Type
-    type: object
-    x-go-package: github.com/Ralphbaer/hubla/transaction/usecase
-  CoverageArea:
-    description: CoverageArea follows the GeoJSON MultiPolygon format (https://en.wikipedia.org/wiki/GeoJSON)
-    properties:
-      coordinates:
-        items:
-          items:
-            items:
-              items:
-                format: double
-                type: number
-              type: array
-            type: array
-          type: array
-        type: array
-        x-go-name: Coordinates
-      type:
-        type: string
-        x-go-name: Type
-    type: object
-    x-go-package: github.com/Ralphbaer/hubla/transaction/usecase
-  CreateSalesInput:
-    description: We can understand it as a Command. It is used in CREATE operations.
-    properties:
-      address:
-        $ref: "#/definitions/Address"
-      coverageArea:
-        $ref: "#/definitions/CoverageArea"
-      document:
-        type: string
-        x-go-name: Document
-      ownerName:
-        type: string
-        x-go-name: OwnerName
-      tradingName:
-        type: string
-        x-go-name: TradingName
-    title: CreateSalesInput is the set of information that will be used to enter data through our handlers.
-    type: object
-    x-go-package: github.com/Ralphbaer/hubla/transaction/usecase
-  FieldValidations:
-    additionalProperties:
-      type: string
-    title: FieldValidations represents a field error response.
-    type: object
-    x-go-package: github.com/Ralphbaer/hubla/common/net/http
-  Sales:
-    description: including its coordinates represented by the coverageArea and address fields.
-    properties:
-      address:
-        $ref: "#/definitions/Address"
-      coverageArea:
-        $ref: "#/definitions/CoverageArea"
-      document:
-        description: Document is a unique field
-        type: string
-        x-go-name: Document
-      id:
-        description: ID is a unique field
-        type: string
-        x-go-name: ID
-      ownerName:
-        type: string
-        x-go-name: OwnerName
-      tradingName:
-        type: string
-        x-go-name: TradingName
-    title: Sales represents a collection of identification data of a Hubla Sales,
-    type: object
-    x-go-package: github.com/Ralphbaer/hubla/transaction/entity
-  ResponseError:
-    description: ResponseError represents a HTTP response error payload
-    properties:
-      code:
-        format: int64
-        type: integer
-        x-go-name: Code
-      message:
-        type: string
-        x-go-name: Message
-      origin:
-        type: string
-        x-go-name: Origin
-    type: object
-    x-go-package: github.com/Ralphbaer/hubla/common/net/http
-  ValidationError:
-    description: ValidationError represents an error occurred when a request to an action is invalid
-    properties:
-      code:
-        format: int64
-        type: integer
-        x-go-name: Code
-      fields:
-        $ref: "#/definitions/FieldValidations"
-      message:
-        type: string
-        x-go-name: Message
-    type: object
-    x-go-package: github.com/Ralphbaer/hubla/common/net/http
+openapi: 3.0.3
 info:
-  description: This guide describes all Hubla Sales API and usecase.
-  title: Sales API.
-  version: 0.0.1
+  title: Transaction API
+  description: >
+    An API for managing transactions of selling for Sellers and Affiliates based
+    on a .txt file. Allows fetching seller balance and searching transactions by
+    imported transaction ID.
+  contact:
+    email: cleversonsoares.zero@gmail.com
+  version: 1.0.11
+servers:
+  - url: "http://localhost:3000/api/v1"
+  - url: "http://localhost:4000/api/v1"
+tags:
+  - name: transaction
+    description: Access to Transaction domain
+  - name: auth
+    description: Authentication and authorization
 paths:
-  /transaction:
+  /auth/login:
     post:
-      description: Register a new Sales into database
-      operationId: Create
-      parameters:
-        - description: The payload
-          in: body
-          name: input
-          required: true
-          schema:
-            $ref: "#/definitions/CreateSalesInput"
-          type: string
+      tags:
+        - auth
+      summary: Authenticate user and generate a JWT token
+      description: >-
+        Authenticate user by providing email and password, and generate a JWT
+        token upon successful authentication.
+      operationId: loginUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token
+          headers:
+            Authorization:
+              description: Bearer token to be included in future requests
+              schema:
+                type: string
+                example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  /transaction/file-transactions:
+    post:
+      tags:
+        - transaction
+      summary: Imports a list of transactions
+      description: ""
+      operationId: importTransaction
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
       responses:
         "201":
-          description: Success Operation
-          schema:
-            $ref: "#/definitions/Sales"
-        "400":
-          description: Invalid Input - Input has invalid/missing values
-          examples:
+          description: Successful operation
+          content:
             application/json:
-              code: 400
-              message: message
-          schema:
-            $ref: "#/definitions/ValidationError"
-        "409":
-          description: Conflict - transaction document already taken
-          examples:
-            application/json:
-              code: 409
-              message: message
-          schema:
-            $ref: "#/definitions/ResponseError"
+              schema:
+                $ref: "#/components/schemas/FileIDResponse"
       security:
-        - Definitions: []
+        - bearerAuth: []
+  "/file-transactions/{id}/transactions":
+    get:
       tags:
         - transaction
-  /transaction/{id}:
-    get:
-      description: Returns an transaction by its id
-      operationId: GetByID
+      summary: List transactions by ID
+      description: ""
+      operationId: listTransactionsById
       parameters:
-        - description: The id of the transaction
+        - name: id
           in: path
-          name: id
+          description: ID of the file containing transactions
           required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+      security:
+        - bearerAuth: []
+components:
+  schemas:
+    Transaction:
+      type: object
+      properties:
+        id:
           type: string
-      responses:
-        "200":
-          description: Success Operation
-          schema:
-            $ref: "#/definitions/Sales"
-        "404":
-          description: Not Found - Resource does not exists
-          examples:
-            application/json:
-              code: 404
-              message: message
-          schema:
-            $ref: "#/definitions/ResponseError"
-      tags:
-        - transaction
-  /transaction/nearest:
-    get:
-      description: Returns a transaction given coordinates longitude and latitude
-      operationId: GetNearestSales
-      parameters:
-        - description: Longitude
-          in: query
-          name: long
-          required: true
+          format: uuid
+          example: 28d64e23-9ad2-48f4-88f7-6733dc1c9770
+        t_type:
           type: integer
-        - description: Latitude
-          in: query
-          name: lat
-          required: true
-          type: integer
-      responses:
-        "200":
-          description: Success Operation
-          schema:
-            $ref: "#/definitions/Sales"
-        "404":
-          description: Not Found - Resource does not exists
-          examples:
-            application/json:
-              code: 404
-              message: message
-          schema:
-            $ref: "#/definitions/ResponseError"
-      tags:
-        - transaction
-produces:
-  - application/json
-schemes:
-  - http
-  - https
-swagger: "2.0"
-x-meta-array:
-  - value1
-  - value2
-x-meta-array-obj:
-  - name: obj
-    value: field
-x-meta-value: value
+          description: Transaction type
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+        t_date:
+          type: string
+          format: date-time
+        product_id:
+          type: string
+          format: uuid
+          example: 28d64e23-9ad2-48f4-88f7-6733dc1c9770
+        amount:
+          type: number
+        seller_id:
+          type: string
+          format: uuid
+          example: 28d64e23-9ad2-48f4-88f7-6733dc1c9770
+        created_at:
+          type: string
+          format: date-time
+    FileIDResponse:
+      type: object
+      properties:
+        id:
+          type: string
+      xml:
+        name: "##default"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

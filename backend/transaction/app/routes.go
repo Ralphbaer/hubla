@@ -37,6 +37,8 @@ func NewRouter(sh *handler.SellerHandler, th *handler.TransactionHandler, logger
 	r := mux.NewRouter()
 	config := NewConfig()
 
+	api := r.PathPrefix("/api/v1").Subrouter()
+
 	lib.AllowFullOptionsWithCORS(r)
 	r.Use(lib.WithCorrelationID)
 	r.Use(lib.WithLog(lib.WithLogger(logger)))
@@ -44,16 +46,16 @@ func NewRouter(sh *handler.SellerHandler, th *handler.TransactionHandler, logger
 
 	// Transaction Files
 
-	r.Handle("/file-transactions", userJWT.Protect(th.Create())).Methods("POST")
-	r.Handle("/file-transactions/{id}/transactions", th.GetFileTransactions()).Methods("GET")
+	api.Handle("/transaction/file-transactions", userJWT.Protect(th.Create())).Methods("POST")
+	api.Handle("/transaction/file-transactions/{id}/transactions", th.GetFileTransactions()).Methods("GET")
 
 	// Sellers
 
-	r.Handle("/sellers/{id}/balance", sh.GetSellerBalanceByID()).Methods("GET")
+	api.Handle("/seller/sellers/{id}/balance", sh.GetSellerBalanceByID()).Methods("GET")
 
 	// Common
 
-	r.HandleFunc("/transaction/ping", lib.Ping)
+	api.HandleFunc("/transaction/ping", lib.Ping)
 
 	// Documentation
 

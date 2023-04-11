@@ -11,8 +11,8 @@ import (
 // swagger:model Transaction
 type Transaction struct {
 	ID        string              `json:"id"`
-	TType     TransactionTypeEnum `json:"type"`
-	TDate     time.Time           `json:"date"`
+	TType     TransactionTypeEnum `json:"t_type"`
+	TDate     time.Time           `json:"t_date"`
 	ProductID string              `json:"product_id"`
 	Amount    decimal.Decimal     `json:"amount"`
 	SellerID  string              `json:"seller_id"`

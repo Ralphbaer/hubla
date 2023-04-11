@@ -42,7 +42,7 @@ func WithError(w http.ResponseWriter, err error) {
 		Conflict(w, e.Error())
 	case common.ValidationError:
 		BadRequest(w, ValidationError{
-			Code:    0,
+			Code:    400,
 			Message: e.Error(),
 			Fields:  nil,
 		})

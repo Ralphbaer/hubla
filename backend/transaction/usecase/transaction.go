@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	"github.com/Ralphbaer/hubla/backend/common"
@@ -55,7 +56,7 @@ func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *Creat
 	if err := uc.FileMetadataRepo.Save(ctx, tfm); err != nil {
 		if err, ok := err.(common.EntityConflictError); ok {
 			return nil, common.EntityConflictError{
-				Message: ErrFileMetadataAlreadyExists.Error(),
+				Message: fmt.Sprintf(ErrFileMetadataAlreadyExists.Error(), tfm.ID),
 				Err:     err,
 			}
 		}
