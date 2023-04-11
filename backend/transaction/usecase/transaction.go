@@ -80,6 +80,19 @@ func (uc *TransactionUseCase) GetFileTransactions(ctx context.Context, fileID st
 	return transactions, nil
 }
 
+// ListFileTransactions retrieves all file transactions.
+// Returns a slice of Transaction pointers and an error if there's any issue.
+func (uc *TransactionUseCase) ListFileTransactions(ctx context.Context) ([]*e.FileTransaction, error) {
+	hlog.NewLoggerFromContext(ctx).Infof("Retrieving a list of file transactions")
+
+	ft, err := uc.FileTransactionRepo.List(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return ft, nil
+}
+
 func (uc *TransactionUseCase) handleTransaction(ctx context.Context, ct *CreateTransaction, sellerNameToID map[string]string, productIDToName map[string]*e.Product) (*e.Transaction, error) {
 	sellerID, err := uc.findOrCreateSeller(ctx, ct.SellerName, ct.TType, sellerNameToID)
 	if err != nil {

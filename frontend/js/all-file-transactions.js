@@ -26,19 +26,11 @@ function populateTransactionsTable(transactions) {
         const row = document.createElement("tr");
 
         const idCell = document.createElement("td");
-        idCell.textContent = transaction.id;
+        const idLink = document.createElement("a");
+        idLink.textContent = transaction.id;
+        idLink.href = `file-transaction.html?id=${transaction.id}`;
+        idCell.appendChild(idLink);
         row.appendChild(idCell);
-
-        const transactionIdCell = document.createElement("td");
-        transactionIdCell.textContent = transaction.transaction_id;
-        row.appendChild(transactionIdCell);
-
-        const fileIdCell = document.createElement("td");
-        const fileIdLink = document.createElement("a");
-        fileIdLink.textContent = transaction.file_id;
-        fileIdLink.href = `file-transaction.html?id=${transaction.file_id}`;
-        fileIdCell.appendChild(fileIdLink);
-        row.appendChild(fileIdCell);
 
         tableBody.appendChild(row);
     });

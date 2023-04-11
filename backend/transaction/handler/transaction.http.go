@@ -85,7 +85,7 @@ func (handler *TransactionHandler) Create() http.Handler {
 	})
 }
 
-// GetFileTransactions handles to retrieve transactions for a given file ID.
+// GetFileTransactions handles to retrieve file transactions for a given file ID.
 func (handler *TransactionHandler) GetFileTransactions() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -94,6 +94,28 @@ func (handler *TransactionHandler) GetFileTransactions() http.Handler {
 
 		fileID := mux.Vars(r)["id"]
 		transactions, err := handler.UseCase.GetFileTransactions(r.Context(), fileID)
+		if err != nil {
+			logger.Error(err.Error())
+			commonHTTP.WithError(w, err)
+			return
+		}
+		if transactions == nil {
+			commonHTTP.OK(w, []interface{}{})
+			return
+		}
+
+		commonHTTP.OK(w, transactions)
+	})
+}
+
+// ListFileTransactions handles to list all file transactions from the server.
+func (handler *TransactionHandler) ListFileTransactions() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		logger := hlog.NewLoggerFromContext(ctx)
+		logger.Debug("Get file transactions")
+
+		transactions, err := handler.UseCase.ListFileTransactions(r.Context())
 		if err != nil {
 			logger.Error(err.Error())
 			commonHTTP.WithError(w, err)

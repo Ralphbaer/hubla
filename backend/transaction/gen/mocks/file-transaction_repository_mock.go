@@ -50,6 +50,21 @@ func (mr *MockFileTransactionRepositoryMockRecorder) Find(arg0, arg1 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockFileTransactionRepository)(nil).Find), arg0, arg1)
 }
 
+// List mocks base method.
+func (m *MockFileTransactionRepository) List(arg0 context.Context) ([]*entity.FileTransaction, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "List", arg0)
+	ret0, _ := ret[0].([]*entity.FileTransaction)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// List indicates an expected call of List.
+func (mr *MockFileTransactionRepositoryMockRecorder) List(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockFileTransactionRepository)(nil).List), arg0)
+}
+
 // Save mocks base method.
 func (m *MockFileTransactionRepository) Save(arg0 context.Context, arg1 *entity.FileTransaction) error {
 	m.ctrl.T.Helper()

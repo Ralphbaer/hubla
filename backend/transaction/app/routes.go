@@ -48,6 +48,7 @@ func NewRouter(sh *handler.SellerHandler, th *handler.TransactionHandler, logger
 
 	api.Handle("/transaction/file-transactions", userJWT.Protect(th.Create())).Methods("POST")
 	api.Handle("/transaction/file-transactions/{id}/transactions", th.GetFileTransactions()).Methods("GET")
+	api.Handle("/transaction/file-transactions/transactions", th.ListFileTransactions()).Methods("GET")
 
 	// Sellers
 

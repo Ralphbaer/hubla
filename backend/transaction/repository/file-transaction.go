@@ -10,6 +10,7 @@ import (
 
 // FileTransactionRepository defines the methods for storing and retrieving file transactions.
 type FileTransactionRepository interface {
+	List(ctx context.Context) ([]*e.FileTransaction, error)
 	Find(ctx context.Context, ID string) (*e.FileTransaction, error)
 	Save(ctx context.Context, ft *e.FileTransaction) error
 }

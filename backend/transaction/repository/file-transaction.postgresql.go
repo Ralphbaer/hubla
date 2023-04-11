@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"log"
 	"reflect"
 
 	"github.com/Ralphbaer/hubla/backend/common"
@@ -83,4 +84,41 @@ func (r *FileTransactionPostgresRepository) Find(ctx context.Context, ID string)
 	}
 
 	return &fileTransaction, nil
+}
+
+// List retrieves a slice of file transaction entities from the Postgres.
+// It returns a slice of File Transactions objects if found, or an error if the query fails.
+func (r *FileTransactionPostgresRepository) List(ctx context.Context) ([]*e.FileTransaction, error) {
+	db, err := r.connection.GetDB()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.QueryContext(ctx, `
+		SELECT DISTINCT file_id
+		FROM file_transaction
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("Failed to close rows: %v", err)
+		}
+	}()
+
+	var fileTransactions []*e.FileTransaction
+	for rows.Next() {
+		fileTransaction := &e.FileTransaction{}
+		if err := rows.Scan(&fileTransaction.ID); err != nil {
+			return nil, err
+		}
+		fileTransactions = append(fileTransactions, fileTransaction)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return fileTransactions, nil
 }
