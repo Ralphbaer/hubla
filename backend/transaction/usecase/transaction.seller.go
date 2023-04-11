@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/Ralphbaer/hubla/backend/transaction/entity"
 	"github.com/google/uuid"
@@ -55,9 +56,10 @@ func (uc *TransactionUseCase) createSeller(ctx context.Context, sellerName strin
 
 func (uc *TransactionUseCase) updateSellerBalance(ctx context.Context, ct *CreateTransaction, sellerID string) error {
 	sellerBalance := &entity.SellerBalance{
-		ID:       uuid.NewString(),
-		SellerID: sellerID,
-		Balance:  entity.TransactionTypeToOperationMap[ct.TType](ct.Amount),
+		ID:        uuid.NewString(),
+		SellerID:  sellerID,
+		Balance:   entity.TransactionTypeToOperationMap[ct.TType](ct.Amount),
+		UpdatedAt: time.Now(),
 	}
 
 	updatedBalance, err := uc.SellerBalanceRepo.Upsert(ctx, sellerBalance)

@@ -70,7 +70,7 @@ func (r *SellerBalancePostgresRepository) Find(ctx context.Context, sellerID str
 	}
 
 	query := `
-        SELECT s.id, s.name, sb.balance, sb.updated_at
+        SELECT s.id, s.name, s.seller_type, s.created_at, sb.balance, sb.updated_at
         FROM seller_balance sb
         JOIN seller s ON s.id = sb.seller_id
         WHERE s.id = $1;
@@ -78,7 +78,7 @@ func (r *SellerBalancePostgresRepository) Find(ctx context.Context, sellerID str
 
 	sellerBalanceView := &e.SellerBalanceView{}
 	err = db.QueryRowContext(ctx, query, sellerID).Scan(&sellerBalanceView.SellerID, &sellerBalanceView.SellerName,
-		&sellerBalanceView.SellerBalance, &sellerBalanceView.UpdatedAt)
+		&sellerBalanceView.SellerType, &sellerBalanceView.SellerCreatedAt, &sellerBalanceView.SellerBalance, &sellerBalanceView.SellerBalanceUpdatedAt)
 
 	if err != nil {
 		if err == sql.ErrNoRows {

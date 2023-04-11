@@ -17,10 +17,12 @@ type Seller struct {
 // SellerBalanceView is a struct representing a seller's balance,
 // including the seller ID, name, balance, and the last update time.
 type SellerBalanceView struct {
-	SellerID      string          `json:"seller_id"`
-	SellerName    string          `json:"seller_name"`
-	SellerBalance decimal.Decimal `json:"balance"`
-	UpdatedAt     time.Time       `json:"updated_at"`
+	SellerID               string          `json:"seller_id"`
+	SellerName             string          `json:"seller_name"`
+	SellerType             string          `json:"seller_type"`
+	SellerBalance          decimal.Decimal `json:"seller_balance"`
+	SellerCreatedAt        time.Time       `json:"seller_created_at"`
+	SellerBalanceUpdatedAt time.Time       `json:"seller_balance_updated_at"`
 }
 
 // SellerTypeEnum is a custom type representing different types of sellers.

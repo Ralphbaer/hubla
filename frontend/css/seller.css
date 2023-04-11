@@ -1,0 +1,70 @@
+body {
+    background-color: #d7ff60;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.seller-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    border: 1px solid #ccc;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h1 {
+    color: #202020;
+    margin-top: 0;
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+p {
+    color: #202020;
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+}
+
+.seller-type,
+.seller-id,
+.seller-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: inline-block;
+    margin-right: 0.5rem;
+    flex-basis: 33.33%;
+}
+
+
+.seller-balance {
+    color: #202020;
+    font-weight: bold;
+    font-size: 2rem;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.seller-balance-updated-at,
+.seller-created-at {
+    color: #202020;
+    font-size: 1.2rem;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+/* Add some spacing between sections */
+.seller-type,
+.seller-id,
+.seller-name {
+    margin-bottom: 1rem;
+}
+
+.seller-balance,
+.seller-balance-updated-at,
+.seller-created-at {
+    margin-top: 2rem;
+}
