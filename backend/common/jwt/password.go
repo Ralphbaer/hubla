@@ -17,6 +17,7 @@ func HashPassword(password string) string {
 func ComparePassword(hashedPassword string, signInUserPassword string) error {
 	if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(signInUserPassword)); err != nil {
 		return common.UnauthorizedError{
+			ErrCode: "ErrPasswordMismatch",
 			Message: ErrPasswordMismatch.Error(),
 			Err:     ErrPasswordMismatch,
 		}

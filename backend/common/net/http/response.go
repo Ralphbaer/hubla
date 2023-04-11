@@ -5,22 +5,24 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Ralphbaer/hubla/backend/common"
 	"github.com/Ralphbaer/hubla/backend/common/hlog"
 )
 
 // Unauthorized respond with HTTP 401 Unauthorized and payload.
-func Unauthorized(w http.ResponseWriter, message string) {
+func Unauthorized(w http.ResponseWriter, err common.UnauthorizedError) {
 	JSONResponse(w, http.StatusUnauthorized, &ResponseError{
-		Code:    http.StatusUnauthorized,
-		Message: message,
+		ErrCode:    err.ErrCode,
+		StatusCode: http.StatusUnauthorized,
+		Message:    err.Message,
 	})
 }
 
 // Forbidden respond with HTTP 403 Forbidden.
 func Forbidden(w http.ResponseWriter, message string) {
 	JSONResponse(w, http.StatusForbidden, &ResponseError{
-		Code:    http.StatusForbidden,
-		Message: message,
+		StatusCode: http.StatusForbidden,
+		Message:    message,
 	})
 }
 
@@ -60,48 +62,42 @@ func RangeNotSatisfiable(w http.ResponseWriter) {
 }
 
 // NotFound respond with HTTP 404 NotFound and payload.
-func NotFound(w http.ResponseWriter, message string) {
+func NotFound(w http.ResponseWriter, err common.EntityNotFoundError) {
 	JSONResponse(w, http.StatusNotFound, &ResponseError{
-		Code:    http.StatusNotFound,
-		Message: message,
+		StatusCode: http.StatusNotFound,
+		ErrCode:    err.ErrCode,
+		Message:    err.Error(),
 	})
 }
 
 // Conflict respond with HTTP 409 Conflict.
-func Conflict(w http.ResponseWriter, message string) {
+func Conflict(w http.ResponseWriter, err common.EntityConflictError) {
 	JSONResponse(w, http.StatusConflict, &ResponseError{
-		Code:    http.StatusConflict,
-		Message: message,
-	})
-}
-
-// NotImplemented respond with HTTP 501 Conflict.
-func NotImplemented(w http.ResponseWriter, message string) {
-	JSONResponse(w, http.StatusNotImplemented, &ResponseError{
-		Code:    http.StatusNotImplemented,
-		Message: message,
+		StatusCode: http.StatusConflict,
+		ErrCode:    err.ErrCode,
+		Message:    err.Error(),
 	})
 }
 
 // UnprocessableEntity respond with HTTP 422 UnprocessableEntity.
-func UnprocessableEntity(w http.ResponseWriter, message string) {
+func UnprocessableEntity(w http.ResponseWriter, err common.UnprocessableOperationError) {
 	JSONResponse(w, http.StatusUnprocessableEntity, &ResponseError{
-		Code:    http.StatusUnprocessableEntity,
-		Message: message,
+		StatusCode: http.StatusUnprocessableEntity,
+		ErrCode:    err.ErrCode,
+		Message:    err.Error(),
 	})
 }
 
 // InternalServerError respond with HTTP 500 InternalServerError and message.
-func InternalServerError(w http.ResponseWriter, message string) {
+func InternalServerError(w http.ResponseWriter, err string) {
 	JSONResponse(w, http.StatusInternalServerError, &ResponseError{
-		Code:    http.StatusInternalServerError,
 		Message: "Internal Server Error",
 	})
 }
 
 // JSONResponseError respond with a ResponseError
 func JSONResponseError(w http.ResponseWriter, err ResponseError) {
-	JSONResponse(w, err.Code, err)
+	JSONResponse(w, err.StatusCode, err)
 }
 
 // JSONResponse respond with given HTTP status and given payload.

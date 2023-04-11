@@ -4,4 +4,8 @@ import "errors"
 
 // ErrPasswordMismatch is returned by ComparePassword when the hashed password
 // does not match the provided plaintext password.
-var ErrPasswordMismatch = errors.New("password mismatch")
+var (
+	ErrPasswordMismatch = errors.New("password mismatch")
+
+	ErrMustProvideAToken = errors.New("must provide a token")
+)

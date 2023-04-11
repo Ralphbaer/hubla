@@ -1,19 +1,21 @@
+import { handleErrors, handleUnauthorized } from './error.js';
 import { getJwtToken } from './jwt.js';
 
-function getIdFromHash() {
-    return window.location.hash.slice(1).split("/")[1];
+function getIdFromURL() {
+    const queryParams = new URLSearchParams(window.location.search);
+    return queryParams.get('id');
 }
 
 async function fetchTransactions(id) {
     const jwtToken = getJwtToken();
     const response = await fetch(
-        `http://localhost:3000/file-transactions/${id}/transactions`,
+        `http://localhost:3000/api/v1/transaction/file-transactions/${id}/transactions`,
         {
             headers: {
                 Authorization: `Bearer ${jwtToken}`,
             },
         }
-    );
+    ).then(handleUnauthorized).then(handleErrors);
 
     if (!response.ok) {
         throw new Error("Error fetching transactions.");
@@ -33,11 +35,11 @@ function populateTransactionsTable(transactions) {
         row.appendChild(idCell);
 
         const typeCell = document.createElement("td");
-        typeCell.textContent = transaction.type;
+        typeCell.textContent = transaction.t_type;
         row.appendChild(typeCell);
 
         const dateCell = document.createElement("td");
-        dateCell.textContent = transaction.date;
+        dateCell.textContent = transaction.t_date;
         row.appendChild(dateCell);
 
         const productIdCell = document.createElement("td");
@@ -49,7 +51,10 @@ function populateTransactionsTable(transactions) {
         row.appendChild(amountCell);
 
         const sellerIdCell = document.createElement("td");
-        sellerIdCell.textContent = transaction.seller_id;
+        const sellerLink = document.createElement("a");
+        sellerLink.textContent = transaction.seller_id;
+        sellerLink.href = `seller.html?id=${transaction.seller_id}`;
+        sellerIdCell.appendChild(sellerLink);
         row.appendChild(sellerIdCell);
 
         tableBody.appendChild(row);
@@ -57,7 +62,7 @@ function populateTransactionsTable(transactions) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const id = getIdFromHash();
+    const id = getIdFromURL();
     try {
         const transactions = await fetchTransactions(id);
         populateTransactionsTable(transactions);

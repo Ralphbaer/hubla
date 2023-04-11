@@ -9,9 +9,10 @@ import (
 // ResponseError represents a HTTP response error payload
 // swagger:model ResponseError
 type ResponseError struct {
-	Code    int     `json:"code,omitempty"`
-	Message string  `json:"message,omitempty"`
-	Origin  *string `json:"origin,omitempty"`
+	StatusCode int     `json:"status_code,omitempty"`
+	ErrCode    string  `json:"err_code,omitempty"`
+	Message    string  `json:"message,omitempty"`
+	Origin     *string `json:"origin,omitempty"`
 }
 
 func (r ResponseError) Error() string {
@@ -21,9 +22,10 @@ func (r ResponseError) Error() string {
 // ValidationError represents an error occurred when a request to an action is invalid
 // swagger:model ValidationError
 type ValidationError struct {
-	Code    int              `json:"code,omitempty"`
-	Message string           `json:"message,omitempty"`
-	Fields  FieldValidations `json:"fields,omitempty"`
+	StatusCode int              `json:"status_code,omitempty"`
+	ErrCode    string           `json:"err_code,omitempty"`
+	Message    string           `json:"message,omitempty"`
+	Fields     FieldValidations `json:"fields,omitempty"`
 }
 
 func (r ValidationError) Error() string {
@@ -37,19 +39,19 @@ type FieldValidations map[string]string
 func WithError(w http.ResponseWriter, err error) {
 	switch e := err.(type) {
 	case common.EntityNotFoundError:
-		NotFound(w, e.Error())
+		NotFound(w, e)
 	case common.EntityConflictError:
-		Conflict(w, e.Error())
+		Conflict(w, e)
 	case common.ValidationError:
 		BadRequest(w, ValidationError{
-			Code:    400,
-			Message: e.Error(),
-			Fields:  nil,
+			StatusCode: 400,
+			Message:    e.Error(),
+			Fields:     nil,
 		})
 	case common.UnprocessableOperationError:
-		UnprocessableEntity(w, e.Error())
+		UnprocessableEntity(w, e)
 	case common.UnauthorizedError:
-		Unauthorized(w, e.Error())
+		Unauthorized(w, e)
 	case common.ForbiddenError:
 		Forbidden(w, e.Error())
 	case *ValidationError, ValidationError:

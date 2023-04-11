@@ -1,3 +1,5 @@
+import { setJwtToken } from './jwt.js';
+
 $(document).ready(function () {
     $('#login-form').submit(function (event) {
         event.preventDefault(); // prevent the default form submission
@@ -8,7 +10,7 @@ $(document).ready(function () {
 
         // make the AJAX request
         $.ajax({
-            url: 'http://localhost:4000/auth/login', // modify the URL to remove the explicit file reference
+            url: 'http://localhost:4000/api/v1/auth/login', // modify the URL to remove the explicit file reference
             method: 'POST',
             data: JSON.stringify({ email, password }),
             contentType: 'application/json',
@@ -35,20 +37,3 @@ $(document).ready(function () {
     });
 });
 
-// Short duration JWT token (5-10 min)
-function getJwtToken() {
-    try {
-        return sessionStorage.getItem("jwt");
-    } catch (error) {
-        console.error('Error getting JWT token:', error);
-        return null;
-    }
-}
-
-function setJwtToken(token) {
-    try {
-        sessionStorage.setItem("jwt", token);
-    } catch (error) {
-        console.error('Error setting JWT token:', error);
-    }
-}

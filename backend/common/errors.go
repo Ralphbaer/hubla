@@ -10,6 +10,8 @@ import (
 type EntityNotFoundError struct {
 	EntityType string
 	Message    string
+	ErrCode    string
+	StatusCode int
 	Err        error
 }
 
@@ -74,6 +76,7 @@ func (e ValidationError) Unwrap() error {
 // EntityConflictError records an error indicating an entity already exists in some repository
 // You can use it to representing a Database conflict, cache or any other repository.
 type EntityConflictError struct {
+	ErrCode string
 	Message string
 	Err     error
 }
@@ -93,9 +96,10 @@ func (e EntityConflictError) Unwrap() error {
 
 // UnauthorizedError indicates an operation that couldn't be performant because there's no user authenticated
 type UnauthorizedError struct {
-	Message string
-	Code    string
-	Err     error
+	Message    string
+	ErrCode    string
+	StatusCode int
+	Err        error
 }
 
 func (e UnauthorizedError) Error() string {
@@ -104,9 +108,10 @@ func (e UnauthorizedError) Error() string {
 
 // ForbiddenError indicates an operation that couldn't be performant because the authenticated user has no sufficient privileges
 type ForbiddenError struct {
-	Message string
-	Code    string
-	Err     error
+	Message    string
+	ErrCode    string
+	StatusCode int
+	Err        error
 }
 
 func (e ForbiddenError) Error() string {
@@ -115,9 +120,10 @@ func (e ForbiddenError) Error() string {
 
 // UnprocessableOperationError indicates an operation that couldn't be performant because it's invalid
 type UnprocessableOperationError struct {
-	Message string
-	Code    string
-	Err     error
+	Message    string
+	ErrCode    string
+	StatusCode int
+	Err        error
 }
 
 func (e UnprocessableOperationError) Error() string {
@@ -126,9 +132,10 @@ func (e UnprocessableOperationError) Error() string {
 
 // HTTPError indicates an http error raised in a http client
 type HTTPError struct {
-	Message string
-	Code    int
-	Err     error
+	Message    string
+	ErrCode    string
+	StatusCode int
+	Err        error
 }
 
 func (e HTTPError) Error() string {

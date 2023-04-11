@@ -65,6 +65,7 @@ func (uc *TransactionUseCase) readFileData(binaryData []byte) ([]string, error) 
 
 	if err := scanner.Err(); err != nil {
 		return nil, common.UnprocessableOperationError{
+			ErrCode: "ErrScanningFile",
 			Err:     err,
 			Message: err.Error(),
 		}
@@ -77,6 +78,7 @@ func (uc *TransactionUseCase) processLine(ctx context.Context, line string, line
 	entry, err := parseLine(line)
 	if err != nil {
 		return nil, common.UnprocessableOperationError{
+			ErrCode: "ErrParsingParsingLine",
 			Message: fmt.Sprintf(ErrParsingParsingLine.Error(), err),
 			Err:     err,
 		}

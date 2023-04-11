@@ -7,6 +7,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 1rem;
+    overflow-x: auto;
 }
 
 table {
@@ -20,11 +21,15 @@ td {
     padding: 0.5rem;
     text-align: left;
     border-bottom: 1px solid #d7ff60;
+    width: 33.33%;
+    /* set width to one-third of the table width */
 }
 
 th {
     background-color: #d7ff60;
     color: #202020;
+    position: sticky;
+    top: 0;
 }
 
 td {

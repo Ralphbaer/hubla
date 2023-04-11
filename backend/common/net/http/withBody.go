@@ -84,8 +84,8 @@ func decodeJSON(r io.Reader, s interface{}) error {
 	err := dec.Decode(s)
 	if err != nil {
 		return &ResponseError{
-			Code:    400,
-			Message: fmt.Sprintf("Request body contains badly-formed JSON (%v).", err.Error()),
+			StatusCode: 400,
+			Message:    fmt.Sprintf("Request body contains badly-formed JSON (%v).", err.Error()),
 		}
 	}
 	return nil

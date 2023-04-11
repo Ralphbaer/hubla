@@ -20,6 +20,7 @@ func (uc *UserUseCase) GetUserByEmail(ctx context.Context, email string) (*e.Use
 	if err != nil {
 		if err, ok := err.(common.EntityNotFoundError); ok {
 			return nil, common.UnauthorizedError{
+				ErrCode: "ErrInvalidEmailOrPassword",
 				Message: ErrInvalidEmailOrPassword.Error(),
 				Err:     err,
 			}

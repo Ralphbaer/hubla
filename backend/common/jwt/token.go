@@ -9,6 +9,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 
+	"github.com/Ralphbaer/hubla/backend/common"
 	"github.com/Ralphbaer/hubla/backend/common/hlog"
 	commonHTTP "github.com/Ralphbaer/hubla/backend/common/net/http"
 )
@@ -84,11 +85,18 @@ func (j *Auth) Protect(next http.Handler) http.Handler {
 		tokenString := getTokenHeader(r)
 
 		if len(tokenString) == 0 {
-			commonHTTP.Unauthorized(w, "Must provider a token")
+			commonHTTP.Unauthorized(w, common.UnauthorizedError{
+				Message: ErrMustProvideAToken.Error(),
+				ErrCode: "ErrMustProvideAToken",
+				Err:     ErrMustProvideAToken,
+			})
 			return
 		}
 		if err := j.ValidateToken(tokenString); err != nil {
-			commonHTTP.Unauthorized(w, err.Error())
+			commonHTTP.Unauthorized(w, common.UnauthorizedError{
+				Message: err.Error(),
+				Err:     err,
+			})
 			return
 		}
 

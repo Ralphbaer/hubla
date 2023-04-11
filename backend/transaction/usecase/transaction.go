@@ -56,6 +56,7 @@ func (uc *TransactionUseCase) StoreFileMetadata(ctx context.Context, ctfm *Creat
 	if err := uc.FileMetadataRepo.Save(ctx, tfm); err != nil {
 		if err, ok := err.(common.EntityConflictError); ok {
 			return nil, common.EntityConflictError{
+				ErrCode: "ErrFileMetadataAlreadyExists",
 				Message: fmt.Sprintf(ErrFileMetadataAlreadyExists.Error(), tfm.ID),
 				Err:     err,
 			}

@@ -36,6 +36,7 @@ type CreateFileMetadata struct {
 	BinaryData  []byte
 }
 
+// FileID is a struct representing file metadata ID
 type FileID struct {
 	ID string `json:"id"`
 }

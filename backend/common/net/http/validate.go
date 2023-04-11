@@ -36,9 +36,9 @@ func ValidateStruct(s interface{}) error {
 
 func malformedRequestErr(err validator.ValidationErrors, trans ut.Translator) ValidationError {
 	return ValidationError{
-		Code:    400,
-		Message: "Malformed request.",
-		Fields:  fields(err, trans),
+		StatusCode: 400,
+		Message:    "Malformed request.",
+		Fields:     fields(err, trans),
 	}
 }
 

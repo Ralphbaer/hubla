@@ -1,5 +1,5 @@
 import { getJwtToken } from './jwt.js';
-import { showError, handleErrors } from './error.js';
+import { showError, handleErrors, handleUnauthorized } from './error.js';
 
 async function validateAndUploadFile(file, filename) {
     if (!file || file.type !== 'text/plain') {
@@ -13,7 +13,7 @@ async function validateAndUploadFile(file, filename) {
         const formData = new FormData();
         formData.append('file', file, filename);
 
-        const response = await fetch('http://localhost:3000/file-transactions', {
+        const response = await fetch('http://localhost:3000/api/v1/transaction/file-transactions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/octet-stream',
@@ -22,7 +22,7 @@ async function validateAndUploadFile(file, filename) {
                 'Authorization': `Bearer ${jwtToken}`,
             },
             body: file,
-        }).then(handleErrors);
+        }).then(handleUnauthorized).then(handleErrors);
 
         if (response.status === 201) {
             const { id } = await response.json()
@@ -47,16 +47,14 @@ function handleFileUpload(event) {
 
 async function confirmFileUpload() {
     if (!uploadedFile) {
-        showError('No file has been uploaded. Please upload a file before confirming.');
+        showError('Nenhum arquivo foi selecionado. Por favor, envie um arquivo antes de confirmar.');
         return;
     }
 
     const fileName = uploadedFile.name;
     const id = await validateAndUploadFile(uploadedFile, fileName);
-
     if (id) {
-        window.location.href = 'http://127.0.0.1:5500/frontend/transactions.html';
-        window.location.hash = `transactions/${id}`;
+        window.location.href = `http://127.0.0.1:5500/frontend/file-transaction.html?id=${id}`;
     }
 }
 

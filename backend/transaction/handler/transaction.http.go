@@ -43,23 +43,24 @@ func (handler *TransactionHandler) Create() http.Handler {
 		contentType := http.DetectContentType(binaryData)
 		if ok := strings.HasPrefix(contentType, "text/plain"); !ok {
 			commonHTTP.WithError(w, commonHTTP.ValidationError{
-				Code:    400,
-				Message: "Only text files with a .txt format are accepted",
+				ErrCode:    "ErrOnlyTxtAreAccepted",
+				StatusCode: 400,
+				Message:    "Only text files with a .txt format are accepted",
 			})
 			return
 		}
 
 		if ctfm.FileSize == "0" {
 			commonHTTP.WithError(w, commonHTTP.ValidationError{
-				Code:    400,
-				Message: "Please provide a file or ensure the file is not empty.",
+				ErrCode:    "ErrProvideAFileOrEnsureNotEmpty",
+				StatusCode: 400,
+				Message:    "Please provide a file or ensure the file is not empty.",
 			})
 			return
 		}
 
 		fileID, err := handler.UseCase.StoreFileMetadata(ctx, ctfm)
 		if err != nil {
-			logger.Error(err.Error())
 			commonHTTP.WithError(w, err)
 			return
 		}
