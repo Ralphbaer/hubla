@@ -1,13 +1,7 @@
-// functions.js
 import { handleErrors, handleUnauthorized } from './error.js';
-import { getJwtToken, checkSession } from './jwt.js';
+import { getJwtToken } from './jwt.js';
 
-function getIdFromURL() {
-    const queryParams = new URLSearchParams(window.location.search);
-    return queryParams.get('id');
-}
-
-export async function fetchSellerBalance(id) {
+export const fetchSellerBalance = async (id) => {
     const jwtToken = getJwtToken();
     const response = await fetch(
         `http://localhost:3000/api/v1/seller/sellers/${id}/balance`,

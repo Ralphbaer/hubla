@@ -24,9 +24,7 @@ td {
     text-align: center;
     border-bottom: 1px solid #d7ff60;
     width: 100%;
-    /* set width to 100% for each cell */
     white-space: nowrap;
-    /* prevent line breaks within cells */
 }
 
 th {
@@ -36,7 +34,6 @@ th {
     top: 0;
 }
 
-
 a {
     color: #202020;
     text-decoration: none;
@@ -45,7 +42,6 @@ a {
 a:hover {
     text-decoration: underline;
 }
-
 
 .page-title {
     text-align: center;

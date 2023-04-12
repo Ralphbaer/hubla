@@ -2,12 +2,12 @@ import { handleErrors, handleUnauthorized } from './error.js';
 import { getJwtToken, checkSession } from './jwt.js';
 import { fetchSellerBalance } from './seller.functions.js';
 
-function getIdFromURL() {
+const getIdFromURL = () => {
     const queryParams = new URLSearchParams(window.location.search);
     return queryParams.get('id');
-}
+};
 
-async function fetchTransactions(id) {
+const fetchTransactions = async (id) => {
     const jwtToken = getJwtToken();
     const response = await fetch(`http://localhost:3000/api/v1/transaction/file-transactions/${id}/transactions`, {
         headers: {
@@ -20,24 +20,24 @@ async function fetchTransactions(id) {
     }
 
     return await response.json();
-}
+};
 
-function createTableCell(value) {
+const createTableCell = (value) => {
     const cell = document.createElement("td");
     cell.textContent = value;
     return cell;
-}
+};
 
-function createLinkCell(value, href) {
+const createLinkCell = (value, href) => {
     const cell = document.createElement("td");
     const link = document.createElement("a");
     link.textContent = value;
     link.href = href;
     cell.appendChild(link);
     return cell;
-}
+};
 
-async function populateSellerBalanceRow(transaction) {
+const populateSellerBalanceRow = async (transaction) => {
     if (!populateSellerBalanceRow.uniqueIds) {
         populateSellerBalanceRow.uniqueIds = [];
     }
@@ -54,10 +54,10 @@ async function populateSellerBalanceRow(transaction) {
     row.appendChild(createTableCell(sellerBalance.seller_name));
     row.appendChild(createTableCell(formatCurrency(sellerBalance.seller_balance)));
     return row;
-}
+};
 
 
-async function populateTransactionsTable(transactions) {
+const populateTransactionsTable = async (transactions) => {
     const tableBody = document.querySelector("#transactions-table tbody");
 
     transactions.forEach((transaction) => {
@@ -70,9 +70,9 @@ async function populateTransactionsTable(transactions) {
         row.appendChild(createLinkCell(transaction.seller_id, `seller.html?id=${transaction.seller_id}`));
         tableBody.appendChild(row);
     });
-}
+};
 
-async function populateSellerBalanceTable(transactions) {
+const populateSellerBalanceTable = async (transactions) => {
     const tableBody = document.querySelector("#sellers-table tbody");
 
     const rows = await Promise.all(transactions.map(populateSellerBalanceRow));
@@ -80,7 +80,7 @@ async function populateSellerBalanceTable(transactions) {
     rows
         .filter(row => row !== null)
         .forEach(row => tableBody.appendChild(row));
-}
+};
 
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -96,10 +96,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-function formatCurrency(amount) {
+const formatCurrency = (amount) => {
     const formatter = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL'
     });
     return formatter.format(amount).replace(/\s/, ''); // remove whitespace between symbol and amount
-}
+};

@@ -1,7 +1,7 @@
 import { getJwtToken, checkSession } from './jwt.js';
 import { showError, handleErrors, handleUnauthorized } from './error.js';
 
-async function validateAndUploadFile(file, filename) {
+const validateAndUploadFile = async (file, filename) => {
     if (!file || file.type !== 'text/plain') {
         showError('Invalid file type. Please upload a .txt file.');
         return;
@@ -33,19 +33,19 @@ async function validateAndUploadFile(file, filename) {
     } catch (error) {
         showError(error.message);
     }
-}
+};
 
 let uploadedFile = null;
 
-function handleFileUpload(event) {
+const handleFileUpload = (event) => {
     uploadedFile = event.target.files[0];
 
     if (uploadedFile) {
         document.querySelector('.upload-label').textContent = `Selected File: ${uploadedFile.name}`;
     }
-}
+};
 
-async function confirmFileUpload() {
+const confirmFileUpload = async () => {
     if (!uploadedFile) {
         showError('Nenhum arquivo foi selecionado. Por favor, envie um arquivo antes de confirmar.');
         return;
@@ -56,7 +56,7 @@ async function confirmFileUpload() {
     if (id) {
         window.location.href = `http://127.0.0.1:5500/frontend/file-transaction.html?id=${id}`;
     }
-}
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     checkSession();

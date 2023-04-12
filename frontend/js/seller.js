@@ -1,13 +1,12 @@
-import { handleErrors, handleUnauthorized } from './error.js';
-import { getJwtToken, checkSession } from './jwt.js';
+import { checkSession } from './jwt.js';
 import { fetchSellerBalance } from './seller.functions.js';
 
-function getIdFromURL() {
+const getIdFromURL = () => {
     const queryParams = new URLSearchParams(window.location.search);
     return queryParams.get('id');
 }
 
-function populateSellerBalanceContainer(sellerBalance) {
+const populateSellerBalanceContainer = (sellerBalance) => {
     const idElement = document.querySelector('.seller-id');
     idElement.textContent = `ID: ${sellerBalance.seller_id}`;
 

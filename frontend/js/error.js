@@ -1,4 +1,6 @@
-export function showError(message) {
+import { logout } from './jwt.js';
+
+export const showError = (message) => {
     const toast = document.getElementById('toast');
     toast.innerText = message;
     toast.classList.add('show');
@@ -7,7 +9,7 @@ export function showError(message) {
     }, 3000);
 }
 
-export async function handleErrors(response) {
+export const handleErrors = async (response) => {
     if (!response.ok) {
         const errorData = await response.json();
         const errorCode = errorData.err_code;
@@ -42,12 +44,10 @@ export async function handleErrors(response) {
     return response;
 }
 
-export function handleUnauthorized(response) {
+export const handleUnauthorized = (response) => {
     if (response.status === 401) {
         localStorage.removeItem('jwt');
-
-        // Redirect the user to the login page
-        window.location.href = '/frontend/login.html';
+        logout();
     }
 
     return response;

@@ -1,4 +1,6 @@
-export function getJwtToken() {
+import { redirectToLogin } from './redirect.js';
+
+export const getJwtToken = () => {
     try {
         return sessionStorage.getItem("jwt");
     } catch (error) {
@@ -7,7 +9,7 @@ export function getJwtToken() {
     }
 }
 
-export function setJwtToken(token) {
+export const setJwtToken = (token) => {
     try {
         sessionStorage.setItem("jwt", token);
     } catch (error) {
@@ -15,9 +17,8 @@ export function setJwtToken(token) {
     }
 }
 
-function isJwtExpired() {
+const isJwtExpired = () => {
     const payload = parseJwt(getJwtToken());
-
     if (!payload.exp) {
         return false;
     }
@@ -25,17 +26,16 @@ function isJwtExpired() {
     const currentTime = Math.floor(Date.now() / 1000);
 
     return payload.exp < currentTime;
+
 }
 
-
-function parseJwt(token) {
+const parseJwt = (token) => {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace('-', '+').replace('_', '/');
     return JSON.parse(atob(base64));
 }
 
-
-export function checkSession() {
+export const checkSession = () => {
     const token = getJwtToken()
     if (token) {
         if (isJwtExpired(token)) {
@@ -45,14 +45,11 @@ export function checkSession() {
             return true;
         }
     } else {
-        logout()
         return false;
     }
 }
 
-function logout() {
+export const logout = () => {
     localStorage.removeItem('jwt');
-    window.location.href = '/frontend/login.html';
+    redirectToLogin()
 }
-
-
