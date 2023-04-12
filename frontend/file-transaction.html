@@ -3,32 +3,51 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transações Importadas</title>
-    <link rel="stylesheet" href="css/transactions.css">
+    <link rel="stylesheet" href="css/file-transaction.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="icon" href="favicon.ico">
 </head>
 
 <body>
     <a href="home.html" class="back-link">Voltar</a>
     <div class="container">
-        <h1 class="page-title">Transações Importadas</h1>
-        <table id="transactions-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Type</th>
-                    <th>Date</th>
-                    <th>Product ID</th>
-                    <th>Amount</th>
-                    <th>Seller ID</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <h1 class="page-title">Transações</h1>
+        <div class="table-wrapper">
+            <div class="transactions-table-container">
+                <h2>Transações Importadas</h2>
+                <table id="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tipo</th>
+                            <th>Data</th>
+                            <th>ID do Produto</th>
+                            <th>Valor de venda</th>
+                            <th>ID do Vendedor</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="spacer"></div>
+            <div class="sellers-table-container">
+                <h2>Balanço Total dos Vendedores</h2>
+                <table id="sellers-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Balanço</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <script type="module" src="js/file-transactions.js"></script>
+    <script type="module" src="js/seller.functions.js"></script>
 </body>
 
 </html>

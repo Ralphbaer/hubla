@@ -1,4 +1,4 @@
-import { getJwtToken } from './jwt.js';
+import { getJwtToken, checkSession } from './jwt.js';
 import { showError, handleErrors, handleUnauthorized } from './error.js';
 
 async function validateAndUploadFile(file, filename) {
@@ -59,6 +59,8 @@ async function confirmFileUpload() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    checkSession();
+
     document.querySelector('#upload').addEventListener('change', handleFileUpload);
     document.querySelector('button').addEventListener('click', confirmFileUpload);
 });

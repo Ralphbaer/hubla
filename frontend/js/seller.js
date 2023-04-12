@@ -1,27 +1,10 @@
 import { handleErrors, handleUnauthorized } from './error.js';
-import { getJwtToken } from './jwt.js';
+import { getJwtToken, checkSession } from './jwt.js';
+import { fetchSellerBalance } from './seller.functions.js';
 
 function getIdFromURL() {
     const queryParams = new URLSearchParams(window.location.search);
     return queryParams.get('id');
-}
-
-async function fetchSellerBalance(id) {
-    const jwtToken = getJwtToken();
-    const response = await fetch(
-        `http://localhost:3000/api/v1/seller/sellers/${id}/balance`,
-        {
-            headers: {
-                Authorization: `Bearer ${jwtToken}`,
-            },
-        }
-    ).then(handleUnauthorized).then(handleErrors);
-
-    if (!response.ok) {
-        throw new Error("Error fetching transactions.");
-    }
-
-    return await response.json();
 }
 
 function populateSellerBalanceContainer(sellerBalance) {
@@ -45,6 +28,8 @@ function populateSellerBalanceContainer(sellerBalance) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+    checkSession();
+
     const id = getIdFromURL();
     try {
         const sellerBalance = await fetchSellerBalance(id);

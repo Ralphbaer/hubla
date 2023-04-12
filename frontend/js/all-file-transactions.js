@@ -1,7 +1,7 @@
 import { handleErrors, handleUnauthorized } from './error.js';
-import { getJwtToken } from './jwt.js';
+import { getJwtToken, checkSession } from './jwt.js';
 
-async function fetchTransactions() {
+async function fetchAllTransactions() {
     const jwtToken = getJwtToken();
     const response = await fetch(
         `http://localhost:3000/api/v1/transaction/file-transactions/transactions`,
@@ -37,8 +37,10 @@ function populateTransactionsTable(transactions) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+    checkSession();
+
     try {
-        const transactions = await fetchTransactions();
+        const transactions = await fetchAllTransactions();
         populateTransactionsTable(transactions);
     } catch (error) {
         console.error("Error fetching transactions:", error);

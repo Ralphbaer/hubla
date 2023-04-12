@@ -1,5 +1,6 @@
 import { handleErrors, handleUnauthorized } from './error.js';
-import { getJwtToken } from './jwt.js';
+import { getJwtToken, checkSession } from './jwt.js';
+import { fetchSellerBalance } from './seller.functions.js';
 
 function getIdFromURL() {
     const queryParams = new URLSearchParams(window.location.search);
@@ -8,14 +9,11 @@ function getIdFromURL() {
 
 async function fetchTransactions(id) {
     const jwtToken = getJwtToken();
-    const response = await fetch(
-        `http://localhost:3000/api/v1/transaction/file-transactions/${id}/transactions`,
-        {
-            headers: {
-                Authorization: `Bearer ${jwtToken}`,
-            },
-        }
-    ).then(handleUnauthorized).then(handleErrors);
+    const response = await fetch(`http://localhost:3000/api/v1/transaction/file-transactions/${id}/transactions`, {
+        headers: {
+            Authorization: `Bearer ${jwtToken}`,
+        },
+    }).then(handleUnauthorized).then(handleErrors);
 
     if (!response.ok) {
         throw new Error("Error fetching transactions.");
@@ -24,49 +22,84 @@ async function fetchTransactions(id) {
     return await response.json();
 }
 
-function populateTransactionsTable(transactions) {
+function createTableCell(value) {
+    const cell = document.createElement("td");
+    cell.textContent = value;
+    return cell;
+}
+
+function createLinkCell(value, href) {
+    const cell = document.createElement("td");
+    const link = document.createElement("a");
+    link.textContent = value;
+    link.href = href;
+    cell.appendChild(link);
+    return cell;
+}
+
+async function populateSellerBalanceRow(transaction) {
+    if (!populateSellerBalanceRow.uniqueIds) {
+        populateSellerBalanceRow.uniqueIds = [];
+    }
+
+    const sellerId = transaction.seller_id;
+    if (populateSellerBalanceRow.uniqueIds.includes(sellerId)) {
+        return null;
+    } else {
+        populateSellerBalanceRow.uniqueIds.push(sellerId);
+    }
+
+    const sellerBalance = await fetchSellerBalance(sellerId);
+    const row = document.createElement("tr");
+    row.appendChild(createTableCell(sellerBalance.seller_name));
+    row.appendChild(createTableCell(formatCurrency(sellerBalance.seller_balance)));
+    return row;
+}
+
+
+async function populateTransactionsTable(transactions) {
     const tableBody = document.querySelector("#transactions-table tbody");
 
     transactions.forEach((transaction) => {
         const row = document.createElement("tr");
-
-        const idCell = document.createElement("td");
-        idCell.textContent = transaction.id;
-        row.appendChild(idCell);
-
-        const typeCell = document.createElement("td");
-        typeCell.textContent = transaction.t_type;
-        row.appendChild(typeCell);
-
-        const dateCell = document.createElement("td");
-        dateCell.textContent = transaction.t_date;
-        row.appendChild(dateCell);
-
-        const productIdCell = document.createElement("td");
-        productIdCell.textContent = transaction.product_id;
-        row.appendChild(productIdCell);
-
-        const amountCell = document.createElement("td");
-        amountCell.textContent = transaction.amount;
-        row.appendChild(amountCell);
-
-        const sellerIdCell = document.createElement("td");
-        const sellerLink = document.createElement("a");
-        sellerLink.textContent = transaction.seller_id;
-        sellerLink.href = `seller.html?id=${transaction.seller_id}`;
-        sellerIdCell.appendChild(sellerLink);
-        row.appendChild(sellerIdCell);
-
+        row.appendChild(createTableCell(transaction.id));
+        row.appendChild(createTableCell(transaction.t_type));
+        row.appendChild(createTableCell(transaction.t_date));
+        row.appendChild(createTableCell(transaction.product_id));
+        row.appendChild(createTableCell(formatCurrency(transaction.amount)));
+        row.appendChild(createLinkCell(transaction.seller_id, `seller.html?id=${transaction.seller_id}`));
         tableBody.appendChild(row);
     });
 }
 
+async function populateSellerBalanceTable(transactions) {
+    const tableBody = document.querySelector("#sellers-table tbody");
+
+    const rows = await Promise.all(transactions.map(populateSellerBalanceRow));
+
+    rows
+        .filter(row => row !== null)
+        .forEach(row => tableBody.appendChild(row));
+}
+
+
 document.addEventListener("DOMContentLoaded", async () => {
+    checkSession();
+
     const id = getIdFromURL();
     try {
         const transactions = await fetchTransactions(id);
-        populateTransactionsTable(transactions);
+        await populateTransactionsTable(transactions);
+        await populateSellerBalanceTable(transactions);
     } catch (error) {
         console.error("Error fetching transactions:", error);
     }
 });
+
+function formatCurrency(amount) {
+    const formatter = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+    return formatter.format(amount).replace(/\s/, ''); // remove whitespace between symbol and amount
+}
