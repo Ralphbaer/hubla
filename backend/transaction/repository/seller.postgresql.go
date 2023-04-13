@@ -69,7 +69,7 @@ func (r *SellerPostgresRepository) FindBySellerName(ctx context.Context, sellerN
 		return nil, err
 	}
 
-	query := `SELECT id, name, seller_type, created_at FROM seller WHERE name = $1`
+	query := `SELECT * FROM seller WHERE name = $1`
 	rows, err := db.QueryContext(ctx, query, sellerName)
 	if err != nil {
 		return nil, err

@@ -1,41 +1,42 @@
 import { checkSession, setJwtToken } from './jwt.js';
-import { showError, handleErrors, } from './error.js';
-import { redirectToHome } from './redirect.js';
+import { showError, handleErrors, handleUnauthorized } from './error.js';
 
-
-const loginForm = document.getElementById('login-form');
 document.addEventListener('DOMContentLoaded', () => {
-    if (checkSession()) {
-        redirectToHome();
+    const tokenExists = checkSession()
+    if (tokenExists) {
+        window.location.href = 'http://127.0.0.1:5500/frontend/home.html';
     }
+    const loginForm = document.getElementById('login-form');
+    loginForm.addEventListener('submit', (event) => {
+        event.preventDefault();
 
-    loginForm.addEventListener('submit', handleLoginSubmit);
-});
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
-async function handleLoginSubmit(event) {
-    event.preventDefault();
-
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    try {
-        const response = await fetch('http://localhost:4000/api/v1/auth/login', {
+        fetch('http://localhost:4000/api/v1/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ email, password })
-        });
+        })
+            .then(handleUnauthorized)
+            .then(handleErrors)
+            .then(response => response.json())
+            .then(data => {
+                console.log(`Login successful: ${JSON.stringify(data)}`);
 
-        const data = await handleErrors(response).json();
-        console.log(`Login successful: ${JSON.stringify(data)}`);
+                const { access_token, status } = data;
+                try {
+                    setJwtToken(access_token);
+                } catch (error) {
+                    console.error('Error setting JWT token:', error);
+                }
 
-        const { access_token } = data;
-        setJwtToken(access_token);
-
-        redirectToHome();
-    } catch (error) {
-        showError(error.message);
-    }
-}
-
+                window.location.href = 'http://127.0.0.1:5500/frontend/home.html';
+            })
+            .catch(error => {
+                showError(error)
+            });
+    });
+});

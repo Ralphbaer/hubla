@@ -36,10 +36,10 @@ const parseJwt = (token) => {
 }
 
 export const checkSession = () => {
-    const token = getJwtToken()
+    const token = getJwtToken();
     if (token) {
         if (isJwtExpired(token)) {
-            logout();
+            //logout();
             return false;
         } else {
             return true;
@@ -47,7 +47,7 @@ export const checkSession = () => {
     } else {
         return false;
     }
-}
+};
 
 export const logout = () => {
     localStorage.removeItem('jwt');

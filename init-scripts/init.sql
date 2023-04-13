@@ -1,6 +1,4 @@
-SET search_path = public, pgcrypto;
-
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+SET search_path = public;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -56,6 +54,7 @@ CREATE TABLE IF NOT EXISTS file_transaction (
     id UUID PRIMARY KEY,
     file_id UUID NOT NULL,
     transaction_id UUID NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
     FOREIGN KEY (file_id) REFERENCES file_metadata(id),
     FOREIGN KEY (transaction_id) REFERENCES transaction_record(id),
     UNIQUE (file_id, transaction_id)
@@ -83,7 +82,7 @@ CREATE TABLE IF NOT EXISTS user_account (
 );
 
 -- Indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_file_metadata_hash ON file_metadata(hash);
+CREATE INDEX IF NOT EXISTS file_transaction_file_id_idx ON file_transaction (file_id);
 
 CREATE INDEX IF NOT EXISTS idx_product_name ON product(name);
 
@@ -107,7 +106,7 @@ VALUES (
     uuid_generate_v4(),
     'Nikola Tesla',
     'nikola.testa@hub.la',
-    crypt('radiantforce', gen_salt('bf')),
+    crypt('not_thomas_edison', gen_salt('bf')),
     'admin',
     NOW(),
     NOW()

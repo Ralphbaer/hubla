@@ -1,5 +1,5 @@
 import { checkSession } from './jwt.js';
-import { fetchSellerBalance } from './seller.functions.js';
+import { fetchSellerBalance } from './seller-functions.js';
 
 const getIdFromURL = () => {
     const queryParams = new URLSearchParams(window.location.search);
