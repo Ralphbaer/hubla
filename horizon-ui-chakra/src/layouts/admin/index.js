@@ -31,70 +31,66 @@ export default function Dashboard(props) {
   };
 
   const getActiveRoute = (routes) => {
-    let activeRoute = "Default Brand Text";
-    for (let i = 0; i < routes.length; i++) {
-      if (routes[i].collapse) {
-        let collapseActiveRoute = getActiveRoute(routes[i].items);
+    const activeRoute = "Default Brand Text";
+    for (const route of routes) {
+      if (route.collapse) {
+        const collapseActiveRoute = getActiveRoute(route.items);
         if (collapseActiveRoute !== activeRoute) {
           return collapseActiveRoute;
         }
-      } else if (routes[i].category) {
-        let categoryActiveRoute = getActiveRoute(routes[i].items);
+      } else if (route.category) {
+        const categoryActiveRoute = getActiveRoute(route.items);
         if (categoryActiveRoute !== activeRoute) {
           return categoryActiveRoute;
         }
       } else {
         if (
-          window.location.href.indexOf(routes[i].layout + routes[i].path) !== -1
+          window.location.href.indexOf(route.layout + route.path) !== -1
         ) {
-          return routes[i].name;
+          return route.name;
         }
       }
     }
     return activeRoute;
   };
   const getActiveNavbar = (routes) => {
-    let activeNavbar = false;
-    for (let i = 0; i < routes.length; i++) {
-      if (routes[i].collapse) {
-        let collapseActiveNavbar = getActiveNavbar(routes[i].items);
+    const activeNavbar = false;
+    for (const route of routes) {
+      if (route.collapse) {
+        const collapseActiveNavbar = getActiveNavbar(route.items);
         if (collapseActiveNavbar !== activeNavbar) {
           return collapseActiveNavbar;
         }
-      } else if (routes[i].category) {
-        let categoryActiveNavbar = getActiveNavbar(routes[i].items);
+      } else if (route.category) {
+        const categoryActiveNavbar = getActiveNavbar(route.items);
         if (categoryActiveNavbar !== activeNavbar) {
           return categoryActiveNavbar;
         }
-      } else {
-        if (
-          window.location.href.indexOf(routes[i].layout + routes[i].path) !== -1
-        ) {
-          return routes[i].secondary;
-        }
+      } else if (
+        window.location.href.includes(route.layout + route.path)
+      ) {
+        return route.secondary;
       }
     }
     return activeNavbar;
   };
   const getActiveNavbarText = (routes) => {
-    let activeNavbar = false;
-    for (let i = 0; i < routes.length; i++) {
-      if (routes[i].collapse) {
-        let collapseActiveNavbar = getActiveNavbarText(routes[i].items);
+    const activeNavbar = false;
+    for (const route of routes) {
+      if (route.collapse) {
+        const collapseActiveNavbar = getActiveNavbarText(route.items);
         if (collapseActiveNavbar !== activeNavbar) {
           return collapseActiveNavbar;
         }
-      } else if (routes[i].category) {
-        let categoryActiveNavbar = getActiveNavbarText(routes[i].items);
+      } else if (route.category) {
+        const categoryActiveNavbar = getActiveNavbarText(route.items);
         if (categoryActiveNavbar !== activeNavbar) {
           return categoryActiveNavbar;
         }
-      } else {
-        if (
-          window.location.href.indexOf(routes[i].layout + routes[i].path) !== -1
-        ) {
-          return routes[i].messageNavbar;
-        }
+      } else if (
+        window.location.href.includes(route.layout + route.path)
+      ) {
+        return route.messageNavbar;
       }
     }
     return activeNavbar;
@@ -113,11 +109,7 @@ export default function Dashboard(props) {
       if (prop.collapse) {
         return getRoutes(prop.items);
       }
-      if (prop.category) {
-        return getRoutes(prop.items);
-      } else {
-        return null;
-      }
+      return prop.category ? getRoutes(prop.items) : null;
     });
   };
   document.documentElement.dir = "ltr";

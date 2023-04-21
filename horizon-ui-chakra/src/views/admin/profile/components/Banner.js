@@ -2,6 +2,7 @@
 import { Avatar, Box, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import Card from "components/card/Card.js";
 import React from "react";
+import PropTypes from 'prop-types';
 
 export default function Banner(props) {
   const { banner, avatar, name, creatorType, balance, createdAt, updatedAt } = props;
@@ -65,3 +66,14 @@ export default function Banner(props) {
     </Card >
   );
 }
+
+Banner.propTypes = {
+  avatar: PropTypes.any,
+  balance: PropTypes.any,
+  banner: PropTypes.any,
+  createdAt: PropTypes.any,
+  creatorType: PropTypes.any,
+  name: PropTypes.any,
+  updatedAt: PropTypes.any
+}
+

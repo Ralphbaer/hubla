@@ -7,6 +7,7 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
+
 // Custom components
 import Card from "components/card/Card.js";
 import React from "react";
@@ -15,7 +16,7 @@ import { MdUpload } from "react-icons/md";
 import Dropzone from "views/admin/import/components/Dropzone";
 
 export default function Upload(props) {
-  const { used, total, ...rest } = props;
+  const { ...rest } = props;
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   const brandColor = useColorModeValue("brand.500", "white");

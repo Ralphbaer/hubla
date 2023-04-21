@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   Flex,
-  Grid,
   HStack,
   Icon,
   Link,
@@ -32,7 +31,7 @@ import { GoChevronDown, GoChevronRight } from "react-icons/go";
 import routes from "routes.js";
 
 export default function AuthNavbar(props) {
-  const { logo, logoText, secondary, sidebarWidth, ...rest } = props;
+  const { logoText, sidebarWidth, ...rest } = props;
   const { colorMode } = useColorMode();
   // Menu States
   const {
@@ -41,50 +40,51 @@ export default function AuthNavbar(props) {
     onClose: onCloseAuth,
   } = useDisclosure();
   const {
-    isOpen: isOpenDashboards,
     onOpen: onOpenDashboards,
-    onClose: onCloseDashboards,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenMain,
+    onClose: onCloseDashboards, isOpen: isOpenMain,
     onOpen: onOpenMain,
     onClose: onCloseMain,
   } = useDisclosure();
   // Menus
-  function getLinks(routeName) {
-    let foundRoute = routes.filter(function (route) {
-      return route.items && route.name === routeName;
-    });
-    console.log(foundRoute);
-    return foundRoute[0].items;
-  }
   function getLinksCollapse(routeName) {
-    let foundRoute = routes.filter(function (route) {
+    const foundRoute = routes.filter(function (route) {
       return route.items && route.name === routeName;
     });
 
-    let foundLinks = foundRoute[0].items.filter(function (link) {
+    const foundLinks = foundRoute[0].items.filter(function (link) {
       return link.collapse === true;
     });
 
     return foundLinks;
   }
-  let authObject = getLinksCollapse("Authentication");
-  let mainObject = getLinksCollapse("Main Pages");
-  let dashboardsObject = getLinks("Dashboards");
-  let logoColor = useColorModeValue("white", "white");
+  const authObject = getLinksCollapse("Authentication");
+  const mainObject = getLinksCollapse("Main Pages");
+  const logoColor = useColorModeValue("white", "white");
   // Chakra color mode
 
   const textColor = useColorModeValue("navy.700", "white");
-  let menuBg = useColorModeValue("white", "navy.900");
-  let mainText = "#fff";
-  let navbarBg = "none";
-  let navbarShadow = "initial";
-  let bgButton = "white";
-  let colorButton = "brand.500";
-  let navbarPosition = "absolute";
+  const menuBg = useColorModeValue("white", "navy.900");
+  const mainText = "#fff";
+  const navbarBg = "none";
+  const navbarShadow = "initial";
+  const bgButton = "white";
+  const colorButton = "brand.500";
+  const navbarPosition = "absolute";
 
-  let brand = (
+  const brand = props.secondary === true ? (
+    <Link
+      minW='175px'
+      href={`${process.env.PUBLIC_URL}/#/`}
+      target='_blank'
+      display='flex'
+      lineHeight='100%'
+      fontWeight='bold'
+      justifyContent='center'
+      alignItems='center'
+      color={mainText}>
+      <HublaLogo h='26px' w='175px' my='32px' color={logoColor} />
+    </Link>
+  ) : (
     <Link
       href={`${process.env.PUBLIC_URL}/#/`}
       target='_blank'
@@ -102,59 +102,6 @@ export default function AuthNavbar(props) {
       </Text>
     </Link>
   );
-  if (props.secondary === true) {
-    brand = (
-      <Link
-        minW='175px'
-        href={`${process.env.PUBLIC_URL}/#/`}
-        target='_blank'
-        display='flex'
-        lineHeight='100%'
-        fontWeight='bold'
-        justifyContent='center'
-        alignItems='center'
-        color={mainText}>
-        <HublaLogo h='26px' w='175px' my='32px' color={logoColor} />
-      </Link>
-    );
-    // mainText = useColorModeValue("gray.700", "gray.200");
-    // navbarBg = useColorModeValue("white", "navy.800");
-    // navbarShadow = useColorModeValue(
-    //   "0px 7px 23px rgba(0, 0, 0, 0.05)",
-    //   "none"
-    // );
-    // bgButton = useColorModeValue("gray.700", "white");
-    // colorButton = useColorModeValue("white", "gray.700");
-    // navbarPosition = "fixed";
-  }
-  const createNftsLinks = (routes) => {
-    return routes.map((link, key) => {
-      return (
-        <NavLink
-          key={key}
-          to={link.layout + link.path}
-          style={{ maxWidth: "max-content", marginLeft: "40px" }}>
-          <Text color='gray.400' fontSize='sm' fontWeight='normal'>
-            {link.name}
-          </Text>
-        </NavLink>
-      );
-    });
-  };
-  const createDashboardsLinks = (routes) => {
-    return routes.map((link, key) => {
-      return (
-        <NavLink
-          key={key}
-          to={link.layout + link.path}
-          style={{ maxWidth: "max-content", marginLeft: "40px" }}>
-          <Text color='gray.400' fontSize='sm' fontWeight='normal'>
-            {link.name}
-          </Text>
-        </NavLink>
-      );
-    });
-  };
   const createMainLinks = (routes) => {
     return routes.map((link, key) => {
       if (link.collapse === true) {
@@ -200,46 +147,42 @@ export default function AuthNavbar(props) {
   };
   const createAuthLinks = (routes) => {
     return routes.map((link, key) => {
-      if (link.collapse === true) {
-        return (
-          <Stack key={key} direction='column' my='auto' maxW='max-content'>
-            <Stack
-              direction='row'
-              spacing='0px'
-              align='center'
-              cursor='default'
-              w='max-content'>
-              <IconBox bg='brand.500' h='30px' w='30px' me='10px'>
-                {link.icon}
-              </IconBox>
-              <Text fontWeight='bold' fontSize='md' me='auto' color={textColor}>
-                {link.name}
-              </Text>
-              <Icon
-                as={GoChevronRight}
-                color={mainText}
-                w='14px'
-                h='14px'
-                fontWeight='2000'
-              />
-            </Stack>
-            <Stack direction='column' bg={menuBg}>
-              {createAuthLinks(link.items)}
-            </Stack>
-          </Stack>
-        );
-      } else {
-        return (
-          <NavLink
-            key={key}
-            to={link.layout + link.path}
-            style={{ maxWidth: "max-content", marginLeft: "40px" }}>
-            <Text color='gray.400' fontSize='sm' fontWeight='normal'>
+      return link.collapse === true ? (
+        <Stack key={key} direction='column' my='auto' maxW='max-content'>
+          <Stack
+            direction='row'
+            spacing='0px'
+            align='center'
+            cursor='default'
+            w='max-content'>
+            <IconBox bg='brand.500' h='30px' w='30px' me='10px'>
+              {link.icon}
+            </IconBox>
+            <Text fontWeight='bold' fontSize='md' me='auto' color={textColor}>
               {link.name}
             </Text>
-          </NavLink>
-        );
-      }
+            <Icon
+              as={GoChevronRight}
+              color={mainText}
+              w='14px'
+              h='14px'
+              fontWeight='2000'
+            />
+          </Stack>
+          <Stack direction='column' bg={menuBg}>
+            {createAuthLinks(link.items)}
+          </Stack>
+        </Stack>
+      ) : (
+        <NavLink
+          key={key}
+          to={link.layout + link.path}
+          style={{ maxWidth: "max-content", marginLeft: "40px" }}>
+          <Text color='gray.400' fontSize='sm' fontWeight='normal'>
+            {link.name}
+          </Text>
+        </NavLink>
+      );
     });
   };
   const linksAuth = (
@@ -267,20 +210,6 @@ export default function AuthNavbar(props) {
             fontWeight='2000'
           />
         </Box>
-        <Menu IsOpen={isOpenDashboards}>
-          <MenuList
-            bg={menuBg}
-            p='22px'
-            cursor='default'
-            borderRadius='15px'
-            position='absolute'
-            top='30px'
-            left='-10px'>
-            <Flex flexWrap='wrap' w='300px' gap='16px'>
-              {createDashboardsLinks(dashboardsObject)}
-            </Flex>
-          </MenuList>
-        </Menu>
       </Stack>
       <Stack
         direction='row'
@@ -318,32 +247,6 @@ export default function AuthNavbar(props) {
               <SimpleGrid columns='3' gap='10px' minW='500px' me='20px'>
                 {createAuthLinks(authObject)}
               </SimpleGrid>
-              {/* <Flex
-                bg='red'
-                direction='column'
-                justify='center'
-                align='center'
-                w='stretch'
-                minH='230px'
-                borderRadius='15px'>
-                <IconBox
-                  bg='white'
-                  color='white'
-                  borderRadius='50%'
-                  h='50px'
-                  w='50px'
-                  mb='12px'>
-                  <Icon as={AiFillStar} w='25px' h='25px' color='blue.500' />
-                </IconBox>
-                <Text
-                  fontSize='xl'
-                  fontWeight='bold'
-                  color='#fff'
-                  maxW='80%'
-                  textAlign='center'>
-                  Explore our utilities pages
-                </Text>
-              </Flex> */}
             </Flex>
           </MenuList>
         </Menu>
@@ -383,45 +286,6 @@ export default function AuthNavbar(props) {
             <Flex flexWrap='wrap' align='start' w='500px' gap='16px'>
               {createMainLinks(mainObject)}
             </Flex>
-          </MenuList>
-        </Menu>
-      </Stack>
-      <Stack
-        direction='row'
-        spacing='4px'
-        align='center'
-        color='#fff'
-        fontWeight='bold'
-        onMouseEnter={onOpenNft}
-        onMouseLeave={onCloseNft}
-        cursor='pointer'
-        position='relative'>
-        <Text fontSize='sm' color={mainText}>
-          NFTs
-        </Text>
-        <Box>
-          <Icon
-            mt='8px'
-            as={GoChevronDown}
-            color={mainText}
-            w='14px'
-            h='14px'
-            fontWeight='2000'
-          />
-        </Box>
-        <Menu IsOpen={isOpenNft}>
-          <MenuList
-            bg={menuBg}
-            p='22px'
-            minW='350px'
-            cursor='default'
-            borderRadius='15px'
-            position='absolute'
-            top='30px'
-            left='-10px'>
-            <Grid templateColumns='repeat(2, 1fr)' gap='16px'>
-              {createNftsLinks(nftsObject)}
-            </Grid>
           </MenuList>
         </Menu>
       </Stack>
@@ -495,6 +359,10 @@ export default function AuthNavbar(props) {
 }
 
 AuthNavbar.propTypes = {
-  color: PropTypes.oneOf(["primary", "info", "success", "warning", "danger"]),
   brandText: PropTypes.string,
-};
+  color: PropTypes.oneOf(["primary", "info", "success", "warning", "danger"]),
+  logo: PropTypes.any,
+  logoText: PropTypes.any,
+  secondary: PropTypes.bool,
+  sidebarWidth: PropTypes.any
+}

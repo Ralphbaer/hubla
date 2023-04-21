@@ -9,6 +9,7 @@ import {
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { AiOutlineFile } from "react-icons/ai";
+import PropTypes from 'prop-types';
 
 function Dropzone(props) {
   const { content, ...rest } = props;
@@ -63,6 +64,10 @@ function Dropzone(props) {
       )}
     </Flex>
   );
+}
+
+Dropzone.propTypes = {
+  content: PropTypes.any
 }
 
 export default Dropzone;

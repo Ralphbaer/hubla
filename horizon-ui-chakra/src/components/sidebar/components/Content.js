@@ -1,4 +1,5 @@
 // chakra imports
+import PropTypes from "prop-types"
 import { Box, Flex, Stack } from "@chakra-ui/react";
 //   Custom components
 import Brand from "components/sidebar/components/Brand";
@@ -21,6 +22,10 @@ function SidebarContent(props) {
 
     </Flex>
   );
+}
+
+SidebarContent.propTypes = {
+  routes: PropTypes.any
 }
 
 export default SidebarContent;

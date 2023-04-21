@@ -9,6 +9,7 @@ import {
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
+import PropTypes from 'prop-types';
 import React, { useMemo } from "react";
 import {
   useGlobalFilter,
@@ -160,3 +161,8 @@ export default function CheckTable(props) {
     </Card>
   );
 }
+
+CheckTable.propTypes = {
+  columnsData: PropTypes.node,
+  tableData: PropTypes.node,
+};

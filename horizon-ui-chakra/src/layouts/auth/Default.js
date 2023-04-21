@@ -91,7 +91,7 @@ function AuthIllustration(props) {
 
 AuthIllustration.propTypes = {
   illustrationBackground: PropTypes.string,
-  image: PropTypes.any,
+  children: PropTypes.any,
 };
 
 export default AuthIllustration;

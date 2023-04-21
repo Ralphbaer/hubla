@@ -28,14 +28,14 @@ import { IoMenuOutline } from "react-icons/io5";
 function Sidebar(props) {
   const { routes } = props;
 
-  let variantChange = "0.2s linear";
-  let shadow = useColorModeValue(
+  const variantChange = "0.2s linear";
+  const shadow = useColorModeValue(
     "14px 17px 40px 4px rgba(112, 144, 176, 0.08)",
     "unset"
   );
   // Chakra Color Mode
-  let sidebarBg = useColorModeValue("white", "navy.800");
-  let sidebarMargins = "0px";
+  const sidebarBg = useColorModeValue("white", "navy.800");
+  const sidebarMargins = "0px";
 
   // SIDEBAR
   return (
@@ -61,18 +61,20 @@ function Sidebar(props) {
   );
 }
 
+Sidebar.propTypes = {
+  routes: PropTypes.any
+}
+
 // FUNCTIONS
 export function SidebarResponsive(props) {
-  let sidebarBackgroundColor = useColorModeValue("white", "navy.800");
-  let menuColor = useColorModeValue("gray.400", "white");
+  const sidebarBackgroundColor = useColorModeValue("white", "navy.800");
+  const menuColor = useColorModeValue("gray.400", "white");
   // // SIDEBAR
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
   const { routes } = props;
-  // let isWindows = navigator.platform.startsWith("Win");
   //  BRAND
-
   return (
     <Flex display={{ sm: "flex", xl: "none" }} alignItems='center'>
       <Flex ref={btnRef} w='max-content' h='max-content' onClick={onOpen}>
@@ -113,12 +115,9 @@ export function SidebarResponsive(props) {
     </Flex>
   );
 }
-// PROPS
 
-Sidebar.propTypes = {
-  logoText: PropTypes.string,
-  routes: PropTypes.arrayOf(PropTypes.object),
-  variant: PropTypes.string,
-};
+SidebarResponsive.propTypes = {
+  routes: PropTypes.any
+}
 
 export default Sidebar;

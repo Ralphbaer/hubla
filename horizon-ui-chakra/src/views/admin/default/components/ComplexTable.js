@@ -10,6 +10,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import PropTypes from 'prop-types';
 import {
   useGlobalFilter,
   usePagination,
@@ -127,3 +128,8 @@ export default function ColumnsTable(props) {
     </Card>
   );
 }
+
+ColumnsTable.propTypes = {
+  columnsData: PropTypes.node,
+  tableData: PropTypes.node,
+};

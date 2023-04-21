@@ -1,4 +1,3 @@
-/*eslint-disable*/
 import React from "react";
 import {
   Flex,
@@ -7,7 +6,7 @@ import {
 } from "@chakra-ui/react";
 
 export default function Footer() {
-  let textColor = useColorModeValue("gray.400", "white");
+  const textColor = useColorModeValue("gray.400", "white");
   return (
     <Flex
       zIndex='3'

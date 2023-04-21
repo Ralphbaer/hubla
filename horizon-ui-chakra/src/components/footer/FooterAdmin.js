@@ -1,4 +1,3 @@
-/*eslint-disable*/
 import React from "react";
 import {
   Flex,
@@ -8,7 +7,6 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { SupportIcon } from "components/icons/Icons";
 
 export default function Footer() {
   const textColor = useColorModeValue("gray.400", "white");

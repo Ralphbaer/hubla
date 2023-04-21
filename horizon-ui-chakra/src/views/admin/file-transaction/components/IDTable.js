@@ -10,6 +10,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import PropTypes from 'prop-types';
 import {
   useGlobalFilter,
   usePagination,
@@ -91,20 +92,17 @@ export default function IDTable(props) {
             return (
               <Tr {...row.getRowProps()} key={index}>
                 {row.cells.map((cell, index) => {
-                  let data = "";
-                  if (cell.column.Header === "ID") {
-                    data = (
-                      <Flex align='center'>
-                        <Text
-                          me='10px'
-                          color={textColor}
-                          fontSize='sm'
-                          fontWeight='700'>
-                          {cell.value}
-                        </Text>
-                      </Flex>
-                    );
-                  }
+                  const data = cell.column.Header === "ID" ? (
+                    <Flex align='center'>
+                      <Text
+                        me='10px'
+                        color={textColor}
+                        fontSize='sm'
+                        fontWeight='700'>
+                        {cell.value}
+                      </Text>
+                    </Flex>
+                  ) : "";
                   return (
                     <Td
                       {...cell.getCellProps()}
@@ -124,3 +122,8 @@ export default function IDTable(props) {
     </Card>
   );
 }
+
+IDTable.propTypes = {
+  columnsData: PropTypes.node,
+  tableData: PropTypes.node,
+};

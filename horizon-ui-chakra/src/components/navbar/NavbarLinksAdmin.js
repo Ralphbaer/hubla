@@ -17,7 +17,7 @@ import routes from 'routes.js';
 export default function HeaderLinks(props) {
 	const { secondary } = props;
 	// Chakra Color Mode
-	let menuBg = useColorModeValue('white', 'navy.800');
+	const menuBg = useColorModeValue('white', 'navy.800');
 	const textColor = useColorModeValue('secondaryGray.900', 'white');
 	const shadow = useColorModeValue(
 		'14px 17px 40px 4px rgba(112, 144, 176, 0.18)',
@@ -77,8 +77,6 @@ export default function HeaderLinks(props) {
 }
 
 HeaderLinks.propTypes = {
-	variant: PropTypes.string,
-	fixed: PropTypes.bool,
-	secondary: PropTypes.bool,
-	onOpen: PropTypes.func
-};
+	secondary: PropTypes.any
+}
+
