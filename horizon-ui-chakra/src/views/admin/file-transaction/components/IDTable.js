@@ -1,8 +1,6 @@
 import {
   Flex,
   Table,
-  Progress,
-  Icon,
   Tbody,
   Td,
   Text,
@@ -21,11 +19,7 @@ import {
 
 // Custom components
 import Card from "components/card/Card";
-import Menu from "components/menu/MainMenu";
-
-// Assets
-import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
-export default function ColumnsTable(props) {
+export default function IDTable(props) {
   const { columnsData, tableData } = props;
 
   const columns = useMemo(() => columnsData, [columnsData]);
@@ -49,25 +43,25 @@ export default function ColumnsTable(props) {
     prepareRow,
     initialState,
   } = tableInstance;
-  initialState.pageSize = 5;
+  initialState.pageSize = 11;
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   return (
     <Card
       direction='column'
-      w='100%'
+      w='35%'
       px='0px'
       overflowX={{ sm: "scroll", lg: "hidden" }}>
-      <Flex px='25px' justify='space-between' mb='20px' align='center'>
+      <Flex px='25px' justify='space-between' align='center'>
         <Text
           color={textColor}
           fontSize='22px'
           fontWeight='700'
-          lineHeight='100%'>
-          Complex Table
+          lineHeight='100%'
+          pb='30px'>
+          Lista de Transações Importadas
         </Text>
-        <Menu />
       </Flex>
       <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
         <Thead>
@@ -98,59 +92,16 @@ export default function ColumnsTable(props) {
               <Tr {...row.getRowProps()} key={index}>
                 {row.cells.map((cell, index) => {
                   let data = "";
-                  if (cell.column.Header === "NAME") {
-                    data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
-                      </Text>
-                    );
-                  } else if (cell.column.Header === "STATUS") {
+                  if (cell.column.Header === "ID") {
                     data = (
                       <Flex align='center'>
-                        <Icon
-                          w='24px'
-                          h='24px'
-                          me='5px'
-                          color={
-                            cell.value === "Approved"
-                              ? "green.500"
-                              : cell.value === "Disable"
-                              ? "red.500"
-                              : cell.value === "Error"
-                              ? "orange.500"
-                              : null
-                          }
-                          as={
-                            cell.value === "Approved"
-                              ? MdCheckCircle
-                              : cell.value === "Disable"
-                              ? MdCancel
-                              : cell.value === "Error"
-                              ? MdOutlineError
-                              : null
-                          }
-                        />
-                        <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        <Text
+                          me='10px'
+                          color={textColor}
+                          fontSize='sm'
+                          fontWeight='700'>
                           {cell.value}
                         </Text>
-                      </Flex>
-                    );
-                  } else if (cell.column.Header === "DATE") {
-                    data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
-                      </Text>
-                    );
-                  } else if (cell.column.Header === "PROGRESS") {
-                    data = (
-                      <Flex align='center'>
-                        <Progress
-                          variant='table'
-                          colorScheme='brandScheme'
-                          h='8px'
-                          w='108px'
-                          value={cell.value}
-                        />
                       </Flex>
                     );
                   }

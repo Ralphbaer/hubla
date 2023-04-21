@@ -5,12 +5,15 @@ import {
   MdPerson,
   MdHome,
   MdLock,
-  MdFilePresent
+  MdFilePresent,
+  MdImportExport
 } from "react-icons/md";
 
 // Admin Imports
 import MainDashboard from "views/admin/default";
 import Profile from "views/admin/profile";
+import Import from "views/admin/import";
+import FileTransaction from "views/admin/file-transaction";
 
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
@@ -39,10 +42,17 @@ const routes = [
   },
   {
     name: "Importar Arquivo",
-    layout: "/auth",
-    path: "/sign-in",
+    layout: "/admin",
+    path: "/import",
     icon: <Icon as={MdFilePresent} width='20px' height='20px' color='inherit' />,
-    component: SignInCentered,
+    component: Import,
+  },
+  {
+    name: "Transações Importadas",
+    layout: "/admin",
+    path: "/file-transaction",
+    icon: <Icon as={MdImportExport} width='20px' height='20px' color='inherit' />,
+    component: FileTransaction,
   },
 ];
 

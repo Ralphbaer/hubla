@@ -1,108 +1,50 @@
 [
   {
-    "id": [
-      "Marketplace"
-    ],
-    "type": 2458,
-    "product_name": "12.Jan.2021",
-    "value": 75.5,
-    "seller_id": 75.5,
-    "date": 75.5
+    "id": "047439c3-7a8e-42e2-9849-0bdf4f177009",
+    "type": "CREATOR_SALE",
+    "product_name": "CURSO PARA DESENVOLVEDORES JAVASCRIPT",
+    "value": "80000",
+    "seller_id": "ea09d1de-e97f-4a85-843e-c6260d8541e5",
+    "date": "2023-04-12T08:11:44.20286Z"
   },
   {
-    "id": [
-      "Venus DB PRO"
-    ],
-    "quantity": 1485,
-    "date": "21.Feb.2021",
-    "progress": 35.4
+    "id": "f974c00e-1f0c-49f6-b33b-48c0a8699d7e",
+    "type": "AFFILIATE_SALE",
+    "product_name": "PYTHON FOR BEGINNERS",
+    "value": "50000",
+    "seller_id": "b51fd6b1-dbb7-4172-a2a6-93934b1079e6",
+    "date": "2023-04-11T10:15:22.43567Z"
   },
   {
-    "id": [
-      "Venus DS"
-    ],
-    "quantity": 1024,
-    "date": "13.Mar.2021",
-    "progress": 25
+    "id": "d1e3e3a7-38c2-4dd3-8c3b-7744b4ca89e9",
+    "type": "CREATOR_SALE",
+    "product_name": "CURSO DE REACT AVANÇADO",
+    "value": "120000",
+    "seller_id": "6b331383-42c1-46d2-92ce-cb2829e6e273",
+    "date": "2023-04-10T14:09:18.91234Z"
   },
   {
-    "id": [
-      "Venus 3D Asset"
-    ],
-    "quantity": 858,
-    "date": "24.Jan.2021",
-    "progress": 100
+    "id": "fbbd461f-96a3-47b3-8a8a-0eb2b9d96e71",
+    "type": "AFFILIATE_SALE",
+    "product_name": "DATA SCIENCE WITH PYTHON",
+    "value": "75000",
+    "seller_id": "1d5a5f5d-23f2-43e8-9df9-9ab94f4e3c6a",
+    "date": "2023-04-09T16:22:12.89356Z"
   },
   {
-    "id": [
-      "Marketplace"
-    ],
-    "quantity": 258,
-    "date": "Oct 24, 2022",
-    "progress": 75.5
+    "id": "8b2d4b7e-6f71-4d02-a6d4-fd9b939b684e",
+    "type": "CREATOR_SALE",
+    "product_name": "CURSO DE REACT NATIVE",
+    "value": "100000",
+    "seller_id": "e15e47db-f10f-44e7-8fa1-81dc9cd98e1a",
+    "date": "2023-04-08T09:55:54.43982Z"
   },
   {
-    "id": [
-      "Marketplace"
-    ],
-    "quantity": 258,
-    "date": "Oct 24, 2022",
-    "progress": 75.5
-  },
-  {
-    "id": [
-      "Marketplace"
-    ],
-    "quantity": 258,
-    "date": "12.Jan.2021",
-    "progress": 75.5
-  },
-  {
-    "id": [
-      "Venus DB PRO"
-    ],
-    "quantity": 858,
-    "date": "21.Feb.2021",
-    "progress": 35.4
-  },
-  {
-    "id": [
-      "Venus DS"
-    ],
-    "quantity": 1024,
-    "date": "13.Mar.2021",
-    "progress": 25
-  },
-  {
-    "id": [
-      "Venus 3D Asset"
-    ],
-    "quantity": 258,
-    "date": "24.Jan.2021",
-    "progress": 100
-  },
-  {
-    "id": [
-      "Marketplace"
-    ],
-    "quantity": 1024,
-    "date": "Oct 24, 2022",
-    "progress": 75.5
-  },
-  {
-    "id": [
-      "Marketplace"
-    ],
-    "quantity": 258,
-    "date": "Oct 24, 2022",
-    "progress": 75.5
-  },
-  {
-    "id": [
-      "Marketplace"
-    ],
-    "quantity": 258,
-    "date": "Oct 24, 2022",
-    "progress": 75.5
+    "id": "d845f556-02f8-49cc-8d88-d1f90d96aa63",
+    "type": "AFFILIATE_SALE",
+    "product_name": "INTRODUCTION TO MACHINE LEARNING",
+    "value": "90000",
+    "seller_id": "d18a7f85-62f5-491c-a01b-61e05e9d1946",
+    "date": "2023-04-07T12:01:36.56478Z"
   }
 ]

@@ -37,8 +37,19 @@ export default function HeaderLinks(props) {
 			borderRadius="30px"
 			boxShadow={shadow}>
 			<SidebarResponsive routes={routes} />
-			<ThemeEditor navbarIcon={navbarIcon} />
-
+			<Flex w="100%" mb="0px">
+				<Text
+					mr='20px'
+					ps="20px"
+					pt="16px"
+					pb="10px"
+					w="100%"
+					fontSize="sm"
+					fontWeight="700"
+					color={textColor}>
+					👋&nbsp; Olá, Adela
+				</Text>
+			</Flex>
 			<Menu>
 				<MenuButton p="0px">
 					<Avatar
@@ -52,24 +63,7 @@ export default function HeaderLinks(props) {
 					/>
 				</MenuButton>
 				<MenuList boxShadow={shadow} p="0px" mt="10px" borderRadius="20px" bg={menuBg} border="none">
-					<Flex w="100%" mb="0px">
-						<Text
-							ps="20px"
-							pt="16px"
-							pb="10px"
-							w="100%"
-							borderBottom="1px solid"
-							borderColor={borderColor}
-							fontSize="sm"
-							fontWeight="700"
-							color={textColor}>
-							👋&nbsp; Olá, Adela
-						</Text>
-					</Flex>
 					<Flex flexDirection="column" p="10px">
-						<MenuItem _hover={{ bg: 'none' }} _focus={{ bg: 'none' }} borderRadius="8px" px="14px">
-							<Text fontSize="sm">Configurações</Text>
-						</MenuItem>
 						<MenuItem
 							_hover={{ bg: 'none' }}
 							_focus={{ bg: 'none' }}

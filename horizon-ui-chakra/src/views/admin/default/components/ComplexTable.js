@@ -1,8 +1,6 @@
 import {
   Flex,
   Table,
-  Progress,
-  Icon,
   Tbody,
   Td,
   Text,
@@ -23,7 +21,6 @@ import {
 import Card from "components/card/Card";
 
 // Assets
-import { MdCheckCircle, MdCancel, MdOutlineError } from "react-icons/md";
 export default function ColumnsTable(props) {
   const { columnsData, tableData } = props;
 
@@ -96,60 +93,17 @@ export default function ColumnsTable(props) {
               <Tr {...row.getRowProps()} key={index}>
                 {row.cells.map((cell, index) => {
                   let data = "";
-                  if (cell.column.Header === "NAME") {
+                  if (cell.column.Header === "NOME") {
                     data = (
                       <Text color={textColor} fontSize='sm' fontWeight='700'>
                         {cell.value}
                       </Text>
                     );
-                  } else if (cell.column.Header === "STATUS") {
-                    data = (
-                      <Flex align='center'>
-                        <Icon
-                          w='24px'
-                          h='24px'
-                          me='5px'
-                          color={
-                            cell.value === "Approved"
-                              ? "green.500"
-                              : cell.value === "Disable"
-                                ? "red.500"
-                                : cell.value === "Error"
-                                  ? "orange.500"
-                                  : null
-                          }
-                          as={
-                            cell.value === "Approved"
-                              ? MdCheckCircle
-                              : cell.value === "Disable"
-                                ? MdCancel
-                                : cell.value === "Error"
-                                  ? MdOutlineError
-                                  : null
-                          }
-                        />
-                        <Text color={textColor} fontSize='sm' fontWeight='700'>
-                          {cell.value}
-                        </Text>
-                      </Flex>
-                    );
-                  } else if (cell.column.Header === "DATE") {
+                  } else if (cell.column.Header === "BALANÇO") {
                     data = (
                       <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
+                        R${cell.value}
                       </Text>
-                    );
-                  } else if (cell.column.Header === "PROGRESS") {
-                    data = (
-                      <Flex align='center'>
-                        <Progress
-                          variant='table'
-                          colorScheme='brandScheme'
-                          h='8px'
-                          w='108px'
-                          value={cell.value}
-                        />
-                      </Flex>
                     );
                   }
                   return (

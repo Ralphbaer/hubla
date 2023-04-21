@@ -4,7 +4,6 @@ import {
   SimpleGrid,
 } from "@chakra-ui/react";
 // Custom components
-import Upload from "views/admin/profile/components/Upload";
 import React from "react";
 import CheckTable from "views/admin/default/components/CheckTable";
 import ComplexTable from "views/admin/default/components/ComplexTable";

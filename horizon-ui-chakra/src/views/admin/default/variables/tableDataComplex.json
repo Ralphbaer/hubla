@@ -1,26 +1,42 @@
 [
   {
-    "name":"Horizon UI PRO",
-    "status": "Approved",
-    "date": "18 Apr 2022",
-    "progress": 75.5  
+    "name": "Cleverson Soares",
+    "balance": "150000"
   },
   {
-    "name":"Horizon UI Free",
-    "status": "Disable",
-    "date": "18 Apr 2022",
-    "progress": 25.5  
+    "name": "Maria Silva",
+    "balance": "200000"
   },
   {
-    "name":"Marketplace",
-    "status": "Error",
-    "date": "20 May 2021",
-    "progress": 90  
+    "name": "João Santos",
+    "balance": "100000"
   },
   {
-    "name":"Weekly Updates",
-    "status": "Approved",
-    "date": "12 Jul 2021",
-    "progress": 50.5  
+    "name": "Ana Oliveira",
+    "balance": "175000"
+  },
+  {
+    "name": "Pedro Souza",
+    "balance": "220000"
+  },
+  {
+    "name": "Juliana Vieira",
+    "balance": "125000"
+  },
+  {
+    "name": "Rodrigo Santos",
+    "balance": "135000"
+  },
+  {
+    "name": "Luciana Ribeiro",
+    "balance": "180000"
+  },
+  {
+    "name": "Renato Alves",
+    "balance": "115000"
+  },
+  {
+    "name": "Bruna Mendes",
+    "balance": "165000"
   }
 ]

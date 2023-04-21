@@ -15,10 +15,21 @@ export default function Dashboard(props) {
   // states and functions
   const [fixed] = useState(false);
   const [toggleSidebar, setToggleSidebar] = useState(false);
+
+  const isExcludedRoute = (route) => {
+    return (
+      (route.layout === "/auth" && route.path === "/sign-in") ||
+      (route.layout === "/admin" && route.path === "/profile")
+    );
+  }
+
+  const filteredRoutes = routes.filter(route => !isExcludedRoute(route));
+
   // functions for changing the states from components
   const getRoute = () => {
     return window.location.pathname !== "/admin/full-screen-maps";
   };
+
   const getActiveRoute = (routes) => {
     let activeRoute = "Default Brand Text";
     for (let i = 0; i < routes.length; i++) {
@@ -90,7 +101,7 @@ export default function Dashboard(props) {
   };
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
+      if (prop.layout === "/admin" && !isExcludedRoute(prop)) {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -118,7 +129,7 @@ export default function Dashboard(props) {
           toggleSidebar,
           setToggleSidebar,
         }}>
-        <Sidebar routes={routes} display='none' {...rest} />
+        <Sidebar routes={filteredRoutes} display='none' {...rest} />
         <Box
           float='right'
           minHeight='100vh'
@@ -137,9 +148,9 @@ export default function Dashboard(props) {
               <Navbar
                 onOpen={onOpen}
                 logoText={"Hubla Admin"}
-                brandText={getActiveRoute(routes)}
-                secondary={getActiveNavbar(routes)}
-                message={getActiveNavbarText(routes)}
+                brandText={getActiveRoute(filteredRoutes)}
+                secondary={getActiveNavbar(filteredRoutes)}
+                message={getActiveNavbarText(filteredRoutes)}
                 fixed={fixed}
                 {...rest}
               />
@@ -154,7 +165,7 @@ export default function Dashboard(props) {
               minH='100vh'
               pt='50px'>
               <Switch>
-                {getRoutes(routes)}
+                {getRoutes(filteredRoutes)}
                 <Redirect from='/' to='/admin/default' />
               </Switch>
             </Box>

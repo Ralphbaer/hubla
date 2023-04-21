@@ -58,8 +58,9 @@ export default function CheckTable(props) {
           color={textColor}
           fontSize='22px'
           fontWeight='700'
-          lineHeight='100%'>
-          Transações Importadas
+          lineHeight='100%'
+          pb='30px'>
+          Última importação realizada
         </Text>
       </Flex>
       <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
@@ -107,6 +108,7 @@ export default function CheckTable(props) {
                     data = (
                       <Flex align='center'>
                         <Text
+                          me='10px'
                           color={textColor}
                           fontSize='sm'
                           fontWeight='700'>
@@ -116,19 +118,19 @@ export default function CheckTable(props) {
                     );
                   } else if (cell.column.Header === "PRODUTO") {
                     data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                      <Text me='10px' color={textColor} fontSize='sm' fontWeight='700'>
                         {cell.value}
                       </Text>
                     );
                   } else if (cell.column.Header === "VALOR") {
                     data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
+                      <Text me='10px' color={textColor} fontSize='sm' fontWeight='700'>
+                        R${cell.value}
                       </Text>
                     );
                   } else if (cell.column.Header === "ID DO VENDEDOR") {
                     data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                      <Text me='10px' color={textColor} fontSize='sm' fontWeight='700'>
                         {cell.value}
                       </Text>
                     );
