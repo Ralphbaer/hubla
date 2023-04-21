@@ -18,8 +18,8 @@ export default function Dashboard(props) {
 
   const isExcludedRoute = (route) => {
     return (
-      (route.layout === "/auth" && route.path === "/sign-in") ||
-      (route.layout === "/admin" && route.path === "/profile")
+      (route.layout === "/auth" && route.path === "/sign-in")
+      // (route.layout === "/admin" && route.path === "/profile")
     );
   }
 

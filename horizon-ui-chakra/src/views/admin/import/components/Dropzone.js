@@ -1,30 +1,66 @@
-// Chakra imports
-import { Button, Flex, Input, useColorModeValue } from "@chakra-ui/react";
-// Assets
-import React from "react";
+import {
+  Button,
+  Flex,
+  Icon,
+  Input,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { AiOutlineFile } from "react-icons/ai";
 
 function Dropzone(props) {
   const { content, ...rest } = props;
-  const { getRootProps, getInputProps } = useDropzone();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      setSelectedFile(acceptedFiles[0]);
+    },
+  });
+
   const bg = useColorModeValue("gray.100", "navy.700");
   const borderColor = useColorModeValue("secondaryGray.100", "whiteAlpha.100");
+  const textColor = useColorModeValue("black", "white");
+
   return (
     <Flex
-      align='center'
-      justify='center'
+      align="center"
+      justify="center"
       bg={bg}
-      border='1px dashed'
+      border="1px dashed"
       borderColor={borderColor}
-      borderRadius='16px'
-      w='100%'
-      h='max-content'
-      minH='100%'
-      cursor='pointer'
+      borderRadius="16px"
+      w="100%"
+      h="max-content"
+      minH="100%"
+      cursor="pointer"
+      p={4}
       {...getRootProps({ className: "dropzone" })}
-      {...rest}>
-      <Input variant='main' {...getInputProps()} />
-      <Button variant='no-effects'>{content}</Button>
+      {...rest}
+    >
+      <Input variant="main" {...getInputProps()} />
+      {selectedFile ? (
+        <Flex align="center" direction="column">
+          <Icon
+            as={AiOutlineFile}
+            boxSize={12}
+            color={textColor}
+            mb={2}
+          />
+          <Text fontSize="sm" fontWeight="bold" color={textColor}>
+            {selectedFile.name}
+          </Text>
+        </Flex>
+      ) : (
+        <Button
+          variant="no-effects"
+          borderColor={borderColor}
+          color={textColor}
+        >
+          {content}
+        </Button>
+      )}
     </Flex>
   );
 }

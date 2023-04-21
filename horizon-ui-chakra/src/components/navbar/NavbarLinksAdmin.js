@@ -14,14 +14,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 // Assets
 import routes from 'routes.js';
-import { ThemeEditor } from './ThemeEditor';
 export default function HeaderLinks(props) {
 	const { secondary } = props;
 	// Chakra Color Mode
-	const navbarIcon = useColorModeValue('gray.400', 'white');
 	let menuBg = useColorModeValue('white', 'navy.800');
 	const textColor = useColorModeValue('secondaryGray.900', 'white');
-	const borderColor = useColorModeValue('#E6ECFA', 'rgba(135, 140, 189, 0.3)');
 	const shadow = useColorModeValue(
 		'14px 17px 40px 4px rgba(112, 144, 176, 0.18)',
 		'14px 17px 40px 4px rgba(112, 144, 176, 0.06)'

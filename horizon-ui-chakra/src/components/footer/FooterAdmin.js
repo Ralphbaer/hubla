@@ -6,14 +6,12 @@ import {
   List,
   ListItem,
   Text,
-  Button,
-  useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { SupportIcon } from "components/icons/Icons";
 
 export default function Footer() {
   const textColor = useColorModeValue("gray.400", "white");
-  const { toggleColorMode } = useColorMode();
   return (
     <Flex
       zIndex='3'
@@ -50,8 +48,9 @@ export default function Footer() {
           <Link
             fontWeight='500'
             color={textColor}
-            href='mailto:cleversonsoares.zero@gmail.com'>
-            Support
+            href='https://hubla.slack.com'
+            isExternal>
+            Suporte
           </Link>
         </ListItem>
       </List>
