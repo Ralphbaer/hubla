@@ -4,7 +4,7 @@ import Card from "components/card/Card.js";
 import React from "react";
 
 export default function Banner(props) {
-  const { banner, avatar, name, job, posts, followers, following } = props;
+  const { banner, avatar, name, creatorType, balance, createdAt, updatedAt } = props;
   // Chakra Color Mode
   const textColorPrimary = useColorModeValue("secondaryGray.900", "white");
   const textColorSecondary = "gray.400";
@@ -34,34 +34,34 @@ export default function Banner(props) {
         {name}
       </Text>
       <Text color={textColorSecondary} fontSize='sm'>
-        {job}
+        {creatorType}
       </Text>
-      <Flex w='max-content' mx='auto' mt='26px'>
-        <Flex mx='auto' me='60px' align='center' direction='column'>
-          <Text color={textColorPrimary} fontSize='2xl' fontWeight='700'>
-            {posts}
-          </Text>
+      <Flex w='100%' justify='space-between' mx='auto' mt='26px'>
+        <Flex ml='80px' align='center' direction='column'>
           <Text color={textColorSecondary} fontSize='sm' fontWeight='400'>
-            Posts
+            Data de Criação
+          </Text>
+          <Text color={textColorPrimary} fontSize='sm' fontWeight='700'>
+            {createdAt}
           </Text>
         </Flex>
-        <Flex mx='auto' me='60px' align='center' direction='column'>
-          <Text color={textColorPrimary} fontSize='2xl' fontWeight='700'>
-            {followers}
-          </Text>
+        <Flex pl='20px' align='center' direction='column' flex='1' justify='center'>
           <Text color={textColorSecondary} fontSize='sm' fontWeight='400'>
-            Followers
+            Total em Vendas
+          </Text>
+          <Text color={textColorPrimary} fontSize='2xl' fontWeight='700'>
+            R${balance}
           </Text>
         </Flex>
-        <Flex mx='auto' align='center' direction='column'>
-          <Text color={textColorPrimary} fontSize='2xl' fontWeight='700'>
-            {following}
-          </Text>
+        <Flex mr='80px' align='center' direction='column'>
           <Text color={textColorSecondary} fontSize='sm' fontWeight='400'>
-            Following
+            Última Atualização
+          </Text>
+          <Text color={textColorPrimary} fontSize='sm' fontWeight='700'>
+            {updatedAt}
           </Text>
         </Flex>
       </Flex>
-    </Card>
+    </Card >
   );
 }

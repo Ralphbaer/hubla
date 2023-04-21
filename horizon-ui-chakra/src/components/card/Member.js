@@ -8,7 +8,7 @@ import TransparentMenu from "components/menu/TransparentMenu";
 import { IoEllipsisVertical } from "react-icons/io5";
 
 export default function Default(props) {
-  const { avatar, name, job, ...rest } = props;
+  const { avatar, name, creatorType, ...rest } = props;
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const bg = useColorModeValue("white", "#1B254B");
   const shadow = useColorModeValue(
@@ -38,7 +38,7 @@ export default function Default(props) {
               textAlign='left'
               fontSize={{ base: "sm", xl: "xs", "3xl": "sm" }}
               fontWeight='400'>
-              {job}
+              {creatorType}
             </Text>
           </Flex>
         </Flex>

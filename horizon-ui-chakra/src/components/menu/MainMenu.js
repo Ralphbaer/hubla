@@ -53,7 +53,7 @@ export default function Banner(props) {
   } = useDisclosure();
 
   return (
-    <Menu isOpen={isOpen1} onClose={onClose1}>
+    <Menu IsOpen={isOpen1} onClose={onClose1}>
       <MenuButton
         align='center'
         justifyContent='center'

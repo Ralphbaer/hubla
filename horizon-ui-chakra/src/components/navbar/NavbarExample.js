@@ -130,7 +130,7 @@ export default function AuthNavbar(props) {
           <Box
             w='1px'
             h='20px'
-            //  bg={useColorModeValue("gray.700", "white")}
+          //  bg={useColorModeValue("gray.700", "white")}
           />
         </Stack>
         <Text fontsize='sm' mt='3px'>
@@ -362,7 +362,7 @@ export default function AuthNavbar(props) {
           h='14px'
           fontWeight='2000'
         />
-        <Menu isOpen={isOpenPages}>
+        <Menu IsOpen={isOpenPages}>
           <MenuList
             bg={menuBg}
             p='22px'
@@ -396,7 +396,7 @@ export default function AuthNavbar(props) {
           h='14px'
           fontWeight='2000'
         />
-        <Menu isOpen={isOpenAuth}>
+        <Menu IsOpen={isOpenAuth}>
           <MenuList
             bg={menuBg}
             p='22px'
@@ -461,7 +461,7 @@ export default function AuthNavbar(props) {
           h='14px'
           fontWeight='2000'
         />
-        <Menu isOpen={isOpenApplication}>
+        <Menu IsOpen={isOpenApplication}>
           <MenuList
             bg={menuBg}
             p='22px'
@@ -496,7 +496,7 @@ export default function AuthNavbar(props) {
           h='14px'
           fontWeight='2000'
         />
-        <Menu isOpen={isOpenEcommerce}>
+        <Menu IsOpen={isOpenEcommerce}>
           <MenuList
             bg={menuBg}
             p='22px'

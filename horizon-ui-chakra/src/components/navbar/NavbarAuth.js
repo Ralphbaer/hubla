@@ -50,11 +50,6 @@ export default function AuthNavbar(props) {
     onOpen: onOpenMain,
     onClose: onCloseMain,
   } = useDisclosure();
-  const {
-    isOpen: isOpenNft,
-    onOpen: onOpenNft,
-    onClose: onCloseNft,
-  } = useDisclosure();
   // Menus
   function getLinks(routeName) {
     let foundRoute = routes.filter(function (route) {
@@ -77,7 +72,6 @@ export default function AuthNavbar(props) {
   let authObject = getLinksCollapse("Authentication");
   let mainObject = getLinksCollapse("Main Pages");
   let dashboardsObject = getLinks("Dashboards");
-  let nftsObject = getLinks("NFTs");
   let logoColor = useColorModeValue("white", "white");
   // Chakra color mode
 
@@ -273,7 +267,7 @@ export default function AuthNavbar(props) {
             fontWeight='2000'
           />
         </Box>
-        <Menu isOpen={isOpenDashboards}>
+        <Menu IsOpen={isOpenDashboards}>
           <MenuList
             bg={menuBg}
             p='22px'
@@ -311,7 +305,7 @@ export default function AuthNavbar(props) {
             fontWeight='2000'
           />
         </Box>
-        <Menu isOpen={isOpenAuth}>
+        <Menu IsOpen={isOpenAuth}>
           <MenuList
             bg={menuBg}
             p='22px'
@@ -377,7 +371,7 @@ export default function AuthNavbar(props) {
             fontWeight='2000'
           />
         </Box>
-        <Menu isOpen={isOpenMain}>
+        <Menu IsOpen={isOpenMain}>
           <MenuList
             bg={menuBg}
             p='22px'
@@ -415,7 +409,7 @@ export default function AuthNavbar(props) {
             fontWeight='2000'
           />
         </Box>
-        <Menu isOpen={isOpenNft}>
+        <Menu IsOpen={isOpenNft}>
           <MenuList
             bg={menuBg}
             p='22px'

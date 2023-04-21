@@ -1,57 +1,23 @@
-export const columnsDataDevelopment = [
-  {
-    Header: "NAME",
-    accessor: "name",
-  },
-  {
-    Header: "TECH",
-    accessor: "tech",
-  },
-  {
-    Header: "DATE",
-    accessor: "date",
-  },
-  {
-    Header: "PROGRESS",
-    accessor: "progress",
-  },
-];
-
 export const columnsDataCheck = [
   {
-    Header: "NAME",
-    accessor: "name",
+    Header: "ID",
+    accessor: "id",
   },
   {
-    Header: "PROGRESS",
-    accessor: "progress",
+    Header: "TIPO",
+    accessor: "type",
   },
   {
-    Header: "QUANTITY",
-    accessor: "quantity",
+    Header: "PRODUTO",
+    accessor: "product_name",
   },
   {
-    Header: "DATE",
-    accessor: "date",
-  },
-];
-
-export const columnsDataColumns = [
-  {
-    Header: "NAME",
-    accessor: "name",
+    Header: "VALOR",
+    accessor: "transaction_value",
   },
   {
-    Header: "PROGRESS",
-    accessor: "progress",
-  },
-  {
-    Header: "QUANTITY",
-    accessor: "quantity",
-  },
-  {
-    Header: "DATE",
-    accessor: "date",
+    Header: "ID DO VENDEDOR",
+    accessor: "seller_id",
   },
 ];
 

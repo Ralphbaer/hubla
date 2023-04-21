@@ -43,7 +43,7 @@ export default function Banner(props) {
   );
 
   return (
-    <Menu isOpen={isOpen1} onClose={onClose1}>
+    <Menu IsOpen={isOpen1} onClose={onClose1}>
       <MenuButton {...rest} onClick={onOpen1}>
         {icon}
       </MenuButton>

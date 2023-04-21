@@ -87,7 +87,7 @@ export function SidebarResponsive(props) {
         />
       </Flex>
       <Drawer
-        isOpen={isOpen}
+        IsOpen={isOpen}
         onClose={onClose}
         placement={document.documentElement.dir === "rtl" ? "right" : "left"}
         finalFocusRef={btnRef}>

@@ -1,21 +1,30 @@
 export const columnsDataCheck = [
   {
-    Header: "NAME",
-    accessor: "name",
+    Header: "ID",
+    accessor: "id",
   },
   {
-    Header: "PROGRESS",
-    accessor: "progress",
+    Header: "TIPO",
+    accessor: "type",
   },
   {
-    Header: "QUANTITY",
-    accessor: "quantity",
+    Header: "PRODUTO",
+    accessor: "product_name",
   },
   {
-    Header: "DATE",
+    Header: "VALOR",
+    accessor: "value",
+  },
+  {
+    Header: "ID DO VENDEDOR",
+    accessor: "seller_id",
+  },
+  {
+    Header: "DATA",
     accessor: "date",
   },
 ];
+
 export const columnsDataComplex = [
   {
     Header: "NAME",
